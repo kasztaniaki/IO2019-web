@@ -1,6 +1,6 @@
 
 # io2019
-[![Build Status](https://travis-ci.com/lkszzajac/testink.svg?token=9VVcxjJ9zrwqsd21qQHx&branch=master)](https://travis-ci.com/lkszzajac/testink)
+[![Build Status](https://travis-ci.org/kasztaniaki/IO2019-frontend.svg?branch=master)](https://travis-ci.org/kasztaniaki/IO2019-frontend)
 ## Project setup
 ```
 npm install
