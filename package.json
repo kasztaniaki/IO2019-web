@@ -9,6 +9,8 @@
     "test": "mocha"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "buefy": "^0.7.3",
     "core-js": "^2.6.5",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1"
