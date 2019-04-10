@@ -9,9 +9,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "buefy": "^0.7.3",
     "core-js": "^2.6.5",
+    "sass-loader": "^7.1.0",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1"
   },
@@ -21,10 +20,12 @@
     "@vue/cli-service": "^3.5.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "buefy": "^0.7.3",
     "chai": "^4.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
     "mocha": "^6.0.2",
+    "node-sass": "^4.11.0",
     "vue-template-compiler": "^2.5.21"
   },
   "eslintConfig": {
