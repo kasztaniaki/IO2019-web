@@ -1,5 +1,15 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="container">
+    <MachinePool/>
   </div>
 </template>
+
+<script>
+import MachinePool from '@/components/MachinePool.vue'
+export default {
+  name: 'About',
+  components: {
+    MachinePool
+  }
+}
+</script>
