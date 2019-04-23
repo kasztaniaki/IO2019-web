@@ -6,12 +6,6 @@
         <span>Click to upload</span>
       </a>
     </b-upload>
-    <span class="file-name" v-if="file">
-        {{ file.name }}
-    </span>
-    <button v-on:click="showContent">
-
-    </button>
   </b-field>
 </template>
 
@@ -21,11 +15,6 @@ export default {
     return {
       file: null,
       content: ''
-    }
-  },
-  methods: {
-    showContent: function () {
-      console.log(this.content)
     }
   },
   watch: {
