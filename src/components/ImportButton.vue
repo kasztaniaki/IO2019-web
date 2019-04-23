@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data () {
     return {
@@ -21,18 +23,32 @@ export default {
     file: function (newValue, oldValue) {
       var reader = new FileReader()
 
-      reader.onload = function (event) {
+      reader.onload = event => {
         this.content = event.target.result
-      }.bind(this)
+      }
       reader.readAsText(this.file)
     },
     content: function (newValue, oldValue) {
-      console.log(newValue)
       if (newValue !== '') {
-        this.$toast.open({
-          message: 'File loaded successfully',
-          type: 'is-success'
+        axios({
+          method: 'post',
+          url: 'http://127.0.0.1:5000/import',
+          data: {
+            files: newValue
+          }
         })
+          .then(response => {
+              this.$toast.open({
+                message: 'File loaded successfully',
+                type: 'is-success'
+              })
+            })
+          .catch(error => {
+            this.$toast.open({
+              message: 'Fail',
+              type: 'is-danger'
+            })
+          })
       }
     }
   }
