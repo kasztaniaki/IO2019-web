@@ -29,7 +29,11 @@ export default {
             }
           })
           .then(response => {
-            // TODO
+            this.$toast.open({
+              message: `File loaded succesfully`,
+              position: 'is-bottom',
+              type: 'is-success'
+            })
           })
           .catch(error => {
             this.$toast.open({
