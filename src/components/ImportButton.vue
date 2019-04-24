@@ -35,6 +35,7 @@ export default {
               type: 'is-success'
             })
           })
+          // eslint-disable-next-line
           .catch(error => {
             this.$toast.open({
               message: `Error`,
