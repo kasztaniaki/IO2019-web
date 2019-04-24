@@ -20,7 +20,7 @@ export default {
     file: function (newValue, oldValue) {
       if (newValue !== null) {
         let fileData = new FormData()
-        fileData.append('pool_csv', this.file)
+        fileData.append('pools_csv', this.file)
 
         this.$http
           .post('http://127.0.0.1:5000/import', fileData, {
