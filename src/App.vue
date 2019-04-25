@@ -1,9 +1,17 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <nav class="navbar level container" role="navigation" aria-label="main navigation">
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item">
+            <router-link to="/">Home</router-link>
+          </a>
+          <a class="navbar-item">
+            <router-link to="/pools">Pools</router-link>
+          </a>
+        </div>
+      </div>
+    </nav>
     <router-view/>
   </div>
 </template>
