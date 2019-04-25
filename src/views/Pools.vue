@@ -7,7 +7,7 @@
 <script>
 import MachinePool from '@/components/MachinePool.vue'
 export default {
-  name: 'About',
+  name: 'Pools',
   components: {
     MachinePool
   }

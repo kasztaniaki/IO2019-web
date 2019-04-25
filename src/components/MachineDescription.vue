@@ -1,27 +1,22 @@
 <template>
-  <div v-bind:class="{ rolled: !expanded }">
-
-      <div class="columns">
-
-        <div class="column">
+  <div class="description" v-bind:class="{ rolled: !expanded }">
+    <div class="columns">
+      <div class="column">
+        <b-field grouped group-multiline>
           <div v-for="program in description" :key="program.name">
-               <div id="program-tag">
-                 <b-taglist attached>
-                              <b-tag type="is-dark">{{program[0]}}</b-tag>
-                              <b-tag type="is-info">{{program[1]}}</b-tag>
-                  </b-taglist>
-               </div>
+            <div id="program-tag">
+              <b-taglist v-if="program[0]" attached>
+                <b-tag type="is-dark">{{program[0]}}</b-tag>
+                <b-tag type="is-info">{{program[1]}}</b-tag>
+              </b-taglist>
+            </div>
           </div>
-        </div>
-        <div @click="toggleDescription()" class="column is-one-quarter">
-          <b-icon
-                pack="fas"
-                :icon="icon"
-                size="is-small">
-          </b-icon>
-        </div>
+        </b-field>
       </div>
-
+      <div @click="toggleDescription()" class="column is-one-quarter">
+        <b-icon pack="fas" :icon="icon" size="is-small"></b-icon>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -54,10 +49,11 @@ export default {
 #program-tag {
   padding: 2px;
 }
+.description {
+  max-width: 400px;
+}
 .rolled {
-  max-height:100px;
-  max-width:400px;
+  max-height: 100px;
   overflow: hidden;
 }
-
 </style>
