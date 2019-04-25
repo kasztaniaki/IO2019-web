@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="level">
-      <ImportButton class="level-left"/>
+      <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
     </div>
     <b-table class="container" :data="data.machines" :columns="columnss">
       <template slot-scope="props">

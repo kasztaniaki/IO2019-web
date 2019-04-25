@@ -34,6 +34,7 @@ export default {
               position: 'is-bottom',
               type: 'is-success'
             })
+            this.$emit('import')
           })
           // eslint-disable-next-line
           .catch(error => {
