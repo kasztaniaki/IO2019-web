@@ -51,9 +51,10 @@ export default {
 }
 .description {
   max-width: 400px;
+  margin-bottom: 10px;
 }
 .rolled {
-  max-height: 100px;
+  max-height: 64px;
   overflow: hidden;
 }
 </style>
