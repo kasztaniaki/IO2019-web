@@ -23,65 +23,65 @@
 </template>
 
 <script>
-import MachineDescription from "@/components/MachineDescription.vue";
+import MachineDescription from '@/components/MachineDescription.vue'
 export default {
   methods: {
-    loadMachinesData() {
+    loadMachinesData () {
       this.$http
-        .get("http://127.0.0.1:5000/pools")
+        .get('http://127.0.0.1:5000/pools')
         .then(response => {
-          console.log(response.data.pools);
-          
+          console.log(response.data.pools)
+
           this.data.machines = response.data.pools
         })
         .catch(error => {
-          console.log(error);
-        });
+          console.log(error)
+        })
     }
   },
   watch: {
-    machines: function(oldValue, newValue) {}
+    machines: function (oldValue, newValue) {}
   },
-  data() {
+  data () {
     return {
       data: {
         machines: []
       },
       columnss: [
         {
-          field: "poolID",
-          label: "ID",
-          width: "40",
+          field: 'poolID',
+          label: 'ID',
+          width: '40',
           numeric: true
         },
         {
-          field: "displayName",
-          label: "Name"
+          field: 'displayName',
+          label: 'Name'
         },
         {
-          field: "maximumCount",
-          label: "Maximum count",
-          width: "40"
+          field: 'maximumCount',
+          label: 'Maximum count',
+          width: '40'
         },
         {
-          field: "enabled",
-          label: "Enabled",
+          field: 'enabled',
+          label: 'Enabled',
           centered: true
         },
         {
-          field: "description",
-          label: "Description"
+          field: 'description',
+          label: 'Description'
         }
       ]
-    };
+    }
   },
-  mounted() {
-    this.loadMachinesData();
+  mounted () {
+    this.loadMachinesData()
   },
   components: {
     MachineDescription
   }
-};
+}
 </script>
 
 <style lang="scss">
