@@ -96,13 +96,6 @@ export default {
       columns: [
         {
           field: 'poolID',
-    },
-    editPool (poolID) {
-      this.selectedColumn = poolID
-      console.log('Edit pool ' + poolID)
-    },
-    removePool (poolID) {
-      console.log('Remove pool ' + poolID)
           label: 'ID',
           width: '40',
           numeric: true
