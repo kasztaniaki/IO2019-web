@@ -89,6 +89,9 @@ export default {
   components: {
     MachineDescription,
     ImportButton
+  },
+  props: {
+    editable: Boolean
   }
 }
 </script>
