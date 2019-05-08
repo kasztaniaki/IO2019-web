@@ -42,6 +42,19 @@
         <b-table-column field="description" label="Description">
           <MachineDescription :description="props.row.InstalledSoftware"/>
         </b-table-column>
+        <b-table-column field="edit" :visible="editable">
+          <b-button v-if="selectedColumn !== props.row.PoolID" icon-left="edit" type="is-light" @click.native="editPool(props.row.PoolID)">
+            Edit
+          </b-button>
+          <b-button v-else icon-left="check" type="is-success" @click.native="savePool(props.row.PoolID)">
+            Save
+          </b-button>
+        </b-table-column>
+        <b-table-column field="remove" :visible="editable">
+          <b-button icon-left="trash" type="is-danger" @click.native="removePool(props.row.PoolID)">
+            Delete
+          </b-button>
+        </b-table-column>
       </template>
     </b-table>
   </div>
