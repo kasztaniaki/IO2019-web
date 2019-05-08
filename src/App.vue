@@ -10,6 +10,14 @@
             <router-link to="/pools">Pools</router-link>
           </a>
         </div>
+        <div class="navbar-end">
+          <a class="navbar-item">
+            <router-link to="/users/signup">Sign up</router-link>
+          </a>
+          <a class="navbar-item">
+            <router-link to="/users/signin">Log in</router-link>
+          </a>
+        </div>
       </div>
     </nav>
     <router-view/>
