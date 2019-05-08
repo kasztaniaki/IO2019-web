@@ -79,6 +79,14 @@ export default {
         {
           field: 'description',
           label: 'Description'
+        },
+        {
+          field: 'edit',
+          width: '30'
+        },
+        {
+          field: 'remove',
+          width: '30'
         }
       ]
     }
