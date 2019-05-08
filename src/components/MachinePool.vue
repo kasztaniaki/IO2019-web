@@ -5,30 +5,13 @@
     </div>
     <b-table class="container" :data="data.machines" :columns="columnss">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">
-          <b-input v-if="editable && selectedColumn === props.row.PoolID" v-model="props.row.PoolID"></b-input>
-          <template v-else>{{props.row.PoolID}}</template>
-        </b-table-column>
-        <b-table-column field="displayName" label="Name">
-          <b-input v-if="editable && selectedColumn === props.row.PoolID" v-model="props.row.DisplayName"></b-input>
-          <template v-else>{{props.row.DisplayName}}</template>
-        </b-table-column>
-        <b-table-column field="operatingSystem" label="OS">
-          <div class="columns is-vcentered">
-            <div class="column">
-              <b-input v-if="editable && selectedColumn === props.row.PoolID" v-model="props.row.OSName"></b-input>
-              <template v-else>{{props.row.OSName}}</template>
-            </div>
-            <div class="column is-4">
-              <b-input v-if="editable && selectedColumn === props.row.PoolID" v-model="props.row.OSVersion"></b-input>
-              <template v-else>{{props.row.OSVersion}}</template>
-            </div>
-          </div>
-        </b-table-column>
-        <b-table-column field="maximumCount" label="Maximum Count">
-          <b-input v-if="editable && selectedColumn === props.row.PoolID" v-model="props.row.MaximumCount"></b-input>
-          <template v-else>{{props.row.MaximumCount}}</template>
-        </b-table-column>
+        <b-table-column field="poolID" label="ID">{{props.row.PoolID}}</b-table-column>
+        <b-table-column field="displayName" label="Name">{{props.row.DisplayName}}</b-table-column>
+        <b-table-column
+          field="operatingSystem"
+          label="OS"
+        >{{props.row.OSName}} {{props.row.OSVersion}}</b-table-column>
+        <b-table-column field="maximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
         <b-table-column field="enabled" label="Enabled">
           <b-icon
             id="enabled-icon"
@@ -59,6 +42,19 @@ export default {
           console.log(response.data.pools)
 
           this.data.machines = response.data.pools
+        <b-table-column field="edit" :visible="editable">
+          <b-button v-if="selectedColumn !== props.row.PoolID" icon-left="edit" type="is-light" @click.native="editPool(props.row.PoolID)">
+            Edit
+          </b-button>
+          <b-button v-else icon-left="check" type="is-success" @click.native="savePool(props.row.PoolID)">
+            Save
+          </b-button>
+        </b-table-column>
+        <b-table-column field="remove" :visible="editable">
+          <b-button icon-left="trash" type="is-danger" @click.native="removePool(props.row.PoolID)">
+            Delete
+          </b-button>
+        </b-table-column>
         })
         .catch(error => {
           console.log(error)
