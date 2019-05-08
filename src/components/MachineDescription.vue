@@ -6,8 +6,8 @@
           <div v-for="program in description" :key="program.name">
             <div id="program-tag">
               <b-taglist v-if="program[0]" attached>
-                <b-tag type="is-dark">{{program[0]}}</b-tag>
-                <b-tag type="is-info">{{program[1]}}</b-tag>
+                <b-tag v-html="$options.filters.highlight(program[0], query)" type="is-dark">{{program[0] | highlight}}</b-tag>
+                <b-tag v-html="$options.filters.highlight(program[1], query)" type="is-info">{{program[1] | highlight}}</b-tag>
               </b-taglist>
             </div>
           </div>
@@ -23,7 +23,8 @@
 <script>
 export default {
   props: {
-    description: Array
+    description: Array,
+    query: String
   },
   data () {
     return {
@@ -41,6 +42,20 @@ export default {
         this.$data.icon = 'chevron-down'
       }
     }
+  },
+  filters: {
+    highlight: function (value, query) {
+      var re = RegExp(query, 'i')
+      var result = value.toString().replace(re, function (matchedText, a, b) {
+        if (matchedText !== '') {
+          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
+          return res
+        } else return ''
+      })
+      console.log(result)
+
+      return result
+    }
   }
 }
 </script>
@@ -56,5 +71,12 @@ export default {
 .rolled {
   max-height: 64px;
   overflow: hidden;
+}
+.highlight{
+  padding: 3px 0px;
+  border-color:hsl(141, 71%, 48%);
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  margin: 0px -2px 0px -2px;
 }
 </style>

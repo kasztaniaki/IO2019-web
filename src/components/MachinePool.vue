@@ -6,13 +6,13 @@
     </div>
     <b-table class="container" :data=filter>
       <template slot-scope="props">
-        <b-table-column sortable field="PoolID" label="ID" >{{props.row.PoolID}}</b-table-column>
-        <b-table-column sortable field="DisplayName" label="Name" v-html="$options.filters.highlight(props.row.DisplayName, query)">{{props.row.DisplayName}}</b-table-column>
+        <b-table-column sortable field="PoolID" label="ID" v-html="$options.filters.highlight(props.row.PoolID, query)">{{props.row.PoolID | highlight}}</b-table-column>
+        <b-table-column sortable field="DisplayName" label="Name" v-html="$options.filters.highlight(props.row.DisplayName, query)">{{props.row.DisplayName | highlight}}</b-table-column>
         <b-table-column sortable
           field="OperatingSystem"
           label="OS"
         >{{props.row.OSName}}</b-table-column>
-        <b-table-column sortable field="MaximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
+        <b-table-column sortable field="MaximumCount" label="Maximum Count" v-html="$options.filters.highlight(props.row.MaximumCount, query)">{{props.row.MaximumCount | highlight}}</b-table-column>
         <b-table-column field="Enabled" label="Enabled">
           <b-icon
             id="enabled-icon"
@@ -24,7 +24,7 @@
           <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle" size="is-small"></b-icon>
         </b-table-column>
         <b-table-column field="Description" label="Description">
-          <MachineDescription :description="props.row.InstalledSoftware"/>
+          <MachineDescription :description="props.row.InstalledSoftware" :query="query"/>
         </b-table-column>
       </template>
     </b-table>
@@ -86,9 +86,13 @@ export default {
   filters: {
     highlight: function (value, query) {
       var re = RegExp(query, 'i')
-      return value.toString().replace(re, function (matchedText, a, b) {
-        return ('<span class="highlight">' + matchedText + '</span>')
+      var result = value.toString().replace(re, function (matchedText, a, b) {
+        if (matchedText !== '') {
+          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
+          return res
+        } else return ''
       })
+      return result
     }
   }
 }
@@ -101,7 +105,11 @@ export default {
 #disabled-icon {
   color: red;
 }
-#highlight{
-  background-color: #FFFF00;
+.highlight{
+  padding: 3px 0px;
+  border-color:hsl(141, 71%, 48%);
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  margin: 0px -2px 0px -2px;
 }
 </style>
