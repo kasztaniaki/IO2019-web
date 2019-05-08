@@ -76,6 +76,13 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    editPool (poolID) {
+      this.selectedColumn = poolID
+      console.log('Edit pool ' + poolID)
+    },
+    removePool (poolID) {
+      console.log('Remove pool ' + poolID)
     }
   },
   watch: {
