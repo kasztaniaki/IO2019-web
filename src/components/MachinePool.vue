@@ -1,7 +1,9 @@
 <template>
   <div>
+    
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
+      <b-input placeholder="filter"></b-input>
     </div>
     <b-table class="container" :data="data.machines">
       <template slot-scope="props">
@@ -36,6 +38,7 @@ import ImportButton from '@/components/ImportButton.vue'
 export default {
   methods: {
     loadMachinesData () {
+      this.data.loading=true
       this.$http
         .get('http://127.0.0.1:5000/pools')
         .then(response => {
