@@ -42,19 +42,6 @@ export default {
           console.log(response.data.pools)
 
           this.data.machines = response.data.pools
-        <b-table-column field="edit" :visible="editable">
-          <b-button v-if="selectedColumn !== props.row.PoolID" icon-left="edit" type="is-light" @click.native="editPool(props.row.PoolID)">
-            Edit
-          </b-button>
-          <b-button v-else icon-left="check" type="is-success" @click.native="savePool(props.row.PoolID)">
-            Save
-          </b-button>
-        </b-table-column>
-        <b-table-column field="remove" :visible="editable">
-          <b-button icon-left="trash" type="is-danger" @click.native="removePool(props.row.PoolID)">
-            Delete
-          </b-button>
-        </b-table-column>
         })
         .catch(error => {
           console.log(error)
@@ -72,6 +59,13 @@ export default {
       columns: [
         {
           field: 'poolID',
+    },
+    editPool (poolID) {
+      this.selectedColumn = poolID
+      console.log('Edit pool ' + poolID)
+    },
+    removePool (poolID) {
+      console.log('Remove pool ' + poolID)
           label: 'ID',
           width: '40',
           numeric: true
