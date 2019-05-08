@@ -56,7 +56,7 @@ export default {
       data: {
         machines: []
       },
-      columnss: [
+      columns: [
         {
           field: 'poolID',
           label: 'ID',
@@ -79,14 +79,6 @@ export default {
         {
           field: 'description',
           label: 'Description'
-        },
-        {
-          field: 'edit',
-          width: '30'
-        },
-        {
-          field: 'remove',
-          width: '30'
         }
       ]
     }
