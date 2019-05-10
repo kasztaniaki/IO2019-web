@@ -17,22 +17,22 @@ export default {
       file: null,
       errors: [
         {
-            "line": 3,
-            "pool": "\"s7n-girls\",\"false\",\"View Agent (6.2.2) Firefox (55.0.3), Chrome (61.0), Flash (27.0.0), Libre Office (5.4.1.2), Adobe Reader DC (17.012), JRE (8u144)\"",
-            "error": "warning",
-            "info": "opis błędu opis błędu opis błędu"
+          'line': 3,
+          'pool': '"s7n-girls","false","View Agent (6.2.2) Firefox (55.0.3), Chrome (61.0), Flash (27.0.0), Libre Office (5.4.1.2), Adobe Reader DC (17.012), JRE (8u144)"',
+          'error': 'warning',
+          'info': 'opis błędu opis błędu opis błędu'
         },
         {
-            "line": 9,
-            "pool": ":tutaj linijka z csv z błędem:",
-            "error": "error",
-            "info": "błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu "
+          'line': 9,
+          'pool': ':tutaj linijka z csv z błędem:',
+          'error': 'error',
+          'info': 'błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu '
         },
         {
-            "line": 14,
-            "pool": ":tutaj linijka z csv z błędem:",
-            "error": "warning",
-            "info": ""
+          'line': 14,
+          'pool': ':tutaj linijka z csv z błędem:',
+          'error': 'warning',
+          'info': ''
         }
       ]
     }
@@ -71,13 +71,10 @@ export default {
                 errors: this.errors
               }
             })
-            this.file=null
+            this.file = null
           })
       }
     }
-  },
-  components: {
-    ImportErrors
   }
 }
 </script>

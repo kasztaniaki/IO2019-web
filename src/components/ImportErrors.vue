@@ -22,9 +22,9 @@
 
 <script>
 export default {
-    props: {
-        errors: Array
-    }    
+  props: {
+    errors: Array
+  }
 }
 </script>
 
