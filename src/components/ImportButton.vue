@@ -10,10 +10,31 @@
 </template>
 
 <script>
+import ImportErrors from '@/components/ImportErrors.vue'
 export default {
   data () {
     return {
-      file: null
+      file: null,
+      errors: [
+        {
+            "line": 3,
+            "pool": "\"s7n-girls\",\"false\",\"View Agent (6.2.2) Firefox (55.0.3), Chrome (61.0), Flash (27.0.0), Libre Office (5.4.1.2), Adobe Reader DC (17.012), JRE (8u144)\"",
+            "error": "warning",
+            "info": "opis błędu opis błędu opis błędu"
+        },
+        {
+            "line": 9,
+            "pool": ":tutaj linijka z csv z błędem:",
+            "error": "error",
+            "info": "błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu opis błędu "
+        },
+        {
+            "line": 14,
+            "pool": ":tutaj linijka z csv z błędem:",
+            "error": "warning",
+            "info": ""
+        }
+      ]
     }
   },
   watch: {
@@ -43,9 +64,20 @@ export default {
               position: 'is-bottom',
               type: 'is-danger'
             })
+            this.$modal.open({
+              parent: this,
+              component: ImportErrors,
+              props: {
+                errors: this.errors
+              }
+            })
+            this.file=null
           })
       }
     }
+  },
+  components: {
+    ImportErrors
   }
 }
 </script>
