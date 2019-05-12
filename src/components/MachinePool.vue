@@ -2,6 +2,9 @@
   <div>
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
+      <b-button @click="resetDB()">
+        db reset
+      </b-button>
     </div>
     <b-table class="container" :data="machines" :columns="columns">
       <template slot-scope="props">
@@ -45,6 +48,26 @@ export default {
         })
         .catch(error => {
           console.log(error)
+        })
+    },
+    resetDB () {
+      this.$http
+        .get('http://127.0.0.1:5000/init_db')
+        .then(response => {
+          this.$toast.open({
+            message: `Db reset`,
+            position: 'is-bottom',
+            type: 'is-success'
+          })
+        })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: `db reset error`,
+              position: 'is-bottom',
+              type: 'is-success'
+            })
+          }
         })
     }
   },
