@@ -6,7 +6,7 @@
         db reset
       </b-button>
     </div>
-    <b-table class="container" :data="machines" :columns="columns">
+    <b-table class="container" :data="machines" :columns="columns" :loading="loading">
       <template slot-scope="props">
         <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
         <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
@@ -39,12 +39,14 @@ import ImportButton from '@/components/ImportButton.vue'
 export default {
   methods: {
     loadMachinesData () {
+      this.loading=true
       this.$http
         .get('http://127.0.0.1:5000/pools')
         .then(response => {
           console.log(response.data.pools)
 
           this.machines = response.data.pools
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
@@ -100,7 +102,8 @@ export default {
           field: 'description',
           label: 'Description'
         }
-      ]
+      ],
+      loading: false
     }
   },
   mounted () {
