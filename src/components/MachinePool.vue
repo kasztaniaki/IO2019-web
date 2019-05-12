@@ -3,10 +3,10 @@
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
     </div>
-    <b-table class="container" :data="data.machines" :columns="columnss">
+    <b-table class="container" :data="machines" :columns="columns">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">{{props.row.PoolID}}</b-table-column>
-        <b-table-column field="displayName" label="Name">{{props.row.DisplayName}}</b-table-column>
+        <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
+        <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
         <b-table-column
           field="operatingSystem"
           label="OS"
@@ -41,7 +41,7 @@ export default {
         .then(response => {
           console.log(response.data.pools)
 
-          this.data.machines = response.data.pools
+          this.machines = response.data.pools
         })
         .catch(error => {
           console.log(error)
@@ -53,15 +53,12 @@ export default {
   },
   data () {
     return {
-      data: {
-        machines: []
-      },
-      columnss: [
+      machines: [],
+      columns: [
         {
           field: 'poolID',
           label: 'ID',
-          width: '40',
-          numeric: true
+          width: '40'
         },
         {
           field: 'displayName',
