@@ -117,7 +117,8 @@ export default {
           field: 'description',
           label: 'Description'
         }
-      ]
+      ],
+      isLoading: false
     }
   },
   mounted () {
