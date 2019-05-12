@@ -79,9 +79,18 @@ export default {
     },
     editPool (poolID) {
       this.selectedColumn = poolID
-      console.log('Edit pool ' + poolID)
-    },
-    removePool (poolID) {
+    editPool (poolProps) {
+      this.$modal.open({
+        parent: this,
+        component: EditPoolForm,
+        hasModalCard: true,
+        props: poolProps,
+        events: {
+          'savePool': (poolProps) => {
+            console.log(poolProps)
+          }
+        }
+      })
       console.log('Remove pool ' + poolID)
     }
   },
@@ -117,8 +126,7 @@ export default {
           field: 'description',
           label: 'Description'
         }
-      ],
-      isLoading: false
+      ]
     }
   },
   mounted () {
