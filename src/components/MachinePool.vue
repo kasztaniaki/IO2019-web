@@ -39,7 +39,7 @@ import ImportButton from '@/components/ImportButton.vue'
 export default {
   methods: {
     loadMachinesData () {
-      this.loading=true
+      this.loading = true
       this.$http
         .get('http://127.0.0.1:5000/pools')
         .then(response => {

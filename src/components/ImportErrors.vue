@@ -36,9 +36,9 @@ export default {
     }
   },
   methods: {
-    forceImport() {
-        this.$parent.$parent.sendRequest(true);
-        this.$parent.close();
+    forceImport () {
+      this.$parent.$parent.sendRequest(true)
+      this.$parent.close()
     }
   },
   data () {
@@ -68,6 +68,6 @@ $error: hsl(348, 100%, 61%);
     tr.error.is-selected{
         filter: brightness(120%);
         border: 5px solid black !important;
-        
+
     }
 </style>

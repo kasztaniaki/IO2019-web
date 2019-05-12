@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     sendRequest (isForced) {
-      this.$parent.loading=true;
+      this.$parent.loading = true
       let fileData = new FormData()
       fileData.append('pools_csv', this.file)
       this.$http
