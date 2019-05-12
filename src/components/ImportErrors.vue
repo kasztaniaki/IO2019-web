@@ -5,7 +5,7 @@
         </header>
         <section class="modal-card-body">
             <b-table :data="errors"
-                    :row-class="(row,index) => row.error" :selected.sync="selected">
+                    :row-class="(row,index) => row.error" :selected.sync="selected" focusable>
                 <template slot-scope="props">
                     <b-table-column field="line" label="#">{{props.row.line}}</b-table-column>
                     <b-table-column field="pool" label="Line" width="400">{{props.row.pool | overflow(selected==props.row)}}</b-table-column>
@@ -43,19 +43,31 @@ export default {
   },
   data () {
     return {
-      selected: this.errors[1]
+      selected: this.errors[0]
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+$warning: hsl(48, 100%, 67%);
+$error: hsl(348, 100%, 61%);
     tr.warning {
-        background: #ffdd57;
-        color: black;
+        background: $warning !important;
+        color: black !important;
     }
     tr.error {
-        background: #ff3860;
-        color: black;
+        background: $error !important;
+        color: black !important;
+    }
+
+    tr.warning.is-selected{
+        filter: brightness(120%);
+        border: 5px solid black !important;
+    }
+    tr.error.is-selected{
+        filter: brightness(120%);
+        border: 5px solid black !important;
+        
     }
 </style>
