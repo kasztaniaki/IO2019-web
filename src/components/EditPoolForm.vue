@@ -104,11 +104,7 @@
 <script>
 export default {
   props: {
-    PoolID: {
-      type: String,
-      default: ''
-    },
-    OSVersion: {
+    ID: {
       type: String,
       default: ''
     },
@@ -125,23 +121,22 @@ export default {
       default: () => []
     },
     Enabled: {
-      type: Number,
-      default: 0
+      type: Boolean,
+      default: false
     },
-    DisplayName: {
+    Name: {
       type: String,
       default: ''
     }
   },
   data () {
     return {
-      newPoolID: JSON.parse(JSON.stringify(this.PoolID)),
-      newOSVersion: JSON.parse(JSON.stringify(this.OSVersion)),
+      newID: JSON.parse(JSON.stringify(this.ID)),
       newOSName: JSON.parse(JSON.stringify(this.OSName)),
       newMaximumCount: JSON.parse(JSON.stringify(this.MaximumCount)),
       newInstalledSoftware: JSON.parse(JSON.stringify(this.InstalledSoftware)),
       newEnabled: JSON.parse(JSON.stringify(this.Enabled)),
-      newDisplayName: JSON.parse(JSON.stringify(this.DisplayName)),
+      newName: JSON.parse(JSON.stringify(this.Name)),
       newSoftwareName: null,
       newSoftwareVersion: null
     }
