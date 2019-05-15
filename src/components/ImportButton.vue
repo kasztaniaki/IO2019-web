@@ -31,7 +31,7 @@ export default {
           .then(response => {
             this.$toast.open({
               message: `File loaded succesfully`,
-              position: 'is-bottom',
+              position: 'is-top',
               type: 'is-success'
             })
             this.$emit('import')
@@ -40,7 +40,7 @@ export default {
           .catch(error => {
             this.$toast.open({
               message: `Error`,
-              position: 'is-bottom',
+              position: 'is-top',
               type: 'is-danger'
             })
           })
