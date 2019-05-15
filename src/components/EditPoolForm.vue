@@ -7,46 +7,41 @@
       <section class="modal-card-body">
         <b-field label="ID">
           <b-input
-            value="newPoolID"
-            v-model="newPoolID"
+            value="newID"
+            v-model="newID"
+            maxlength="80"
+            has-counter
             required>
           </b-input>
         </b-field>
 
         <b-field label="Name">
           <b-input
-            value="newDisplayName"
-            v-model="newDisplayName"
+            value="newName"
+            v-model="newName"
+            maxlength="80"
+            has-counter
             required>
           </b-input>
         </b-field>
-
-        <div class="columns">
-          <div class="column is-10">
-            <b-field label="OS">
-              <b-input
-                value="newOSName"
-                v-model="newOSName"
-                required>
-              </b-input>
-            </b-field>
-          </div>
-          <div class="column">
-            <b-field label="Version">
-              <b-input
-                value="newOSVersion"
-                v-model="newOSVersion"
-                required>
-              </b-input>
-            </b-field>
-          </div>
-        </div>
-        <b-field label="Maximum Count">
+        <b-field label="OS">
           <b-input
-            value="newMaximumCount"
-            v-model="newMaximumCount"
-            required>
+            value="newOSName"
+            v-model="newOSName"
+            maxlength="80"
+            has-counter>
           </b-input>
+        </b-field>
+
+        <b-field label="Maximum Count">
+          <b-numberinput
+            value="newMaximumCount"
+            controls-position="compact"
+            type="is-light"
+            min="0"
+            v-model="newMaximumCount"
+            expanded>
+          </b-numberinput>
         </b-field>
 
         <b-field label="Enabled">
@@ -72,8 +67,7 @@
           <b-input
             value="newSofwareName"
             placeholder="Program"
-            v-model="newSoftwareName"
-            required>
+            v-model="newSoftwareName">
           </b-input>
 
           <b-input
@@ -93,7 +87,8 @@
         class="button"
         type="is-success"
         icon-left="check"
-        @click="$emit('savePool', { newPoolID, newOSName, newOSVersion, newMaximumCount, newInstalledSoftware, newEnabled, newDisplayName })">
+        :disabled="newID === '' || newName === ''"
+        @click="saveForm()">
           Save
         </b-button>
       </footer>
@@ -155,6 +150,18 @@ export default {
 
       this.newSoftwareName = null
       this.newSoftwareVersion = null
+    },
+    saveForm () {
+      const newPoolProps = {
+        ID: this.newID,
+        OSName: this.newOSName,
+        MaximumCount: this.newMaximumCount,
+        InstalledSoftware: this.newInstalledSoftware,
+        Enabled: this.newEnabled,
+        Name: this.newName
+      }
+      this.$emit('poolRequest', newPoolProps)
+      this.$emit('close')
     }
   }
 }
