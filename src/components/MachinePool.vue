@@ -17,7 +17,7 @@
             <div class="column">
               {{props.row.OSName}}
             </div>
-            </div>
+          </div>
         </b-table-column>
         <b-table-column field="maximumCount" label="Maximum Count">
           {{props.row.MaximumCount}}
@@ -69,21 +69,100 @@ export default {
           console.log(error)
         })
     },
-    editPool (poolProps) {
+    showPoolForm (poolId = '', poolProps = {}) {
       this.$modal.open({
         parent: this,
         component: EditPoolForm,
         hasModalCard: true,
         props: poolProps,
         events: {
-          'savePool': (poolProps) => {
-            console.log(poolProps)
+          'poolRequest': (poolProps) => {
+            if (poolId !== '') {
+              this.editPool(poolId, poolProps)
+            } else {
+              this.addPool(poolProps)
+            }
           }
         }
       })
     },
-    removePool (poolID) {
-      console.log('Remove pool ' + poolID)
+    confirmPoolDelete (poolId) {
+      this.$dialog.confirm({
+        title: 'Deleting pool',
+        message: `Are you sure you want to <b>delete</b> pool ${poolId}? This action cannot be undone.`,
+        confirmText: 'Delete Pool',
+        type: 'is-danger',
+        hasIcon: true,
+        onConfirm: () => this.removePool(poolId)
+      })
+    },
+    addPool (poolProps) {
+      this.$http
+        .post('http://127.0.0.1:5000/add_pool', poolProps, {
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+          this.loadMachinesData()
+          this.$toast.open({
+            message: `Pool added successfully`,
+            position: 'is-top',
+            type: 'is-success'
+          })
+        })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    editPool (poolId, poolProps) {
+      console.log(poolProps)
+      this.$http
+        .post('http://127.0.0.1:5000/edit_pool', poolProps, {
+          params: { id: poolId },
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+          this.loadMachinesData()
+          this.$toast.open({
+            message: `Pool edited successfully`,
+            position: 'is-top',
+            type: 'is-success'
+          })
+        })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    removePool (poolId) {
+      this.$http
+        .get('http://127.0.0.1:5000/remove_pool', {
+          params: { id: poolId }
+        })
+        .then(response => {
+          this.loadMachinesData()
+          this.$toast.open({
+            message: `Pool removed successfully`,
+            position: 'is-top',
+            type: 'is-success'
+          })
+        })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
     }
   },
   data () {
