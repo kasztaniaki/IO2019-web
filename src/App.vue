@@ -1,28 +1,20 @@
 <template>
   <div id="app">
-    <nav class="navbar level container" role="navigation" aria-label="main navigation">
-      <div class="navbar-menu">
-        <div class="navbar-start">
-          <a class="navbar-item">
-            <router-link to="/">Home</router-link>
-          </a>
-          <a class="navbar-item">
-            <router-link to="/pools">Pools</router-link>
-          </a>
-        </div>
-        <div class="navbar-end">
-          <a class="navbar-item">
-            <router-link to="/users/signup">Sign up</router-link>
-          </a>
-          <a class="navbar-item">
-            <router-link to="/users/signin">Log in</router-link>
-          </a>
-        </div>
-      </div>
-    </nav>
+    <navbar></navbar>
     <router-view/>
   </div>
 </template>
+
+<script>
+import Navbar from './components/Navbar'
+
+export default {
+  name: 'App',
+  components: {
+    'Navbar': Navbar
+  }
+}
+</script>
 
 <style>
 #app {

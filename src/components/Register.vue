@@ -26,7 +26,7 @@
             v-validate="{ required: true, is: password }" />
         </b-field>
 
-        <button type="submit" class="button is-primary"> Sign up </button>
+        <button type="submit" class="button is-primary" @click="register()"> Sign up </button>
       </div>
 
       <div class="information">
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import EventBus from './EventBus'
+
 export default {
   data () {
     return {
@@ -44,25 +46,14 @@ export default {
       lastname: null,
       email: null,
       password: null,
-      confirmPassword: null
+      confirmPassword: null,
+      errorMsg: null
     }
   },
   methods: {
     register () {
-      this.$http
-        .post('http://127.0.0.1:5000/users/signup', {
-          first_name: this.first_name,
-          last_name: this.last_name,
-          email: this.email,
-          password: this.password
-        }).then((response) => {
-          console.log(response)
-          this.$router.push({
-            name: 'pools'
-          })
-        }).catch((err) => {
-          console.log(err)
-        })
+      this.$store.dispatch('register', { firstname: this.firstname, lastname: this.lastname, email: this.email, password: this.password })
+        .then(() => this.$router.push('/'))
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
@@ -81,6 +72,14 @@ export default {
         })
       })
     }
+  },
+  mounted () {
+    EventBus.$on('failedChangingPassword', (msg) => {
+      this.errorMsg = msg
+    })
+  },
+  beforeDestroy () {
+    EventBus.$off('failedChangingPassword')
   }
 }
 </script>

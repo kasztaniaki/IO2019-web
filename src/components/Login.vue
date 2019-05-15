@@ -12,7 +12,7 @@
             v-validate="'required|min:8'" />
         </b-field>
 
-        <button type="submit" class="button is-primary"> Log in </button>
+        <button type="submit" class="button is-primary" @click="authenticate()"> Log in </button>
       </div>
       <div class="information">
         <p>Don't have an account? <a href="http://localhost:8080/#/users/signup">Sign up</a> </p>
@@ -22,27 +22,20 @@
 </template>
 
 <script>
+import EventBus from './EventBus'
+
 export default {
   data () {
     return {
       email: null,
-      password: null
+      password: null,
+      errorMsg: null
     }
   },
   methods: {
-    login () {
-      this.$http
-        .post('http://127.0.0.1:5000/users/signin', {
-          email: this.email,
-          password: this.password
-        }).then((response) => {
-          console.log(response)
-          this.$router.push({
-            name: 'pools'
-          })
-        }).catch((err) => {
-          console.log(err)
-        })
+    authenticate () {
+      this.$store.dispatch('login', { email: this.email, password: this.password })
+        .then(() => this.$router.push('/'))
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
@@ -61,6 +54,14 @@ export default {
         })
       })
     }
+  },
+  mounted () {
+    EventBus.$on('failedAuthentication', (msg) => {
+      this.errorMsg = msg
+    })
+  },
+  beforeDestroy () {
+    EventBus.$off('failedAuthentication')
   }
 }
 </script>

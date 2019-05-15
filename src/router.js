@@ -28,6 +28,11 @@ export default new Router({
       path: '/users/signin',
       name: 'signin',
       component: () => import('./views/Signin.vue')
+    },
+    {
+      path: '/users/password',
+      name: 'password',
+      component: () => import('./views/PasswordSettings.vue')
     }
   ]
 })

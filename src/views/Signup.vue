@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-<!-- todo: container -->
     <Register/>
   </div>
 </template>
