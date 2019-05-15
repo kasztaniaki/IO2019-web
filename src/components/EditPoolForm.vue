@@ -1,8 +1,8 @@
 <template>
   <form action="">
-    <div class="modal-card" style="width: 600px">
+    <div class="modal-card" style="width: 600px;height:800px">
       <header class="modal-card-head">
-        <p class="modal-card-title">Edit</p>
+        <p class="modal-card-title">{{ ID === '' ? 'Add New Pool' : 'Edit Pool'}}</p>
       </header>
       <section class="modal-card-body">
         <b-field label="ID">
