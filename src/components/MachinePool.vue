@@ -2,25 +2,22 @@
   <div>
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left" :disabled="isLoading"/>
-      <b-button v-if="editable" class="level-right" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="editPool({})">New pool</b-button>
+      <b-button v-if="editable" class="level-right" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
     </div>
     <b-table class="container" :data="data.machines" :columns="columns" :loading="isLoading">
       <template slot-scope="props">
         <b-table-column field="poolID" label="ID">
-          {{props.row.PoolID}}
+          {{props.row.ID}}
         </b-table-column>
         <b-table-column field="displayName" label="Name">
-          {{props.row.DisplayName}}
+          {{props.row.Name}}
         </b-table-column>
         <b-table-column field="operatingSystem" label="OS">
           <div class="columns is-vcentered">
             <div class="column">
               {{props.row.OSName}}
             </div>
-            <div class="column is-4">
-              {{props.row.OSVersion}}
             </div>
-          </div>
         </b-table-column>
         <b-table-column field="maximumCount" label="Maximum Count">
           {{props.row.MaximumCount}}
@@ -39,10 +36,10 @@
           <MachineDescription :description="props.row.InstalledSoftware"/>
         </b-table-column>
         <b-table-column field="edit" :visible="editable">
-          <b-button icon-left="edit" type="is-light" @click.native="editPool(props.row)"></b-button>
+          <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
         </b-table-column>
         <b-table-column field="remove" :visible="editable">
-          <b-button icon-left="trash" type="is-danger" @click.native="removePool(props.row.PoolID)">
+          <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
       </template>
