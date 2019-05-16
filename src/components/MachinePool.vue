@@ -3,25 +3,16 @@
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left" :disabled="isLoading"/>
       <b-button v-if="editable" class="level-right" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
+      <b-button @click="resetDB()">
+        db reset
+      </b-button>
     </div>
-    <b-table class="container" :data="data.machines" :columns="columns" :loading="isLoading">
+    <b-table class="container" :data="machines" :columns="columns" :loading="isLoading">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">
-          {{props.row.ID}}
-        </b-table-column>
-        <b-table-column field="displayName" label="Name">
-          {{props.row.Name}}
-        </b-table-column>
-        <b-table-column field="operatingSystem" label="OS">
-          <div class="columns is-vcentered">
-            <div class="column">
-              {{props.row.OSName}}
-            </div>
-          </div>
-        </b-table-column>
-        <b-table-column field="maximumCount" label="Maximum Count">
-          {{props.row.MaximumCount}}
-        </b-table-column>
+        <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
+        <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
+        <b-table-column field="operatingSystem" label="OS">{{props.row.OSName}}</b-table-column>
+        <b-table-column field="maximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
         <b-table-column field="enabled" label="Enabled">
           <b-icon
             id="enabled-icon"
@@ -56,14 +47,13 @@ export default {
   methods: {
     loadMachinesData () {
       this.isLoading = true
-
       this.$http
         .get('http://127.0.0.1:5000/pools')
         .then(response => {
           console.log(response.data.pools)
 
-          this.data.machines = response.data.pools
           this.isLoading = false
+          this.machines = response.data.pools
         })
         .catch(error => {
           console.log(error)
@@ -163,19 +153,36 @@ export default {
             type: 'is-danger'
           })
         })
+    },
+    resetDB () {
+      this.$http
+        .get('http://127.0.0.1:5000/init_db')
+        .then(response => {
+          this.$toast.open({
+            message: `Db reset`,
+            position: 'is-bottom',
+            type: 'is-success'
+          })
+        })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: `db reset error`,
+              position: 'is-bottom',
+              type: 'is-success'
+            })
+          }
+        })
     }
   },
   data () {
     return {
-      data: {
-        machines: []
-      },
+      machines: [],
       columns: [
         {
           field: 'poolID',
           label: 'ID',
-          width: '40',
-          numeric: true
+          width: '40'
         },
         {
           field: 'displayName',
@@ -214,12 +221,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-#enabled-icon {
-  color: green;
-}
-#disabled-icon {
-  color: red;
-}
-</style>
