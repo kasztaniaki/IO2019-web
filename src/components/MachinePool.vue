@@ -42,16 +42,17 @@
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
 
 export default {
   methods: {
     loadMachinesData () {
       this.isLoading = true
-      this.$http
-        .get('http://127.0.0.1:5000/pools')
+      loadPoolsReq()
         .then(response => {
+          console.log('omg to dziala')
           console.log(response.data.pools)
-
+          console.log(response)
           this.isLoading = false
           this.machines = response.data.pools
         })
@@ -87,18 +88,14 @@ export default {
       })
     },
     addPool (poolProps) {
-      this.$http
-        .post('http://127.0.0.1:5000/add_pool', poolProps, {
-          headers: { 'Content-Type': 'application/json' }
+      addPoolReq(poolProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool added successfully`,
+          position: 'is-top',
+          type: 'is-success'
         })
-        .then(response => {
-          this.loadMachinesData()
-          this.$toast.open({
-            message: `Pool added successfully`,
-            position: 'is-top',
-            type: 'is-success'
-          })
-        })
+      })
         // eslint-disable-next-line
         .catch(error => {
           this.$toast.open({
@@ -110,19 +107,14 @@ export default {
     },
     editPool (poolId, poolProps) {
       console.log(poolProps)
-      this.$http
-        .post('http://127.0.0.1:5000/edit_pool', poolProps, {
-          params: { id: poolId },
-          headers: { 'Content-Type': 'application/json' }
+      editPoolReq(poolId, poolProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool edited successfully`,
+          position: 'is-top',
+          type: 'is-success'
         })
-        .then(response => {
-          this.loadMachinesData()
-          this.$toast.open({
-            message: `Pool edited successfully`,
-            position: 'is-top',
-            type: 'is-success'
-          })
-        })
+      })
         // eslint-disable-next-line
         .catch(error => {
           this.$toast.open({
@@ -133,18 +125,14 @@ export default {
         })
     },
     removePool (poolId) {
-      this.$http
-        .get('http://127.0.0.1:5000/remove_pool', {
-          params: { id: poolId }
+      removePoolReq(poolId).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool removed successfully`,
+          position: 'is-top',
+          type: 'is-success'
         })
-        .then(response => {
-          this.loadMachinesData()
-          this.$toast.open({
-            message: `Pool removed successfully`,
-            position: 'is-top',
-            type: 'is-success'
-          })
-        })
+      })
         // eslint-disable-next-line
         .catch(error => {
           this.$toast.open({
@@ -155,15 +143,13 @@ export default {
         })
     },
     resetDB () {
-      this.$http
-        .get('http://127.0.0.1:5000/init_db')
-        .then(response => {
-          this.$toast.open({
-            message: `Db reset`,
-            position: 'is-bottom',
-            type: 'is-success'
-          })
+      resetDBReq().then(response => {
+        this.$toast.open({
+          message: `Db reset`,
+          position: 'is-bottom',
+          type: 'is-success'
         })
+      })
         .catch(error => {
           if (error) {
             this.$toast.open({

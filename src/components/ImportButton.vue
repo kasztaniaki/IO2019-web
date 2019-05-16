@@ -11,6 +11,7 @@
 
 <script>
 import ImportErrors from '@/components/ImportErrors.vue'
+import { importFile } from '@/api'
 export default {
   data () {
     return {
@@ -20,18 +21,10 @@ export default {
   },
   methods: {
     sendRequest (isForced) {
-      this.$parent.loading = true
+      this.$parent.isLoading = true
       let fileData = new FormData()
       fileData.append('pools_csv', this.file)
-      this.$http
-        .post('http://127.0.0.1:5000/import', fileData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          params: {
-            force: isForced
-          }
-        })
+      importFile(fileData, isForced)
         .then(response => {
           this.$toast.open({
             message: `File loaded succesfully`,
