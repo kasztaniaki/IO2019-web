@@ -35,10 +35,10 @@
                     </b-dropdown-item>
                     <hr class="dropdown-divider">
                     <b-dropdown-item has-link aria-role="menuitem">
-                        <a href="http://localhost:8080/#/users/password" target="_blank">
+                        <router-link to="/users/password">
                             <b-icon pack="fas" icon="lock" size="is-small"></b-icon>
                             Change password
-                        </a>
+                        </router-link>
                     </b-dropdown-item>
                     <b-dropdown-item value="home" aria-role="menuitem">
                         <b-icon pack="fas" icon="at" size="is-small"></b-icon>
@@ -48,7 +48,6 @@
 
                 <a class="navbar-item">
                     <a class="nav-link" href="" @click="logout()">Log out</a>
-                    <!-- <router-link to="/users/signin">Log out</router-link> -->
                 </a>
         </div>
 
@@ -73,7 +72,7 @@ export default {
   },
   computed: {
     isAuthenticated () {
-      return this.$store.getters.isAuthenticated // if you want to simulate the logged state replace with: true
+      return true // this.$store.getters.isAuthenticated // if you want to simulate the logged state replace with: true
     },
     getEmail () {
       return this.$store.getters.getUserData.email
