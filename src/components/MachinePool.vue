@@ -2,11 +2,14 @@
   <div>
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
+      <b-button @click="resetDB()">
+        db reset
+      </b-button>
     </div>
-    <b-table class="container" :data="data.machines" :columns="columnss">
+    <b-table class="container" :data="machines" :columns="columns" :loading="loading">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">{{props.row.PoolID}}</b-table-column>
-        <b-table-column field="displayName" label="Name">{{props.row.DisplayName}}</b-table-column>
+        <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
+        <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
         <b-table-column
           field="operatingSystem"
           label="OS"
@@ -36,15 +39,37 @@ import ImportButton from '@/components/ImportButton.vue'
 export default {
   methods: {
     loadMachinesData () {
+      this.loading = true
       this.$http
         .get('http://127.0.0.1:5000/pools')
         .then(response => {
           console.log(response.data.pools)
 
-          this.data.machines = response.data.pools
+          this.machines = response.data.pools
+          this.loading = false
         })
         .catch(error => {
           console.log(error)
+        })
+    },
+    resetDB () {
+      this.$http
+        .get('http://127.0.0.1:5000/init_db')
+        .then(response => {
+          this.$toast.open({
+            message: `Db reset`,
+            position: 'is-bottom',
+            type: 'is-success'
+          })
+        })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: `db reset error`,
+              position: 'is-bottom',
+              type: 'is-success'
+            })
+          }
         })
     }
   },
@@ -53,15 +78,12 @@ export default {
   },
   data () {
     return {
-      data: {
-        machines: []
-      },
-      columnss: [
+      machines: [],
+      columns: [
         {
           field: 'poolID',
           label: 'ID',
-          width: '40',
-          numeric: true
+          width: '40'
         },
         {
           field: 'displayName',
@@ -80,7 +102,8 @@ export default {
           field: 'description',
           label: 'Description'
         }
-      ]
+      ],
+      loading: false
     }
   },
   mounted () {
