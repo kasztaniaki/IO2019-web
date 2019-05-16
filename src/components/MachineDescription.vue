@@ -13,7 +13,7 @@
           </div>
         </b-field>
       </div>
-      <div @click="toggleDescription()" class="column is-one-quarter">
+      <div @click="toggleDescription()" class="column is-narrow">
         <b-icon pack="fas" :icon="icon" size="is-small"></b-icon>
       </div>
     </div>
