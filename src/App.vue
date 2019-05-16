@@ -36,4 +36,19 @@ export default {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+  .message {
+    padding: 4px;
+    font-size: large;
+  }
+
+  .information {
+    text-align: left;
+  }
+
+  .form_styling {
+    width: 38%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 </style>
