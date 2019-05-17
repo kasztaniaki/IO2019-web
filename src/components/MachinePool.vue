@@ -4,16 +4,13 @@
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
       <b-input v-model=query placeholder="filter"></b-input>
     </div>
-    <b-table class="container" :data=filter>
+    <b-table class="container" :data=data.machines>
       <template slot-scope="props">
-        <b-table-column sortable field="PoolID" label="ID" v-html="$options.filters.highlight(props.row.PoolID, query)">{{props.row.PoolID | highlight}}</b-table-column>
-        <b-table-column sortable field="DisplayName" label="Name" v-html="$options.filters.highlight(props.row.DisplayName, query)">{{props.row.DisplayName | highlight}}</b-table-column>
-        <b-table-column sortable
-          field="OperatingSystem"
-          label="OS"
-        >{{props.row.OSName}}</b-table-column>
-        <b-table-column sortable field="MaximumCount" label="Maximum Count" v-html="$options.filters.highlight(props.row.MaximumCount, query)">{{props.row.MaximumCount | highlight}}</b-table-column>
-        <b-table-column field="Enabled" label="Enabled">
+        <b-table-column sortable field="PoolID" v-if="match(props.row)" label="ID">{{props.row.ID}}</b-table-column>
+        <b-table-column sortable field="DisplayName" v-if="match(props.row)" label="Name">{{props.row.Name}}</b-table-column>
+        <b-table-column sortable field="OperatingSystem" v-if="match(props.row)" label="OS">{{props.row.OSName}}</b-table-column>
+        <b-table-column sortable field="MaximumCount" v-if="match(props.row)" label="Maximum Count" >{{props.row.MaximumCount}}</b-table-column>
+        <b-table-column field="Enabled" v-if="match(props.row)" label="Enabled">
           <b-icon
             id="enabled-icon"
             v-if="props.row.Enabled"
@@ -23,7 +20,7 @@
           ></b-icon>
           <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle" size="is-small"></b-icon>
         </b-table-column>
-        <b-table-column field="Description" label="Description">
+        <b-table-column field="Description" v-if="match(props.row)" label="Description">
           <MachineDescription :description="props.row.InstalledSoftware" :query="query"/>
         </b-table-column>
       </template>
@@ -47,6 +44,17 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    match (row) {
+      var re = RegExp(this.query, 'i')
+      
+      for (const key in row) {
+        if (row.hasOwnProperty(key)) {
+          const field = row[key];
+          if(field.toString().match(re)) return true
+        }
+      }
+      return false
     }
   },
   data () {

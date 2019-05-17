@@ -26,6 +26,9 @@ export default {
           .post('http://127.0.0.1:5000/import', fileData, {
             headers: {
               'Content-Type': 'multipart/form-data'
+            },
+            params: {
+              force: true
             }
           })
           .then(response => {
