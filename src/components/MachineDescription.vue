@@ -65,7 +65,7 @@ export default {
   padding: 2px;
 }
 .description {
-  max-width: 400px;
+  max-width: 500px;
   margin-bottom: 10px;
 }
 .rolled {
