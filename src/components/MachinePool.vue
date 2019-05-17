@@ -7,19 +7,19 @@
     <b-table class="container" :data=machines>
       <template slot-scope="props">
         <b-table-column sortable v-if="match(props.row)"
-          field="PoolID"
+          field="ID"
           label="ID"
           width="120">
             {{props.row.ID}}
           </b-table-column>
         <b-table-column sortable v-if="match(props.row)"
-          field="DisplayName"
+          field="Name"
           label="Name"
           width="500">
             {{props.row.Name}}
         </b-table-column>
         <b-table-column sortable v-if="match(props.row)"
-          field="OperatingSystem"
+          field="OSName"
           label="OS"
           width="100">
             {{props.row.OSName}}
