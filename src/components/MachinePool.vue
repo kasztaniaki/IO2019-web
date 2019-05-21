@@ -3,7 +3,7 @@
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
       <div class="level-right">
-        <b-input class="level-item" v-model=query placeholder="filter"></b-input>
+        <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="filter"></b-input>
         <b-checkbox class="level-item" v-model="highlighting"></b-checkbox>
       </div>
     </div>
@@ -95,11 +95,15 @@ export default {
         }
       }
       return false
+    },
+    filterPools: function() {
+      this.query = this.text
     }
   },
   data () {
     return {
       machines: [],
+      text: '',
       query: '',
       loading: false,
       highlighting: true
