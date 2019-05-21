@@ -16,7 +16,10 @@ const actions = {
     context.commit('setUserData', { userData })
     console.log(userData)
     return authenticate(userData)
-      .then(response => context.commit('setJwtToken', { jwt: response.data }))
+      .then(response => {
+        context.commit('setJwtToken', { jwt: response.data })
+        console.log(state.jwt)
+      })
       .catch(error => {
         console.log('Error Authenticating: ', error)
         EventBus.emit('failedAuthentication', error)
@@ -61,8 +64,8 @@ const mutations = {
     state.userData.email = payload.userData.email
   },
   setJwtToken (state, payload) {
-    console.log('setJwtTo{ken payload = ', payload)
-    localStorage.setItem('token', payload.jwt.token)
+    console.log('setJwtToken payload = ', payload)
+    localStorage.setItem('token', payload.jwt)
     state.jwt = payload.jwt
   },
   clearJwtToken (state) {
@@ -78,7 +81,7 @@ const mutations = {
 
 const getters = {
   isAuthenticated (state) {
-    return isValidJwt(state.jwt.token)
+    return isValidJwt(state.jwt)
   },
   getUserData (state) {
     return state.userData
