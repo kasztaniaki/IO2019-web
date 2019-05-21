@@ -72,7 +72,7 @@ export default {
   },
   computed: {
     isAuthenticated () {
-      return true // this.$store.getters.isAuthenticated // if you want to simulate the logged state replace with: true
+      return this.$store.getters.isAuthenticated // if you want to simulate the logged state replace with: true
     },
     getEmail () {
       return this.$store.getters.getUserData.email
