@@ -61,7 +61,7 @@
           field="Description"
           label="Description"
           width="500">
-            <MachineDescription :description="props.row.InstalledSoftware" :query="query"/>
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlighting="highlighting" :highlightOptions="highlightOptions"/>
         </b-table-column>
       </template>
     </b-table>
@@ -86,7 +86,7 @@ export default {
         })
     },
     match (row) {
-      if(this.query.length < 3) return true
+      if (this.query.length < 3) return true
       var re = RegExp(this.query, 'i')
       for (const key in row) {
         if (row.hasOwnProperty(key)) {
@@ -106,8 +106,8 @@ export default {
     }
   },
   computed: {
-    highlightOptions() {
-      return (this.query.length >= 3 && this.highlighting) ? {keyword: this.query, sensitive: false, overWriteStyle: {backgroundColor: 'indianred', color: 'white'}} : null
+    highlightOptions () {
+      return (this.query.length >= 3 && this.highlighting) ? { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } } : {}
     }
   },
   mounted () {
@@ -129,7 +129,7 @@ export default {
     MachineDescription,
     ImportButton
   }
-  
+
 }
 </script>
 
