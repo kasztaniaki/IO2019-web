@@ -2,7 +2,10 @@
   <div>
     <div class="level">
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
-      <b-input v-model=query placeholder="filter"></b-input>
+      <div class="level-right">
+        <b-input class="level-item" v-model=query placeholder="filter"></b-input>
+        <b-checkbox class="level-item" v-model="highlighting"></b-checkbox>
+      </div>
     </div>
     <b-table class="container" :data=machines>
       <template slot-scope="props">
@@ -10,19 +13,25 @@
           field="ID"
           label="ID"
           width="120">
-            {{props.row.ID}}
+            <div v-highlight="highlightOptions">
+              {{props.row.ID}}
+            </div>
           </b-table-column>
         <b-table-column sortable v-if="match(props.row)"
           field="Name"
           label="Name"
           width="500">
+          <div v-highlight="highlightOptions">
             {{props.row.Name}}
+            </div>
         </b-table-column>
         <b-table-column sortable v-if="match(props.row)"
           field="OSName"
           label="OS"
           width="100">
+          <div v-highlight="highlightOptions">
             {{props.row.OSName}}
+            </div>
         </b-table-column>
         <b-table-column sortable v-if="match(props.row)"
           field="MaximumCount"
@@ -77,8 +86,8 @@ export default {
         })
     },
     match (row) {
+      if(this.query.length < 3) return true
       var re = RegExp(this.query, 'i')
-
       for (const key in row) {
         if (row.hasOwnProperty(key)) {
           const field = row[key]
@@ -92,34 +101,17 @@ export default {
     return {
       machines: [],
       query: '',
-      loading: false
-
+      loading: false,
+      highlighting: true
+    }
+  },
+  computed: {
+    highlightOptions() {
+      return (this.query.length >= 3 && this.highlighting) ? {keyword: this.query, sensitive: false, overWriteStyle: {backgroundColor: 'indianred', color: 'white'}} : null
     }
   },
   mounted () {
     this.loadMachinesData()
-  },
-  computed: {
-    filter: function () {
-      var re = RegExp(this.query, 'i')
-      var result = []
-      for (const pool of this.machines) {
-        for (const prop in pool) {
-          if (pool.hasOwnProperty(prop)) {
-            const element = pool[prop]
-            if (element.toString().match(re)) {
-              result.push(pool)
-              break
-            }
-          }
-        }
-      }
-      return result
-    }
-  },
-  components: {
-    MachineDescription,
-    ImportButton
   },
   filters: {
     highlight: function (value, query) {
@@ -132,7 +124,12 @@ export default {
       })
       return result
     }
+  },
+  components: {
+    MachineDescription,
+    ImportButton
   }
+  
 }
 </script>
 
