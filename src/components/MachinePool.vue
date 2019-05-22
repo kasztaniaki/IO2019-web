@@ -69,12 +69,11 @@
           width="500">
             <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
         </b-table-column>
-        <b-table-column field="edit" :visible="editable">
-          <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
-        </b-table-column>
-        <b-table-column field="remove" :visible="editable">
-          <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
-          </b-button>
+        <b-table-column width="55" field="edit" :visible="editable" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">
+          <div class="my-button">
+            <b-button v-show="props.row.buttonsVisible" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
+          </div>
+          <b-button v-show="props.row.buttonsVisible" size="is-small" icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)"></b-button>
         </b-table-column>
       </template>
     </b-table>
@@ -93,11 +92,11 @@ export default {
       this.isLoading = true
       loadPoolsReq()
         .then(response => {
-          console.log('omg to dziala')
-          console.log(response.data.pools)
-          console.log(response)
           this.isLoading = false
           this.machines = response.data.pools
+          for (const pool of this.machines) {            
+            this.$set(pool,"buttonsVisible",false)
+          }
         })
         .catch(error => {
           console.log(error)
@@ -205,6 +204,12 @@ export default {
           })
         })
     },
+    showButtons (row) {
+        row.buttonsVisible = true
+    },
+    hideButtons (row) {
+        row.buttonsVisible = false
+    },
     resetDB () {
       resetDBReq().then(response => {
         this.$toast.open({
@@ -281,5 +286,9 @@ export default {
   border-style: solid;
   border-width: 0px 2px 0px 2px;
   margin: 0px -2px 0px -2px;
+}
+
+.my-button {
+  padding-bottom: 10px;
 }
 </style>
