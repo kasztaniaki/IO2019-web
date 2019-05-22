@@ -33,6 +33,11 @@ export default new Router({
       path: '/users/password',
       name: 'password',
       component: () => import('./views/PasswordSettings.vue')
+    },
+    {
+      path: '/admin/users',
+      name: 'users',
+      component: () => import('./views/Users.vue')
     }
   ]
 })
