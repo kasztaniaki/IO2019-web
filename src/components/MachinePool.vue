@@ -9,11 +9,11 @@
     </div>
     <b-table class="container" :data="machines" :columns="columns" :loading="isLoading">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
-        <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
-        <b-table-column field="operatingSystem" label="OS">{{props.row.OSName}}</b-table-column>
-        <b-table-column field="maximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
-        <b-table-column field="enabled" label="Enabled">
+        <b-table-column field="poolID" label="ID" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">{{props.row.ID}}</b-table-column>
+        <b-table-column field="displayName" label="Name" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">{{props.row.Name}}</b-table-column>
+        <b-table-column field="operatingSystem" label="OS" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">{{props.row.OSName}}</b-table-column>
+        <b-table-column field="maximumCount" label="Maximum Count" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">{{props.row.MaximumCount}}</b-table-column>
+        <b-table-column field="enabled" label="Enabled" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">
           <b-icon
             id="enabled-icon"
             v-if="props.row.Enabled"
@@ -23,15 +23,14 @@
           ></b-icon>
           <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle" size="is-small"></b-icon>
         </b-table-column>
-        <b-table-column field="description" label="Description">
+        <b-table-column field="description" label="Description" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">
           <MachineDescription :description="props.row.InstalledSoftware"/>
         </b-table-column>
-        <b-table-column field="edit" :visible="editable">
-          <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
-        </b-table-column>
-        <b-table-column field="remove" :visible="editable">
-          <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
-          </b-button>
+        <b-table-column width="55" field="edit" :visible="editable" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">
+          <div class="my-button">
+            <b-button v-show="props.row.buttonsVisible" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
+          </div>
+          <b-button v-show="props.row.buttonsVisible" size="is-small" icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)"></b-button>
         </b-table-column>
       </template>
     </b-table>
@@ -50,11 +49,11 @@ export default {
       this.isLoading = true
       loadPoolsReq()
         .then(response => {
-          console.log('omg to dziala')
-          console.log(response.data.pools)
-          console.log(response)
           this.isLoading = false
           this.machines = response.data.pools
+          for (const pool of this.machines) {            
+            this.$set(pool,"buttonsVisible",false)
+          }
         })
         .catch(error => {
           console.log(error)
@@ -142,6 +141,12 @@ export default {
           })
         })
     },
+    showButtons (row) {
+        row.buttonsVisible = true
+    },
+    hideButtons (row) {
+        row.buttonsVisible = false
+    },
     resetDB () {
       resetDBReq().then(response => {
         this.$toast.open({
@@ -207,3 +212,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.my-button {
+  padding-bottom: 10px;
+}
+</style>
