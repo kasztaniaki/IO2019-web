@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 import { authenticate, register, updatePassword } from '@/api'
 import EventBus, { isValidJwt } from '@/components/EventBus'
@@ -92,7 +93,8 @@ const store = new Vuex.Store({
   state,
   actions,
   mutations,
-  getters
+  getters,
+  plugins: [createPersistedState()]
 })
 
 export default store
