@@ -297,4 +297,11 @@ export default {
   padding-bottom: 10px;
   padding-top: 6px
 }
+
+#enabled-icon {
+  color: green;
+}
+#disabled-icon {
+  color: red;
+}
 </style>
