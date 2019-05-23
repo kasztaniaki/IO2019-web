@@ -54,3 +54,20 @@ export function removePoolReq (poolId) {
 export function resetDBReq () {
   return axios.get(`${API_URL}/init_db`)
 }
+
+export function loadUsersReq () {
+  return axios.get(`${API_URL}/users`)
+}
+
+export function removeUserReq(idToRemove) {
+  console.log(idToRemove);
+  
+  return axios.post(`${API_URL}/users/remove_user`,null, {
+    params: {
+      id: idToRemove
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+}
