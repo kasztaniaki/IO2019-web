@@ -16,7 +16,7 @@
             <div class="row">
             {{props.row.Surname}}
             </div>
-        
+
         </b-table-column>
         <b-table-column centered="true" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)" field="Buttons" width="50">
             <div class="button-padding">
@@ -40,20 +40,19 @@ export default {
   methods: {
     loadUsers () {
       this.isLoading = false // change to true
-      var users2 = []
       for (const user of this.users) {
-          this.$set(user, "buttonsVisible", false)
+        this.$set(user, 'buttonsVisible', false)
       }
     },
     showButtons (row) {
-        console.log("hejka");
-        console.log(row); 
-        row.buttonsVisible = true
-        console.log("hejka");
-        console.log(row); 
+      console.log('hejka')
+      console.log(row)
+      row.buttonsVisible = true
+      console.log('hejka')
+      console.log(row)
     },
     hideButtons (row) {
-        row.buttonsVisible = false
+      row.buttonsVisible = false
     },
     resetDB () {
       resetDBReq().then(response => {
@@ -76,17 +75,17 @@ export default {
   },
   data () {
     const users = [
-        {
-          Name: 'Łukasz',
-          Surname: 'Zając'
-        },
-        {
-          Name: 'Krystian',
-          Surname: 'Ziaja'
-        }
-      ]
+      {
+        Name: 'Łukasz',
+        Surname: 'Zając'
+      },
+      {
+        Name: 'Krystian',
+        Surname: 'Ziaja'
+      }
+    ]
     return {
-        users: users,
+      users: users,
       isLoading: false,
       selectedRow: users[0]
     }
@@ -105,4 +104,3 @@ export default {
     padding-top: 3px;
 }
 </style>
-
