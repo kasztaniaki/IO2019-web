@@ -5,6 +5,13 @@ const API_URL = process.env.VUE_APP_API_URL
 // WROCTU w register userData to: imie, nazwisko, email i haslo
 // a w authenticate powinno byc tylko email i haslo
 
+export default {
+  http: axios,
+  setHeader (header, value) {
+    this.http.defaults.headers.common[header] = value
+  }
+}
+
 export function authenticate (userData) {
   return axios.post(`${API_URL}/users/signin`, userData)
 }
