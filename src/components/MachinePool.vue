@@ -33,7 +33,7 @@
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
-        <b-button @click.native="showReservationForm(props.row.ID, props.row.MaximumCount)">Reserve</b-button>
+        <b-button @click.native="showReservationForm">Reserve</b-button>
       </template>
     </b-table>
   </div>
