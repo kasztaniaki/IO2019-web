@@ -13,7 +13,7 @@
         </b-button>
       </div>
     </div>
-    <b-table class="container" :data=machines :loading="isLoading">
+    <b-table class="container" :data=machines :loading="isLoading" :selected.sync="selectedRow">
       <template slot-scope="props">
         <b-table-column sortable v-if="match(props.row)"
           field="ID"
@@ -67,13 +67,13 @@
           field="Description"
           label="Description"
           width="500">
-            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
-        <b-table-column width="55" field="edit" :visible="editable" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)">
+        <b-table-column width="55" field="edit" :visible="editable">
           <div class="my-button">
-            <b-button v-show="props.row.buttonsVisible" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
+            <b-button v-show="props.row==selectedRow" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
           </div>
-          <b-button v-show="props.row.buttonsVisible" size="is-small" icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)"></b-button>
+          <b-button v-show="props.row==selectedRow" size="is-small" icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)"></b-button>
         </b-table-column>
       </template>
     </b-table>
@@ -95,7 +95,7 @@ export default {
           this.isLoading = false
           this.machines = response.data.pools
           for (const pool of this.machines) {
-            this.$set(pool, 'buttonsVisible', false)
+            this.$set(pool.InstalledSoftware, 'expanded', false)
           }
         })
         .catch(error => {
@@ -204,12 +204,6 @@ export default {
           })
         })
     },
-    showButtons (row) {
-      row.buttonsVisible = true
-    },
-    hideButtons (row) {
-      row.buttonsVisible = false
-    },
     resetDB () {
       resetDBReq().then(response => {
         this.$toast.open({
@@ -235,7 +229,8 @@ export default {
       isLoading: false,
       text: '',
       query: '',
-      highlighting: true
+      highlighting: true,
+      selectedRow: null
     }
   },
   computed: {
@@ -290,5 +285,6 @@ export default {
 
 .my-button {
   padding-bottom: 10px;
+  padding-top: 6px
 }
 </style>
