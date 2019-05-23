@@ -33,6 +33,7 @@
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
+        <b-button @click.native="showReservationForm(props.row.ID, props.row.MaximumCount)">Reserve</b-button>
       </template>
     </b-table>
   </div>
@@ -42,6 +43,7 @@
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
+import SingleReservationForm from '@/components/SingleReservationForm.vue'
 import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
 
 export default {
@@ -159,6 +161,24 @@ export default {
             })
           }
         })
+    },
+    showReservationForm (poolID, poolMaxCount) {
+      const reservationProps = {
+        poolID,
+        poolMaxCount
+      }
+
+      this.$modal.open({
+        parent: this,
+        props: reservationProps,
+        component: SingleReservationForm,
+        hasModalCard: true,
+        events: {
+          'saveReservation': (reservationProps) => {
+            console.log(reservationProps)
+          }
+        }
+      })
     }
   },
   data () {
