@@ -82,19 +82,10 @@ export default {
     }
   },
   data () {
-    const users = [
-      {
-        Name: 'Łukasz',
-        Surname: 'Zając'
-      },
-      {
-        Name: 'Krystian',
-        Surname: 'Ziaja'
-      }
-    ]
+    
     return {
       selectedRow: null,
-      users: users,
+      users: [],
       isLoading: false
     }
   },
