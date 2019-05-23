@@ -94,8 +94,8 @@ export default {
         .then(response => {
           this.isLoading = false
           this.machines = response.data.pools
-          for (const pool of this.machines) {            
-            this.$set(pool,"buttonsVisible",false)
+          for (const pool of this.machines) {
+            this.$set(pool, 'buttonsVisible', false)
           }
         })
         .catch(error => {
@@ -205,10 +205,10 @@ export default {
         })
     },
     showButtons (row) {
-        row.buttonsVisible = true
+      row.buttonsVisible = true
     },
     hideButtons (row) {
-        row.buttonsVisible = false
+      row.buttonsVisible = false
     },
     resetDB () {
       resetDBReq().then(response => {
