@@ -13,7 +13,7 @@
         </b-button>
       </div>
     </div>
-    <b-table class="container" :data=machines :loading="isLoading" :selected.sync="selectedRow">
+    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props">
         <b-table-column sortable v-if="match(props.row)"
           field="ID"
@@ -204,6 +204,10 @@ export default {
           })
         })
     },
+    rowClass (row, index) {
+      if (this.selectedRow === row) return 'selected-row'
+      else return ''
+    },
     resetDB () {
       resetDBReq().then(response => {
         this.$toast.open({
@@ -269,6 +273,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "@/variables.scss";
+
 #enabled-icon {
   color: green;
 }
@@ -283,6 +289,10 @@ export default {
   margin: 0px -2px 0px -2px;
 }
 
+.selected-row{
+  background-color: $selected !important;
+  color: $dark !important;
+};
 .my-button {
   padding-bottom: 10px;
   padding-top: 6px
