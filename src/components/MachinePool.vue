@@ -7,7 +7,7 @@
         db reset
       </b-button>
     </div>
-    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow">
+    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props">
         <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
         <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
@@ -141,6 +141,10 @@ export default {
           })
         })
     },
+    rowClass (row, index) {
+      if (this.selectedRow === row) return 'selected-row'
+      else return ''
+    },
     resetDB () {
       resetDBReq().then(response => {
         this.$toast.open({
@@ -185,6 +189,12 @@ export default {
 </script>
 
 <style lang="scss">
+@import "@/variables.scss";
+
+.selected-row{
+  background-color: $selected !important;
+  color: $dark !important;
+};
 .my-button {
   padding-bottom: 10px;
   padding-top: 6px

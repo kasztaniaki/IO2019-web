@@ -5,7 +5,7 @@
         db reset
       </b-button>
     </div>
-    <b-table class="container" :data="users" :loading="isLoading" :selected.sync="selectedRow">
+    <b-table class="container" :data="users" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props" class="row">
         <b-table-column field="Name" label="Name">
             <div class="row">
@@ -45,15 +45,9 @@ export default {
       }
       this.selectedRow = this.users[0]
     },
-    showButtons (row) {
-      console.log('hejka')
-      console.log(row)
-      row.buttonsVisible = true
-      console.log('hejka')
-      console.log(row)
-    },
-    hideButtons (row) {
-      row.buttonsVisible = false
+    rowClass (row, index) {
+      if (this.selectedRow === row) return 'selected-row'
+      else return ''
     },
     resetDB () {
       resetDBReq().then(response => {
@@ -98,6 +92,12 @@ export default {
 </script>
 
 <style lang="scss">
+@import "@/variables.scss";
+
+.selected-row{
+  background-color: $selected !important;
+  color: $dark !important;
+}
 .row {
     padding: 4px;
 }
