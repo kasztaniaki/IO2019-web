@@ -5,22 +5,22 @@
         db reset
       </b-button>
     </div>
-    <b-table class="container" :data="users" :loading="isLoading" >
+    <b-table class="container" :data="users" :loading="isLoading" :selected.sync="selectedRow">
       <template slot-scope="props" class="row">
-        <b-table-column @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)" field="Name" label="Name">
+        <b-table-column field="Name" label="Name">
             <div class="row">
                 {{props.row.Name}}
             </div>
         </b-table-column>
-        <b-table-column @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)" field="Surname" label="Surname">
+        <b-table-column field="Surname" label="Surname">
             <div class="row">
             {{props.row.Surname}}
             </div>
 
         </b-table-column>
-        <b-table-column centered="true" @mouseover.native="showButtons(props.row)" @mouseleave.native="hideButtons(props.row)" field="Buttons" width="50">
+        <b-table-column centered="true" field="Buttons" width="50">
             <div class="button-padding">
-                <b-button v-show="props.row.buttonsVisible"
+                <b-button v-show="props.row==selectedRow"
                 size="is-small"
                 icon-left="trash"
                 class="is-danger"></b-button>
@@ -43,6 +43,7 @@ export default {
       for (const user of this.users) {
         this.$set(user, 'buttonsVisible', false)
       }
+      this.selectedRow = this.users[0]
     },
     showButtons (row) {
       console.log('hejka')
@@ -85,9 +86,9 @@ export default {
       }
     ]
     return {
+      selectedRow: null,
       users: users,
-      isLoading: false,
-      selectedRow: users[0]
+      isLoading: false
     }
   },
   mounted () {
