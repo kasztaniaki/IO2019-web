@@ -1,13 +1,19 @@
 <template>
   <div>
     <div class="level">
-      <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
+      <div class="level-left">
+        <ImportButton v-on:import="loadMachinesData()" class="level-item" :disabled="isLoading"/>
+        <b-button v-if="editable" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
+      </div>
       <div class="level-right">
         <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
-        <b-button @click.native="clearFilter" >Clear</b-button>
+        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
+        <b-button @click="resetDB()">
+        db reset
+        </b-button>
       </div>
     </div>
-    <b-table class="container" :data=machines>
+    <b-table class="container" :data=machines :loading="isLoading">
       <template slot-scope="props">
         <b-table-column sortable v-if="match(props.row)"
           field="ID"
@@ -63,6 +69,13 @@
           width="500">
             <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
         </b-table-column>
+        <b-table-column field="edit" :visible="editable">
+          <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
+        </b-table-column>
+        <b-table-column field="remove" :visible="editable">
+          <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
+          </b-button>
+        </b-table-column>
       </template>
     </b-table>
   </div>
@@ -71,15 +84,20 @@
 <script>
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
+import EditPoolForm from '@/components/EditPoolForm.vue'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
+
 export default {
   methods: {
     loadMachinesData () {
-      this.loading = true
-      this.$http
-        .get('http://127.0.0.1:5000/pools')
+      this.isLoading = true
+      loadPoolsReq()
         .then(response => {
+          console.log('omg to dziala')
+          console.log(response.data.pools)
+          console.log(response)
+          this.isLoading = false
           this.machines = response.data.pools
-          console.log(this.machines)
         })
         .catch(error => {
           console.log(error)
@@ -100,18 +118,118 @@ export default {
       this.query = this.text
     },
     clearFilter () {
-      console.log("halko");
-      
+      console.log('halko')
+
       this.query = ''
       this.text = ''
+    },
+    showPoolForm (poolId = '', poolProps = {}) {
+      this.$modal.open({
+        parent: this,
+        component: EditPoolForm,
+        hasModalCard: true,
+        props: poolProps,
+        events: {
+          'poolRequest': (poolProps) => {
+            if (poolId !== '') {
+              this.editPool(poolId, poolProps)
+            } else {
+              this.addPool(poolProps)
+            }
+          }
+        }
+      })
+    },
+    confirmPoolDelete (poolId) {
+      this.$dialog.confirm({
+        title: 'Deleting pool',
+        message: `Are you sure you want to <b>delete</b> pool ${poolId}? This action cannot be undone.`,
+        confirmText: 'Delete Pool',
+        type: 'is-danger',
+        hasIcon: true,
+        onConfirm: () => this.removePool(poolId)
+      })
+    },
+    addPool (poolProps) {
+      addPoolReq(poolProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    editPool (poolId, poolProps) {
+      console.log(poolProps)
+      editPoolReq(poolId, poolProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool edited successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    removePool (poolId) {
+      removePoolReq(poolId).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool removed successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    resetDB () {
+      resetDBReq().then(response => {
+        this.$toast.open({
+          message: `Db reset`,
+          position: 'is-bottom',
+          type: 'is-success'
+        })
+      })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: `db reset error`,
+              position: 'is-bottom',
+              type: 'is-success'
+            })
+          }
+        })
     }
   },
   data () {
     return {
       machines: [],
+      isLoading: false,
       text: '',
       query: '',
-      loading: false,
       highlighting: true
     }
   },
@@ -137,7 +255,14 @@ export default {
   },
   components: {
     MachineDescription,
-    ImportButton
+    ImportButton,
+    // eslint-disable-next-line
+    EditPoolForm
+  },
+  props: {
+    editable: {
+      type: Boolean
+    }
   }
 
 }
