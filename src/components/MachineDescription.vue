@@ -33,7 +33,6 @@ export default {
   props: {
     description: Array,
     query: String,
-    highlighting: Boolean,
     highlightOptions: Object
   },
   data () {

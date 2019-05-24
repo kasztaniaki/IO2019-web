@@ -4,7 +4,7 @@
       <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
       <div class="level-right">
         <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
-        <b-checkbox class="level-item" v-model="highlighting"></b-checkbox>
+        <b-button @click.native="clearFilter" >Clear</b-button>
       </div>
     </div>
     <b-table class="container" :data=machines>
@@ -61,7 +61,7 @@
           field="Description"
           label="Description"
           width="500">
-            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlighting="highlighting" :highlightOptions="highlightOptions"/>
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
         </b-table-column>
       </template>
     </b-table>
@@ -96,8 +96,14 @@ export default {
       }
       return false
     },
-    filterPools: function() {
+    filterPools () {
       this.query = this.text
+    },
+    clearFilter () {
+      console.log("halko");
+      
+      this.query = ''
+      this.text = ''
     }
   },
   data () {
@@ -111,7 +117,7 @@ export default {
   },
   computed: {
     highlightOptions () {
-      return (this.query.length >= 3 && this.highlighting) ? { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } } : {}
+      return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
     }
   },
   mounted () {
