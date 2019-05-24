@@ -1,12 +1,10 @@
 <template>
-  <b-field class="file">
     <b-upload v-model="file" accept=".csv">
       <a class="button is-primary">
         <b-icon icon="upload"></b-icon>
         <span>Click to upload</span>
       </a>
     </b-upload>
-  </b-field>
 </template>
 
 <script>

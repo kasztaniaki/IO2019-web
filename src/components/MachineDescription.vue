@@ -6,8 +6,16 @@
           <div v-for="program in description" :key="program.name">
             <div id="program-tag">
               <b-taglist v-if="program[0]" attached>
-                <b-tag type="is-dark">{{program[0]}}</b-tag>
-                <b-tag type="is-info">{{program[1]}}</b-tag>
+                <b-tag type="is-dark">
+                  <div v-highlight="highlightOptions">
+                  {{program[0]}}
+                  </div>
+                </b-tag>
+                <b-tag type="is-info">
+                  <div v-highlight="highlightOptions">
+                    {{program[1]}}
+                  </div>
+                </b-tag>
               </b-taglist>
             </div>
           </div>
@@ -23,7 +31,9 @@
 <script>
 export default {
   props: {
-    description: Array
+    description: Array,
+    query: String,
+    highlightOptions: Object
   },
   data () {
     return {
@@ -50,11 +60,18 @@ export default {
   padding: 2px;
 }
 .description {
-  max-width: 400px;
+  max-width: 500px;
   margin-bottom: 10px;
 }
 .rolled {
   max-height: 64px;
   overflow: hidden;
+}
+.highlight{
+  padding: 3px 0px;
+  border-color:hsl(141, 71%, 48%);
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  margin: 0px -2px 0px -2px;
 }
 </style>
