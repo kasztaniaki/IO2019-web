@@ -44,6 +44,11 @@ export default {
               component: ImportErrors,
               props: {
                 errors: error.response.data.errors[0]
+              },
+              events: {
+                'force': () => {
+                  this.sendRequest(true)
+                }
               }
             })
             // this.file = null

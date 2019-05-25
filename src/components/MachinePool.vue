@@ -93,9 +93,6 @@ export default {
       this.isLoading = true
       loadPoolsReq()
         .then(response => {
-          console.log('omg to dziala')
-          console.log(response.data.pools)
-          console.log(response)
           this.isLoading = false
           this.machines = response.data.pools
         })
@@ -212,6 +209,7 @@ export default {
           position: 'is-bottom',
           type: 'is-success'
         })
+        loadMachinesData()
       })
         .catch(error => {
           if (error) {
