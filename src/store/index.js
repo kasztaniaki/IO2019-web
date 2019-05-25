@@ -2,13 +2,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 
-import { authenticate, register, updatePassword, editUser, checkUser } from '@/api'
+import { authenticate, register, editUser } from '@/api'
 import EventBus, { isValidJwt } from '@/components/EventBus'
 
 Vue.use(Vuex)
 
 const state = {
-  userData: {}, // todo dehardcode
+  userData: {},
   jwt: {}
 }
 
@@ -33,7 +33,6 @@ const actions = {
       })
   },
   register (context, userData) {
-    // context.commit('setUserData', { userData }) //todo commented because I think it is done in the login() method
     console.log(userData)
     console.log({ email: state.userData.email })
     return register(userData)
@@ -47,9 +46,8 @@ const actions = {
     console.log(userData)
     return authenticate({ email: store.getters.getUserData.email, password: userData.current_password }) // weryfy with the old password
       .then(res => {
-        console.log('TUUUU!!!!')
         return editUser({ email: store.getters.getUserData.email, new_name: userData.new_name, new_surname: userData.new_surname, new_password: userData.new_password })
-          .then(console.log('OK!!!'))
+          .then(console.log('OK'))
           // newResponse => context.commit('setJwtToken', { jwt: newResponse.data })
           .catch(error => {
             console.log('Error while changing user data: ', error)
@@ -62,7 +60,6 @@ const actions = {
       })
   },
   logout (context) {
-    // WROCTU wywolanie this.$store.dispatch('logout') + zeby guzik do logowania dzialal + naprawic ten warn z navbarem
     context.commit('clearJwtToken')
     context.commit('clearUserData')
   }
@@ -93,9 +90,9 @@ const mutations = {
 
 const getters = {
   isAuthenticated (state) {
-    return isValidJwt(state.jwt.token)
+    return isValidJwt(store.getters.getJwt)
   },
-  getUserData (state) { //todo 2505 sprawdz co tego uzywa i napraw
+  getUserData (state) {
     return state.userData
   },
   getJwt (state) {

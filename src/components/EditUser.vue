@@ -1,13 +1,14 @@
 <template>
   <div class="container">
-    <!-- <div class="form_styling"> -->
+          <div class="new_form_styling">
+
 
     <div class="modal-card" style="width: auto">
       <form @submit.prevent="validateBeforeSubmit">
         <header class="modal-card-head">
           <p class="modal-card-title">Update your account data</p>
         </header>
-        <!-- <p class="message"> Update your account data </p> -->
+                  <!-- <div class="my_form_styling"> -->
 
         <section class="modal-card-body">
           <p> Fill in only the fields you would like to update</p>
@@ -22,12 +23,8 @@
           <b-field :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
             <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'alpha'" />
           </b-field>
-          <!-- <b-field :type="{'is-danger': errors.has('confirm-password')}" :message="[{'The confirm password field is required' : errors.firstByRule('confirm-password', 'required'),
-                'The confirm password is not valid' : errors.firstByRule('confirm-password', 'is')}]">
-          <b-input placeholder="Confirm new password" type="password" v-model="confirmnew_password" name="confirm-password"
-            v-validate="{ required: true, is: new_password }" />
-        </b-field> -->
         </section>
+                  <!-- </div> -->
         <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Close</button>
 
@@ -36,7 +33,7 @@
       </form>
     </div>
   </div>
-  <!-- </div> -->
+  </div>
 </template>
 
 <script>
@@ -70,15 +67,6 @@ export default {
         }
       })
     },
-    // editUser () {
-    //   this.$store.dispatch('editUser', {
-    //     old_password: this.old_password,
-    //     new_password: this.new_password,
-    //     new_name: this.new_name,
-    //     new_surname: this.new_surname
-    //   })
-    //     .then(() => this.$router.push('/'))
-    // },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
@@ -109,9 +97,11 @@ export default {
 
 </script>
 
-<style lang="scss">
-  // .modal-background{
-  //   background: blue
-  // }
+<style scoped lang="scss">
+  .new_form_styling{
+    // width: 38%;
+    overflow-x: hidden;
+
+  }
 
 </style>

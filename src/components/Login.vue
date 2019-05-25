@@ -15,53 +15,57 @@
         <button type="submit" class="button is-primary" @click="authenticate()"> Log in </button>
       </div>
       <div class="information">
-        <p>Don't have an account? <a href="http://localhost:8080/#/users/signup">Sign up</a> </p>
+        <p>Don't have an account? <router-link to="/users/signup">Sign up</router-link> </p>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import EventBus from './EventBus'
+  import EventBus from './EventBus'
 
-export default {
-  data () {
-    return {
-      email: null,
-      password: null,
-      errorMsg: null
-    }
-  },
-  methods: {
-    authenticate () {
-      this.$store.dispatch('login', { email: this.email, password: this.password })
-        .then(() => this.$router.push('/'))
+  export default {
+    data() {
+      return {
+        email: null,
+        password: null,
+        errorMsg: null
+      }
     },
-    validateBeforeSubmit () {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
+    methods: {
+      authenticate() {
+        this.$store.dispatch('login', {
+            email: this.email,
+            password: this.password
+          })
+          .then(() => this.$router.push('/'))
+      },
+      validateBeforeSubmit() {
+        this.$validator.validateAll().then((result) => {
+          if (result) {
+            this.$toast.open({
+              message: 'Form is valid!',
+              type: 'is-success',
+              position: 'is-bottom'
+            })
+            return
+          }
           this.$toast.open({
-            message: 'Form is valid!',
-            type: 'is-success',
+            message: 'Form is not valid! Please check the fields.',
+            type: 'is-danger',
             position: 'is-bottom'
           })
-          return
-        }
-        this.$toast.open({
-          message: 'Form is not valid! Please check the fields.',
-          type: 'is-danger',
-          position: 'is-bottom'
         })
+      }
+    },
+    mounted() {
+      EventBus.$on('failedAuthentication', (msg) => {
+        this.errorMsg = msg
       })
+    },
+    beforeDestroy() {
+      EventBus.$off('failedAuthentication')
     }
-  },
-  mounted () {
-    EventBus.$on('failedAuthentication', (msg) => {
-      this.errorMsg = msg
-    })
-  },
-  beforeDestroy () {
-    EventBus.$off('failedAuthentication')
   }
-}
+
 </script>
