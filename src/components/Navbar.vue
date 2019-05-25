@@ -8,6 +8,9 @@
           <a class="navbar-item">
             <router-link to="/pools">Pools</router-link>
           </a>
+          <a class="navbar-item">
+            <router-link to="/reservations">Reservations</router-link>
+          </a>
         </div>
         <div v-if="!isAuthenticated" class="navbar-end">
                 <a class="navbar-item">
