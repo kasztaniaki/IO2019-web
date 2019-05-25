@@ -69,10 +69,10 @@
           width="500">
             <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
         </b-table-column>
-        <b-table-column field="edit" :visible="editable">
+        <b-table-column v-if="match(props.row)" field="edit" :visible="editable">
           <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
         </b-table-column>
-        <b-table-column field="remove" :visible="editable">
+        <b-table-column v-if="match(props.row)" field="remove" :visible="editable">
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
