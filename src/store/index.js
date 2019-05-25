@@ -2,24 +2,30 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 
-import { authenticate, register, updatePassword } from '@/api'
+import { authenticate, register, updatePassword, editUser, checkUser } from '@/api'
 import EventBus, { isValidJwt } from '@/components/EventBus'
 
 Vue.use(Vuex)
 
 const state = {
-  userData: { email: 'ala@makota.d17' }, // todo dehardcode
-  jwt: ''
+  userData: {}, // todo dehardcode
+  jwt: {}
 }
 
 const actions = {
   login (context, userData) {
-    context.commit('setUserData', { userData })
-    console.log(userData)
+    console.log('EMAIL PRZED SETEM ' + state.userData.email)
+    context.commit('setUserData', userData)
+    console.log('USERDATA ' + userData)
+    var myCurrent = store.getters.getUserData
+    console.log('EMAIL PO SETCIE ' + myCurrent.email)
     return authenticate(userData)
       .then(response => {
-        context.commit('setJwtToken', { jwt: response.data })
-        console.log(state.jwt)
+        console.log('RESPONSE ' + response)
+        console.log('DATA ' + response.data)
+        context.commit('setJwtToken', response.data)
+        var current = store.getters.getJwt
+        console.log('JWT PO LOGINIE ' + current)
       })
       .catch(error => {
         console.log('Error Authenticating: ', error)
@@ -37,14 +43,17 @@ const actions = {
         EventBus.emit('failedRegistering: ', error)
       })
   },
-  changePassword (context, userData) {
-    return authenticate({ email: state.userData.email, password: userData.oldPassword }) // weryfy with the old password
+  editUser (context, userData) {
+    console.log(userData)
+    return authenticate({ email: store.getters.getUserData.email, password: userData.current_password }) // weryfy with the old password
       .then(res => {
-        return updatePassword({ email: state.userData.email, password: userData.newPassword })
-          .then(newResponse => context.commit('setJwtToken', { jwt: newResponse.data })) // todo werify the newResponse
+        console.log('TUUUU!!!!')
+        return editUser({ email: store.getters.getUserData.email, new_name: userData.new_name, new_surname: userData.new_surname, new_password: userData.new_password })
+          .then(console.log('OK!!!'))
+          // newResponse => context.commit('setJwtToken', { jwt: newResponse.data })
           .catch(error => {
-            console.log('Error while changing password: ', error)
-            EventBus.emit('failedChangingPassword: ', error)
+            console.log('Error while changing user data: ', error)
+            EventBus.emit('failedChangingUserData: ', error)
           })
       })
       .catch(error => {
@@ -62,17 +71,19 @@ const actions = {
 const mutations = {
   setUserData (state, payload) {
     console.log('setUserData payload = ', payload)
-    state.userData.email = payload.userData.email
+    state.userData.email = payload.email
   },
   setJwtToken (state, payload) {
     console.log('setJwtToken payload = ', payload)
-    localStorage.setItem('token', payload.jwt)
-    state.jwt = payload.jwt
+    localStorage.setItem('token', payload)
+    console.log('SAMO JTW ', payload)
+    console.log('TYP JTW ', typeof (payload))
+    state.jwt.token = payload
   },
   clearJwtToken (state) {
     localStorage.removeItem('token')
-    state.jwt = ''
-    console.log(state.jwt)
+    state.jwt.token = ''
+    console.log(state.jwt.token)
   },
   clearUserData (state) {
     state.userData.email = ''
@@ -82,10 +93,13 @@ const mutations = {
 
 const getters = {
   isAuthenticated (state) {
-    return isValidJwt(state.jwt)
+    return isValidJwt(state.jwt.token)
   },
-  getUserData (state) {
+  getUserData (state) { //todo 2505 sprawdz co tego uzywa i napraw
     return state.userData
+  },
+  getJwt (state) {
+    return state.jwt.token
   }
 }
 

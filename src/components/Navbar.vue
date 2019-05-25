@@ -34,11 +34,11 @@
                         Logged as <b>{{ getEmail }}</b>
                     </b-dropdown-item>
                     <hr class="dropdown-divider">
-                    <b-dropdown-item has-link aria-role="menuitem">
-                        <router-link to="/users/password">
-                            <b-icon pack="fas" icon="lock" size="is-small"></b-icon>
-                            Change password
-                        </router-link>
+                    <b-dropdown-item @click="editUserData()" aria-role="menuitem">
+                        <!-- <router-link to="/users/password"> -->
+                          <b-icon pack="fas" icon="lock" size="is-small"></b-icon>
+                          Edit profile
+                        <!-- </router-link> -->
                     </b-dropdown-item>
                     <b-dropdown-item value="home" aria-role="menuitem">
                         <b-icon pack="fas" icon="at" size="is-small"></b-icon>
@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import EditUser from '@/components/EditUser.vue'
 export default {
   data () {
     return {
@@ -68,6 +69,12 @@ export default {
     logout () {
       this.$store.dispatch('logout')
         .then(() => this.$router.push('/users/signin'))
+    },
+    editUserData () {
+      this.$modal.open({
+        parent: this,
+        component: EditUser
+      })
     }
   },
   computed: {
