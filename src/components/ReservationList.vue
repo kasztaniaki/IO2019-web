@@ -2,7 +2,7 @@
   <div>
     <div class="level">
       <div class="level-left">
-        <b-button class="level-item"
+        <b-button class="level-item my-button"
           icon-left="chevron-left"
           @click.native="weekChange(-1)" ></b-button>
 
@@ -10,7 +10,7 @@
           {{this.weekstart.toLocaleString('pl-PL', dateOptions)}} - {{this.weekend.toLocaleString('pl-PL', dateOptions)}}
         </div>
 
-        <b-button class="level-item"
+        <b-button class="level-item my-button"
           icon-left="chevron-right"
           @click.native="weekChange(1)" ></b-button>
 
@@ -91,36 +91,67 @@
 </template>
 
 <script>
-import { loadPoolsReq, loadUsersReq } from '@/api'
+import { loadPoolsReq, loadUsersReq, loadReservationsReq } from '@/api'
 import ReservationCard from '@/components/ReservationCard.vue'
 
 export default {
   methods: {
-    loadReservations () {
-      let weekdays = [ [], [], [], [], [], [], [] ]
-      var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-      for (const res of this.reservations) {
-        res.StartDate = parseInt(res.StartDate)
-        res.EndDate = parseInt(res.EndDate)
-        var weekday = new Date(res.StartDate).getUTCDay()
-        weekdays[weekday - 1].push(res)
-      }
-      let slots = []
-      let inserted = true
-      let j = 0
-      while (inserted) {
-        inserted = false
-        let slot = {}
-        for (let i = 0; i < 7; i++) {
-          if (weekdays[i].length > j) {
-            slot[names[i]] = weekdays[i][j]
-            inserted = true
+    loadReservations (startDate, endDate, showCancelled) {
+      loadReservationsReq(startDate, endDate, showCancelled)
+        .then(response => {
+          let weekdays = [ [], [], [], [], [], [], [] ]
+          var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+          for (const res of response.data.reservations) {
+            res.StartDate = parseInt(res.StartDate)
+            res.EndDate = parseInt(res.EndDate)
+            var weekday = new Date(res.StartDate).getUTCDay()
+            weekdays[weekday - 1].push(res)
           }
-        }
-        if (inserted) slots.push(slot)
-        j += 1
-      }
-      this.reservations = slots
+          let slots = []
+          let inserted = true
+          let j = 0
+          while (inserted) {
+            inserted = false
+            let slot = {}
+            for (let i = 0; i < 7; i++) {
+              if (weekdays[i].length > j) {
+                slot[names[i]] = weekdays[i][j]
+                inserted = true
+              }
+            }
+            if (inserted) slots.push(slot)
+            j += 1
+          }
+          this.reservations = slots
+        })
+        .catch(error => {
+          if (error) {
+            let weekdays = [ [], [], [], [], [], [], [] ]
+            var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+            for (const res of this.reservations) {
+              res.StartDate = parseInt(res.StartDate)
+              res.EndDate = parseInt(res.EndDate)
+              var weekday = new Date(res.StartDate).getUTCDay()
+              weekdays[weekday - 1].push(res)
+            }
+            let slots = []
+            let inserted = true
+            let j = 0
+            while (inserted) {
+              inserted = false
+              let slot = {}
+              for (let i = 0; i < 7; i++) {
+                if (weekdays[i].length > j) {
+                  slot[names[i]] = weekdays[i][j]
+                  inserted = true
+                }
+              }
+              if (inserted) slots.push(slot)
+              j += 1
+            }
+            this.reservations = slots
+          }
+        })
     },
     filterReservations (res, weekday) {
       return this.isWeekday(res, weekday) && this.filterPools(res) && this.filterUsers(res)
@@ -147,6 +178,7 @@ export default {
       diff = diff * 7
       this.weekstart = new Date(this.weekstart.setDate(this.weekstart.getDate() + diff))
       this.weekend = new Date(this.weekend.setDate(this.weekend.getDate() + diff))
+      this.loadReservations(this.weekstart, this.weekend)
     },
     loadPools () { // todo error handling
       loadPoolsReq()
@@ -176,7 +208,7 @@ export default {
     this.weekstart = new Date(d.setDate(diff))
     this.weekend = new Date(d.setDate(diff + 7))
 
-    this.loadReservations()
+    this.loadReservations(this.weekstart, this.weekend, false)
     this.loadPools()
     this.loadUsers()
   },
@@ -263,7 +295,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .button {
-    padding: 0px;
+  .my-button {
+    border-color: transparent !important;
   }
 </style>

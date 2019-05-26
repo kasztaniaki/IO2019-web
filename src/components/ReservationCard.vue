@@ -1,6 +1,6 @@
 <template>
   <div class="card" :style="{'background-color': poolColor(reservationData.PoolID)}">
-    <div class="card-content has-text-white">
+    <div class="card-content my-card-content has-text-white">
         <div @click="$emit('user',reservationData.UserID)" class="element clickable">
           <b-icon
             icon="user"
@@ -23,18 +23,20 @@
           {{reservationData.PoolName}}
         </div>
     </div>
-    <div class="card-footer" v-if="isReservationOwner(reservationData.UserID)">
+    <div class="card-footer my-card-footer" v-if="isReservationOwner(reservationData.UserID)">
 
       <b-button
-        class="card-footer-item"
+        class="card-footer-item my-card-footer-item my-button"
         icon-left="pen"
-        type="is-info">
+        type="is-info"
+        @click="editReservation(reservationData)">
 
       </b-button>
       <b-button
-        class="card-footer-item"
+        class="card-footer-item my-card-footer-item my-button"
         icon-left="trash"
-        type="is-danger">
+        type="is-danger"
+        @click="removeReservationDialog(reservationData)">
 
       </b-button>
     </div>
@@ -43,7 +45,7 @@
 
 <script>
 // import { loadReservationsReq } from '@/api'
-
+import RemoveReservationForm from '@/components/RemoveReservationForm.vue'
 export default {
   methods: {
     isReservationOwner (id) {
@@ -55,6 +57,18 @@ export default {
         hash = id.charCodeAt(i) * 33 + hash
       }
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
+    },
+    editReservation (resData) {
+      console.log('edit fired')
+    },
+    removeReservationDialog (resData) {
+      this.$modal.open({
+        parent: this,
+        component: RemoveReservationForm,
+        props: {
+          reservationData: resData
+        }
+      })
     }
 
   },
@@ -74,16 +88,21 @@ export default {
 
 <style lang="scss">
 
-.card-footer-item {
+.my-card-footer-item {
   border-color: transparent !important;
   padding: 0px !important;
 }
-.card-footer, .card-content, .button{
+.my-card-footer {
   border: none !important;
-  border-radius: 0px !important;
+}
+.my-card-content{
+  border: none !important;
   padding: 0.6em
 }
 
+.my-button {
+  border-radius: 0px !important;
+}
 .element {
   padding: 0.5em
 }

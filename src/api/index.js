@@ -65,3 +65,15 @@ export function resetDBReq () {
 export function loadUsersReq () {
   return axios.get(`${API_URL}/users`)
 }
+
+export function loadReservationsReq (startDate, endDate, showCancelled) {
+  return axios.get(`${API_URL}/reservations`, {
+    params: { startDate: startDate, endDate: endDate, showCancelled: showCancelled }
+  })
+}
+
+export function removeReservationReq (reservationID) {
+  return axios.post(`${API_URL}/reservations/remove`, {
+    params: { reservationID: reservationID }
+  })
+}
