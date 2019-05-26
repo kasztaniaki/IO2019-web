@@ -38,7 +38,11 @@
             email: this.email,
             password: this.password
           })
-          .then(() => this.$router.push('/'))
+          .then(() => {
+            var token = this.$store.getters.getJwt
+            this.$api.setHeader("Auth-Token",token)
+            this.$router.push('/')}
+            )
       },
       validateBeforeSubmit() {
         this.$validator.validateAll().then((result) => {

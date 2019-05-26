@@ -12,6 +12,12 @@ export default {
   name: 'App',
   components: {
     'Navbar': Navbar
+  },
+  mounted() {
+    var token = this.$store.getters.getJwt
+    console.log(token);
+    
+    this.$api.setHeader("Auth-Token",token)
   }
 }
 </script>

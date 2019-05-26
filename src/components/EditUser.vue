@@ -1,9 +1,5 @@
 <template>
-  <div class="container">
-          <div class="new_form_styling">
-
-
-    <div class="modal-card" style="width: auto">
+    <div class="modal-card">
       <form @submit.prevent="validateBeforeSubmit">
         <header class="modal-card-head">
           <p class="modal-card-title">Update your account data</p>
@@ -32,8 +28,6 @@
         </footer>
       </form>
     </div>
-  </div>
-  </div>
 </template>
 
 <script>
@@ -63,24 +57,32 @@ export default {
             new_name: this.new_name,
             new_surname: this.new_surname
           })
-            .then(() => this.$router.push('/'))
+            .then(() => {
+              this.$toast.open({
+              message: `Data changed succesfully!`,
+              position: 'is-top',
+              type: 'is-success'
+              })
+              this.$router.push('/pools')
+              })
+            .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: `Error. Provided password is invalid!`,
+              position: 'is-top',
+              type: 'is-danger'
+            })
+          }
+        })
         }
       })
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
-        if (result) {
-          this.$toast.open({
-            message: 'Form is valid!',
-            type: 'is-success',
-            position: 'is-bottom'
-          })
-          return
-        }
         this.$toast.open({
           message: 'Form is not valid! Please check the fields.',
           type: 'is-danger',
-          position: 'is-bottom'
+          position: 'is-top'
         })
       })
     }

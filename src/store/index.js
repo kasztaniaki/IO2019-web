@@ -8,8 +8,12 @@ import EventBus, { isValidJwt } from '@/components/EventBus'
 Vue.use(Vuex)
 
 const state = {
-  userData: {},
-  jwt: {}
+  userData: {
+    email: ""
+  },
+  jwt: {
+    token: ""
+  }
 }
 
 const actions = {
