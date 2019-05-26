@@ -1,25 +1,24 @@
 <template>
   <div class="card" :style="{'background-color': poolColor(reservationData.PoolID)}">
     <div class="card-content has-text-white">
-        <div>
+        <div @click="$emit('user',reservationData.UserID)" class="element clickable">
           <b-icon
             icon="user"
             size="is-small">
           </b-icon>
           {{reservationData.Name}} {{reservationData.Surname}}
         </div>
-        <div>
+        <div class="element">
           <b-icon
             icon="clock"
             size="is-small">
           </b-icon>
           {{new Date(reservationData.StartDate).toLocaleString('pl-PL',timeOptions)}} - {{new Date(reservationData.EndDate).toLocaleString('pl-PL',timeOptions)}}
         </div>
-        <div>
+        <div @click="$emit('pool',reservationData.PoolID)" class="element clickable">
           <b-icon
             icon="desktop"
             size="is-small">
-
           </b-icon>
           {{reservationData.PoolName}}
         </div>
@@ -82,6 +81,15 @@ export default {
 .card-footer, .card-content, .button{
   border: none !important;
   border-radius: 0px !important;
+  padding: 0.6em
+}
+
+.element {
+  padding: 0.5em
+}
+.clickable:hover {
+  background-color: white;
+  color: black;
 }
 
 </style>

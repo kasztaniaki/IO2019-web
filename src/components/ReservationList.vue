@@ -16,6 +16,9 @@
 
       </div>
       <div class="level-right">
+        <div class="level-item">
+          Filter
+        </div>
         <b-select class="level-item"
           placeholder="Select pool"
           icon="desktop"
@@ -47,31 +50,40 @@
       <template slot-scope="props">
         <b-table-column
           label="Mon">
-            <ReservationCard :reservationData="props.row.mon" v-if="filterReservations(props.row.mon,1)"/>
+            <ReservationCard @user="(user) => selectedUser = user"
+              :reservationData="props.row.mon" v-if="filterReservations(props.row.mon,1)"/>
           </b-table-column>
         <b-table-column
           label="Tue">
-            <ReservationCard :reservationData="props.row.tue" v-if="filterReservations(props.row.thu,2)"/>
+            <ReservationCard @user="(user) => selectedUser = user"
+              :reservationData="props.row.tue" v-if="filterReservations(props.row.thu,2)"/>
           </b-table-column>
         <b-table-column
           label="Wed">
-            <ReservationCard :reservationData="props.row.wed" v-if="filterReservations(props.row.wed,3)"/>
+            <ReservationCard
+              @user="(user) => selectedUser = user"
+              @pool="(pool) => selectedPool = pool"
+              :reservationData="props.row.wed" v-if="filterReservations(props.row.wed,3)"/>
           </b-table-column>
         <b-table-column
           label="Thu">
-            <ReservationCard :reservationData="props.row.thu" v-if="filterReservations(props.row.thu,4)"/>
+            <ReservationCard @user="(user) => selectedUser = user"
+              :reservationData="props.row.thu" v-if="filterReservations(props.row.thu,4)"/>
           </b-table-column>
         <b-table-column
           label="Fri">
-            <ReservationCard :reservationData="props.row.fri" v-if="filterReservations(props.row.fri,5)"/>
+            <ReservationCard @user="(user) => selectedUser = user"
+              :reservationData="props.row.fri" v-if="filterReservations(props.row.fri,5)"/>
           </b-table-column>
         <b-table-column
           label="Sat">
-            <ReservationCard :reservationData="props.row.sat" v-if="filterReservations(props.row.sat,6)"/>
+            <ReservationCard @user="(user) => selectedUser = user"
+              :reservationData="props.row.sat" v-if="filterReservations(props.row.sat,6)"/>
           </b-table-column>
         <b-table-column
           label="Sun">
-            <ReservationCard :reservationData="props.row.sun" v-if="filterReservations(props.row.sun,7)"/>
+            <ReservationCard @user="(user) => selectedUser = user"
+              :reservationData="props.row.sun" v-if="filterReservations(props.row.sun,7)"/>
           </b-table-column>
       </template>
     </b-table>
@@ -251,5 +263,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+  .button {
+    padding: 0px;
+  }
 </style>
