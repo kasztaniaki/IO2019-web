@@ -62,9 +62,13 @@ export function resetDBReq () {
   return axios.get(`${API_URL}/init_db`)
 }
 
+// export function editUser (userData) {
+//   return axios.post(`${API_URL}/users/edit_user`, userData)
+// }
+
 export function editUser (userData) {
-  return axios.post(`${API_URL}/users/edit_user`, userData)
-}
-export function checkUser (userData) {
-  return true
+  return axios.post(`${API_URL}/users/edit_user`, userData, {
+    params: { email: userData.email },
+    headers: { 'Content-Type': 'application/json' }
+  })
 }

@@ -1,106 +1,125 @@
 <template>
-    <div class="modal-card">
-      <form @submit.prevent="validateBeforeSubmit">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Update your account data</p>
-        </header>
-                  <!-- <div class="my_form_styling"> -->
+  <div class="modal-card">
+    <form @submit.prevent="validateBeforeSubmit">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Update your account data</p>
+      </header>
+      <section class="modal-card-body">
+        <p> Fill in only the fields you would like to update</p>
 
-        <section class="modal-card-body">
-          <p> Fill in only the fields you would like to update</p>
+        <b-field :type="{'is-danger': errors.has('new-password')}" :message="errors.first('new-password')">
+          <b-input placeholder="New password" type="password" v-model="new_password" name="new-password"
+            v-validate="'min:8'" />
+        </b-field>
+        <b-field :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
+          <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'alpha'" />
+        </b-field>
+        <b-field :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
+          <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'alpha'" />
+        </b-field>
+        <div v-if="getIsAdmin">
+          <b-field :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
+            <b-input placeholder="Updated email" type="text" v-model="email" name="email" v-validate="'email'" />
+          </b-field>
+          <b-checkbox v-model="admin" true-value="Admin" false-value="non-Admin">
+            <p> Administrator privileges </p>
+            {{ getIsAdmin }}
+          </b-checkbox>
 
-          <b-field :type="{'is-danger': errors.has('new-password')}" :message="errors.first('new-password')">
-            <b-input placeholder="New password" type="password" v-model="new_password" name="new-password"
-              v-validate="'min:8'" />
-          </b-field>
-          <b-field :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
-            <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'alpha'" />
-          </b-field>
-          <b-field :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
-            <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'alpha'" />
-          </b-field>
-        </section>
-                  <!-- </div> -->
-        <footer class="modal-card-foot">
-          <button class="button" type="button" @click="$parent.close()">Close</button>
+        </div>
 
-          <button type="submit" class="button is-primary" @click="prompt()">Save</button>
-        </footer>
-      </form>
-    </div>
+
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button" type="button" @click="$parent.close()">Close</button>
+
+        <button type="submit" class="button is-primary" @click="prompt()">Save</button>
+      </footer>
+    </form>
+  </div>
 </template>
 
 <script>
-import EventBus from './EventBus'
+  import EventBus from './EventBus'
 
-export default {
-  data () {
-    return {
-      old_password: null,
-      new_password: null,
-      new_name: null,
-      new_surname: null
-    }
-  },
-  methods: {
-    prompt () {
-      this.$dialog.prompt({
-        message: `Provide your current password`,
-        inputAttrs: {
-          placeholder: 'Password',
-          type: 'password'
-        },
-        onConfirm: (value) => {
-          this.$store.dispatch('editUser', {
-            current_password: value,
-            new_password: this.new_password,
-            new_name: this.new_name,
-            new_surname: this.new_surname
-          })
-            .then(() => {
-              this.$toast.open({
-              message: `Data changed succesfully!`,
-              position: 'is-top',
-              type: 'is-success'
+  export default {
+    data() {
+      return {
+        old_password: null,
+        new_password: null,
+        new_name: null,
+        new_surname: null,
+        new_email: null,
+        admin: null
+        // todo zamienic na checkbox z adminem
+      }
+    },
+    methods: {
+      prompt() {
+        this.$dialog.prompt({
+          message: `Provide your current password`,
+          inputAttrs: {
+            placeholder: 'Password',
+            type: 'password'
+          },
+          onConfirm: (value) => {
+            this.$store.dispatch('editUser', {
+                current_password: value,
+                new_password: this.new_password,
+                new_name: this.new_name,
+                new_surname: this.new_surname,
+                // new_email: this.new_email,
+                // isAdmin: this.admin
               })
-              this.$router.push('/pools')
+              .then(() => {
+                this.$toast.open({
+                  message: `Data changed succesfully!`,
+                  position: 'is-top',
+                  type: 'is-success'
+                })
+                this.$router.push('/pools')
               })
-            .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: `Error. Provided password is invalid!`,
-              position: 'is-top',
-              type: 'is-danger'
-            })
+              .catch(error => {
+                if (error) {
+                  this.$toast.open({
+                    message: `Error. Provided password is invalid!`,
+                    position: 'is-top',
+                    type: 'is-danger'
+                  })
+                }
+              })
           }
         })
-        }
+      },
+      validateBeforeSubmit() {
+        this.$validator.validateAll().catch((error) => {
+          this.$toast.open({
+            message: 'Form is not valid! Please check the fields.',
+            type: 'is-danger',
+            position: 'is-top'
+          })
+        })
+      }
+    },
+    computed: {
+      getIsAdmin() {
+        return false // this.$store.getters.getIsAdmin  // todo
+      },
+    },
+    mounted() {
+      EventBus.$on('failedRegistering', (msg) => {
+        this.errorMsg = msg
       })
     },
-    validateBeforeSubmit () {
-      this.$validator.validateAll().then((result) => {
-        this.$toast.open({
-          message: 'Form is not valid! Please check the fields.',
-          type: 'is-danger',
-          position: 'is-top'
-        })
-      })
+    beforeDestroy() {
+      EventBus.$off('failedRegistering')
     }
-  },
-  mounted () {
-    EventBus.$on('failedRegistering', (msg) => {
-      this.errorMsg = msg
-    })
-  },
-  beforeDestroy () {
-    EventBus.$off('failedRegistering')
   }
-}
 
 </script>
 
 <style scoped lang="scss">
-  .new_form_styling{
+  .new_form_styling {
     // width: 38%;
     overflow-x: hidden;
 

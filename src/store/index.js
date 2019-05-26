@@ -9,7 +9,10 @@ Vue.use(Vuex)
 
 const state = {
   userData: {
-    email: ""
+    email: "",
+    name: "",
+    surname: "",
+    isAdmin: ""
   },
   jwt: {
     token: ""
@@ -25,11 +28,16 @@ const actions = {
     console.log('EMAIL PO SETCIE ' + myCurrent.email)
     return authenticate(userData)
       .then(response => {
-        console.log('RESPONSE ' + response)
-        console.log('DATA ' + response.data)
-        context.commit('setJwtToken', response.data)
+        console.log(':::::::::::::::::RESPONSE ' + response)
+        console.log(':::::::::::::::::DATA ' + response.data.data)
+        console.log(':::::::::::::::::EMAIL ' + response.data.UserData.Email)
+
+        context.commit('setJwtToken', response.data.Token)
+        //         context.commit('setIsAdmin', response.data) // todo podpodmieniac dane
         var current = store.getters.getJwt
         console.log('JWT PO LOGINIE ' + current)
+        // var adminField = store.getters.getIsAdmin //todo uncomment
+        // console.log('JWT PO LOGINIE ' + adminField) //todo uncomment
       })
       .catch(error => {
         console.log('Error Authenticating: ', error)
@@ -81,6 +89,21 @@ const mutations = {
     console.log('TYP JTW ', typeof (payload))
     state.jwt.token = payload
   },
+  setIsAdmin (state, payload) {
+    console.log('SET ADMIN payload = ', payload)
+    state.userData.isAdmin = payload.is_admin
+    console.log('ADMIN FIELD AFTER SET = ', store.getters.getUserData.isAdmin)
+  },
+  setName (state, payload) {
+    console.log('SET NAME payload = ', payload)
+    state.userData.name = payload.name
+    console.log('NAME FIELD AFTER SET = ', store.getters.getUserData.name)
+  },
+  setSetSurname (state, payload) {
+    console.log('SET SURNAME payload = ', payload)
+    state.userData.surname = payload.surname
+    console.log('SURNAME FIELD AFTER SET = ', store.getters.getUserData.surname)
+  },
   clearJwtToken (state) {
     localStorage.removeItem('token')
     state.jwt.token = ''
@@ -101,6 +124,9 @@ const getters = {
   },
   getJwt (state) {
     return state.jwt.token
+  },
+  getIsAdmin (state) {
+    return true // todo state.isAdmin
   }
 }
 
