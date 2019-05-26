@@ -62,10 +62,31 @@ export default {
     removeReservation (id) {
       removeReservationReq(id)
         .then(response => {
-          // todo
+          if (response.status == 200) {
+            this.$toast.open({
+            message: `Reservation cancelled successfully`,
+            position: 'is-top',
+            type: 'is-success'
+          })
+
+          if (response.status == 202) {
+            var IDs = response.data.reservationIDs //check this
+            this.$dialog.confirm({
+              title: 'Mass deleting reservations',
+              message: 'Are you sure you want to <b>cancel</b> ' + IDS.length + ' reservations? This action cannot be undone.',
+              confirmText: 'Confirm',
+              type: 'is-danger',
+              hasIcon: true,
+              onConfirm: () => {
+                this.removeReservation(IDs)
+              }
+            })
+          }
+              
+          }
         }).catch(error => {
           if (error) {
-            // todo
+            console.log(error)
           }
         })
     }
