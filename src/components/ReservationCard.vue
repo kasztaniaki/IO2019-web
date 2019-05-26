@@ -13,7 +13,7 @@
             icon="clock"
             size="is-small">
           </b-icon>
-          {{new Date(reservationData.StartDate).toLocaleString('pl-PL',timeOptions)}} - {{new Date(reservationData.EndDate).toLocaleString('pl-PL',timeOptions)}}
+          {{new Date(reservationData.StartDate).toLocaleString('pl-PL')}} - {{new Date(reservationData.EndDate).toLocaleString('pl-PL',timeOptions)}}
         </div>
         <div @click="$emit('pool',reservationData.PoolID)" class="element clickable">
           <b-icon
@@ -21,6 +21,7 @@
             size="is-small">
           </b-icon>
           {{reservationData.PoolName}}
+          ({{reservationData.Count}})
         </div>
     </div>
     <div class="card-footer my-card-footer" v-if="isReservationOwner(reservationData.UserID)">

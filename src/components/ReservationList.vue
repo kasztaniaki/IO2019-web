@@ -6,7 +6,7 @@
           icon-left="chevron-left"
           @click.native="weekChange(-1)" ></b-button>
 
-        <div class="level-item">
+        <div v-if="weekstart" class="level-item">
           {{this.weekstart.toLocaleString('pl-PL', dateOptions)}} - {{this.weekend.toLocaleString('pl-PL', dateOptions)}}
         </div>
 
@@ -50,39 +50,57 @@
       <template slot-scope="props">
         <b-table-column
           label="Mon">
-            <ReservationCard @user="(user) => selectedUser = user"
-              :reservationData="props.row.mon" v-if="filterReservations(props.row.mon,1)"/>
+            <ReservationCard
+              @user="(user) => selectedUser = user"
+              @pool="(pool) => selectedPool = pool"
+              :reservationData="props.row.mon"
+              v-if="filterReservations(props.row.mon,1)"/>
           </b-table-column>
         <b-table-column
           label="Tue">
-            <ReservationCard @user="(user) => selectedUser = user"
-              :reservationData="props.row.tue" v-if="filterReservations(props.row.thu,2)"/>
+            <ReservationCard
+              @user="(user) => selectedUser = user"
+              @pool="(pool) => selectedPool = pool"
+              :reservationData="props.row.tue"
+              v-if="filterReservations(props.row.thu,2)"/>
           </b-table-column>
         <b-table-column
           label="Wed">
             <ReservationCard
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
-              :reservationData="props.row.wed" v-if="filterReservations(props.row.wed,3)"/>
+              :reservationData="props.row.wed"
+              v-if="filterReservations(props.row.wed,3)"/>
           </b-table-column>
         <b-table-column
           label="Thu">
-            <ReservationCard @user="(user) => selectedUser = user"
-              :reservationData="props.row.thu" v-if="filterReservations(props.row.thu,4)"/>
+            <ReservationCard
+              @pool="(pool) => selectedPool = pool"
+              @user="(user) => selectedUser = user"
+              :reservationData="props.row.thu"
+              v-if="filterReservations(props.row.thu,4)"/>
           </b-table-column>
         <b-table-column
           label="Fri">
-            <ReservationCard @user="(user) => selectedUser = user"
-              :reservationData="props.row.fri" v-if="filterReservations(props.row.fri,5)"/>
+            <ReservationCard
+              @pool="(pool) => selectedPool = pool"
+              @user="(user) => selectedUser = user"
+              :reservationData="props.row.fri"
+              v-if="filterReservations(props.row.fri,5)"/>
           </b-table-column>
         <b-table-column
           label="Sat">
-            <ReservationCard @user="(user) => selectedUser = user"
-              :reservationData="props.row.sat" v-if="filterReservations(props.row.sat,6)"/>
+            <ReservationCard
+              @user="(user) => selectedUser = user"
+              @pool="(pool) => selectedPool = pool"
+              :reservationData="props.row.sat"
+              v-if="filterReservations(props.row.sat,6)"/>
           </b-table-column>
         <b-table-column
           label="Sun">
-            <ReservationCard @user="(user) => selectedUser = user"
+            <ReservationCard
+              @pool="(pool) => selectedPool = pool"
+              @user="(user) => selectedUser = user"
               :reservationData="props.row.sun" v-if="filterReservations(props.row.sun,7)"/>
           </b-table-column>
       </template>
@@ -102,8 +120,8 @@ export default {
           let weekdays = [ [], [], [], [], [], [], [] ]
           var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
           for (const res of response.data.reservations) {
-            res.StartDate = parseInt(res.StartDate)
-            res.EndDate = parseInt(res.EndDate)
+            res.StartDate = new Date(res.StartDate)
+            res.EndDate = new Date(res.EndDate)
             var weekday = new Date(res.StartDate).getUTCDay()
             weekdays[weekday - 1].push(res)
           }
@@ -129,8 +147,8 @@ export default {
             let weekdays = [ [], [], [], [], [], [], [] ]
             var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
             for (const res of this.reservations) {
-              res.StartDate = parseInt(res.StartDate)
-              res.EndDate = parseInt(res.EndDate)
+              res.StartDate = new Date(res.StartDate)
+              res.EndDate = new Date(res.EndDate)
               var weekday = new Date(res.StartDate).getUTCDay()
               weekdays[weekday - 1].push(res)
             }
@@ -205,6 +223,7 @@ export default {
     var d = new Date()
     var day = d.getDay()
     var diff = d.getDate() - day + (day === 0 ? -6 : 1) // adjust when day is sunday
+    d.setHours(0, 0, 0, 0)
     this.weekstart = new Date(d.setDate(diff))
     this.weekend = new Date(d.setDate(diff + 7))
 
@@ -235,8 +254,8 @@ export default {
           PoolName: 'Green Lights 4 Girls',
           PoolID: 's7n-girls',
 
-          StartDate: '1558512000000',
-          EndDate: '1558515600000',
+          StartDate: '2019-05-20T17:15:41.227Z',
+          EndDate: '2019-05-20T17:15:41.227Z',
           Count: 13,
           Cancelled: false
         },
@@ -248,8 +267,8 @@ export default {
           PoolName: 'Gramatyki grafowe',
           PoolID: 's7n-gram',
 
-          StartDate: '1558522800000',
-          EndDate: '1558526400000',
+          StartDate: '2019-05-20T17:15:41.227Z',
+          EndDate: '2019-05-20T17:15:41.227Z',
           Count: 13,
           Cancelled: false
         },
@@ -261,8 +280,8 @@ export default {
           PoolName: 'Technologie Aplikacji Internetowych',
           PoolID: 's7n-tai-auto',
 
-          StartDate: '1558598400000',
-          EndDate: '1558602000000',
+          StartDate: '2019-05-20T17:15:41.227Z',
+          EndDate: '2019-05-20T17:15:41.227Z',
           Count: 13,
           Cancelled: false
         },
@@ -274,8 +293,8 @@ export default {
           PoolName: 'Technologie Aplikacji Internetowych',
           PoolID: 's7n-tai-auto',
 
-          StartDate: '1559116800000',
-          EndDate: '1559120400000',
+          StartDate: '2019-05-20T17:15:41.227Z',
+          EndDate: '2019-05-20T17:15:41.227Z',
           Count: 13,
           Cancelled: false
         }
