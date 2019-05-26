@@ -7,7 +7,7 @@
 <script>
 import ReservationList from '@/components/ReservationList.vue'
 export default {
-  name: 'Pools',
+  name: 'Reservations',
   components: {
     ReservationList
   }

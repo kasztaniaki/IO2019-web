@@ -61,3 +61,7 @@ export function removePoolReq (poolId) {
 export function resetDBReq () {
   return axios.get(`${API_URL}/init_db`)
 }
+
+export function loadUsersReq () {
+  return axios.get(`${API_URL}/users`)
+}

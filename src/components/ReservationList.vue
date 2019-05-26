@@ -16,8 +16,30 @@
 
       </div>
       <div class="level-right">
-        <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
-        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
+        <b-select class="level-item"
+          placeholder="Select pool"
+          icon="desktop"
+          v-model="selectedPool">
+          <option value="None">None</option>
+          <option
+              v-for="pool in pools"
+              :value="pool.ID"
+              :key="pool.ID">
+              {{ pool.Name }}
+          </option>
+        </b-select>
+        <b-select class="level-item"
+          placeholder="Select user"
+          icon="user"
+          v-model="selectedUser">
+          <option value="None">None</option>
+          <option
+              v-for="user in users"
+              :value="user.Email"
+              :key="user.Email">
+              {{ user.Name }} {{user.Surname}}
+          </option>
+        </b-select>
 
       </div>
     </div>
@@ -25,31 +47,31 @@
       <template slot-scope="props">
         <b-table-column
           label="Mon">
-            <ReservationCard :reservationData="props.row.mon" v-if="isWeekday(props.row.mon,1)"/>
+            <ReservationCard :reservationData="props.row.mon" v-if="filterReservations(props.row.mon,1)"/>
           </b-table-column>
         <b-table-column
           label="Tue">
-            <ReservationCard :reservationData="props.row.tue" v-if="isWeekday(props.row.thu,2)"/>
+            <ReservationCard :reservationData="props.row.tue" v-if="filterReservations(props.row.thu,2)"/>
           </b-table-column>
         <b-table-column
           label="Wed">
-            <ReservationCard :reservationData="props.row.wed" v-if="isWeekday(props.row.wed,3)"/>
+            <ReservationCard :reservationData="props.row.wed" v-if="filterReservations(props.row.wed,3)"/>
           </b-table-column>
         <b-table-column
           label="Thu">
-            <ReservationCard :reservationData="props.row.thu" v-if="isWeekday(props.row.thu,4)"/>
+            <ReservationCard :reservationData="props.row.thu" v-if="filterReservations(props.row.thu,4)"/>
           </b-table-column>
         <b-table-column
           label="Fri">
-            <ReservationCard :reservationData="props.row.fri" v-if="isWeekday(props.row.fri,5)"/>
+            <ReservationCard :reservationData="props.row.fri" v-if="filterReservations(props.row.fri,5)"/>
           </b-table-column>
         <b-table-column
           label="Sat">
-            <ReservationCard :reservationData="props.row.sat" v-if="isWeekday(props.row.sat,6)"/>
+            <ReservationCard :reservationData="props.row.sat" v-if="filterReservations(props.row.sat,6)"/>
           </b-table-column>
         <b-table-column
           label="Sun">
-            <ReservationCard :reservationData="props.row.sun" v-if="isWeekday(props.row.sun,7)"/>
+            <ReservationCard :reservationData="props.row.sun" v-if="filterReservations(props.row.sun,7)"/>
           </b-table-column>
       </template>
     </b-table>
@@ -57,7 +79,7 @@
 </template>
 
 <script>
-// import { loadReservationsReq } from '@/api'
+import { loadPoolsReq, loadUsersReq } from '@/api'
 import ReservationCard from '@/components/ReservationCard.vue'
 
 export default {
@@ -88,18 +110,51 @@ export default {
       }
       this.reservations = slots
     },
-    isWeekday (date, weekday) {
-      if (date) {
-        var isThisWeek = new Date(date.StartDate) > new Date(this.weekstart) && new Date(date.StartDate) < new Date(this.weekend)
+    filterReservations (res, weekday) {
+      return this.isWeekday(res, weekday) && this.filterPools(res) && this.filterUsers(res)
+    },
+    isWeekday (res, weekday) {
+      if (res) {
+        var isThisWeek = new Date(res.StartDate) > new Date(this.weekstart) && new Date(res.StartDate) < new Date(this.weekend)
         console.log(isThisWeek)
 
-        return new Date(date.StartDate).getUTCDay() === weekday && isThisWeek
+        return new Date(res.StartDate).getUTCDay() === weekday && isThisWeek
       }
+    },
+    filterPools (res) {
+      if (this.selectedPool && this.selectedPool !== 'None') {
+        return this.selectedPool === res.PoolID
+      } else return true
+    },
+    filterUsers (res) {
+      if (this.selectedUser && this.selectedUser !== 'None') {
+        return this.selectedUser === res.UserID
+      } else return true
     },
     weekChange (diff) {
       diff = diff * 7
       this.weekstart = new Date(this.weekstart.setDate(this.weekstart.getDate() + diff))
       this.weekend = new Date(this.weekend.setDate(this.weekend.getDate() + diff))
+    },
+    loadPools () { // todo error handling
+      loadPoolsReq()
+        .then(response => {
+          this.pools = response.data.pools
+          console.log(this.pools)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    loadUsers () { // todo error handling
+      loadUsersReq()
+        .then(response => {
+          this.users = response.data.users
+          console.log(this.pools)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   mounted () {
@@ -110,6 +165,8 @@ export default {
     this.weekend = new Date(d.setDate(diff + 7))
 
     this.loadReservations()
+    this.loadPools()
+    this.loadUsers()
   },
   data () {
     return {
@@ -121,10 +178,14 @@ export default {
       weekstart: null,
       weekend: null,
       dateOptions: { year: 'numeric', month: 'numeric', day: 'numeric' },
+      pools: [],
+      users: [],
+      selectedPool: null,
+      selectedUser: null,
       reservations: [
         {
-          Name: 'Jacek',
-          Surname: 'Dajda',
+          Name: 'Łukasz',
+          Surname: 'Zając',
           UserID: 'kiicek.z@gmail.com',
 
           PoolName: 'Green Lights 4 Girls',
