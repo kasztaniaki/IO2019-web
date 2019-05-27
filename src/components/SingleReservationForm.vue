@@ -4,40 +4,68 @@
       <p class="modal-card-title">Reservation for <b>{{ this.poolID }}</b></p>
     </header>
     <section class="modal-card-body">
-      <b-field>
-        <div class="columns">
-          <div class="column is-half">
-            <label class="label">Start Date</label>
-            <b-datepicker
-              inline
-              v-model="startDate"
-              placeholder="Click to select..."
-              icon="calendar-today">
-            </b-datepicker>
-          </div>
+      <b-tabs expanded>
+        <b-tab-item label="Start">
+          <b-field>
+            <div class="box">
+              <div class="columns">
+                <div class="column">
+                  <b-datepicker
+                    inline
+                    v-model="startDate">
+                  </b-datepicker>
+                </div>
 
-          <div class="column is-half">
-            <label class="label">End Date</label>
-            <b-datepicker
-              inline
-              v-model="endDate"
-              :min-date="startDate"
-              placeholder="Click to select..."
-              icon="calendar-today">
-            </b-datepicker>
-          </div>
+                <div class="column is-narrow">
+                  <b-clockpicker
+                    inline
+                    rounded
+                    v-model="startTime"
+                    hour-format="24">
+                  </b-clockpicker>
+                </div>
+              </div>
+            </div>
+          </b-field>
+        </b-tab-item>
+
+        <b-tab-item label="End">
+          <b-field>
+            <div class="box">
+              <div class="columns">
+              <div class="column is-narrow">
+                <b-datepicker
+                  inline
+                  v-model="endDate">
+                </b-datepicker>
+              </div>
+
+              <div class="column is-half">
+                <b-clockpicker
+                  inline
+                  rounded
+                  v-model="endTime"
+                  hour-format="24">
+                </b-clockpicker>
+              </div>
+            </div>
+            </div>
+          </b-field>
+        </b-tab-item>
+      </b-tabs>
+      <div class="columns is-centered">
+        <div class="column is-7">
+          <b-field label="Machines Count">
+            <b-numberinput
+              value="machinesCount"
+              v-model="machinesCount"
+              :min=0
+              :max="poolMaxCount"
+              expanded>
+            </b-numberinput>
+          </b-field>
         </div>
-      </b-field>
-
-      <b-field label="Machines Count">
-        <b-numberinput
-          value="machinesCount"
-          v-model="machinesCount"
-          :min=0
-          :max="poolMaxCount"
-          expanded>
-        </b-numberinput>
-      </b-field>
+      </div>
     </section>
     <footer class="modal-card-foot">
       <b-button
@@ -64,8 +92,10 @@ export default {
   },
   data () {
     return {
-      startDate: null,
-      endDate: null,
+      startDate: new Date(),
+      startTime: new Date(),
+      endDate: new Date(),
+      endTime: new Date(),
       machinesCount: 0
     }
   },
@@ -75,7 +105,9 @@ export default {
         poolID: this.poolID,
         poolMaxCount: this.poolMaxCount,
         startDate: this.startDate,
-        endDate: this.endDate
+        startTime: this.startTime,
+        endDate: this.endDate,
+        endTime: this.endTime
       }
 
       this.$emit('saveReservation', reservationProps)
