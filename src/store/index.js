@@ -28,16 +28,10 @@ const actions = {
     console.log('EMAIL PO SETCIE ' + myCurrent.email)
     return authenticate(userData)
       .then(response => {
-        console.log(':::::::::::::::::RESPONSE ' + response)
-        console.log(':::::::::::::::::DATA ' + response.data.data)
-        console.log(':::::::::::::::::EMAIL ' + response.data.UserData.Email)
-
         context.commit('setJwtToken', response.data.Token)
-        //         context.commit('setIsAdmin', response.data) // todo podpodmieniac dane
-        var current = store.getters.getJwt
-        console.log('JWT PO LOGINIE ' + current)
-        // var adminField = store.getters.getIsAdmin //todo uncomment
-        // console.log('JWT PO LOGINIE ' + adminField) //todo uncomment
+        context.commit('setIsAdmin', response.data.UserData.IsAdmin)
+        context.commit('setName', response.data.UserData.Name)
+        context.commit('setSurname', response.data.UserData.Surname)
       })
       .catch(error => {
         console.log('Error Authenticating: ', error)
@@ -58,7 +52,14 @@ const actions = {
     console.log(userData)
     return authenticate({ email: store.getters.getUserData.email, password: userData.current_password }) // weryfy with the old password
       .then(res => {
-        return editUser({ email: store.getters.getUserData.email, new_name: userData.new_name, new_surname: userData.new_surname, new_password: userData.new_password })
+        return editUser({
+          email: store.getters.getUserData.email,
+          new_name: userData.new_name,
+          new_surname: userData.new_surname,
+          new_password: userData.new_password,
+          is_admin: userData.isAdmin,
+          new_email: userData.new_email
+        })
           .then(console.log('OK'))
           // newResponse => context.commit('setJwtToken', { jwt: newResponse.data })
           .catch(error => {
@@ -91,17 +92,17 @@ const mutations = {
   },
   setIsAdmin (state, payload) {
     console.log('SET ADMIN payload = ', payload)
-    state.userData.isAdmin = payload.is_admin
+    state.userData.isAdmin = payload
     console.log('ADMIN FIELD AFTER SET = ', store.getters.getUserData.isAdmin)
   },
   setName (state, payload) {
     console.log('SET NAME payload = ', payload)
-    state.userData.name = payload.name
+    state.userData.name = payload
     console.log('NAME FIELD AFTER SET = ', store.getters.getUserData.name)
   },
-  setSetSurname (state, payload) {
+  setSurname (state, payload) {
     console.log('SET SURNAME payload = ', payload)
-    state.userData.surname = payload.surname
+    state.userData.surname = payload
     console.log('SURNAME FIELD AFTER SET = ', store.getters.getUserData.surname)
   },
   clearJwtToken (state) {
@@ -126,7 +127,7 @@ const getters = {
     return state.jwt.token
   },
   getIsAdmin (state) {
-    return true // todo state.isAdmin
+    return state.userData.isAdmin
   }
 }
 

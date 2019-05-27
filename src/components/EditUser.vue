@@ -5,25 +5,26 @@
         <p class="modal-card-title">Update your account data</p>
       </header>
       <section class="modal-card-body">
-        <p> Fill in only the fields you would like to update</p>
+        <b-field>
+          <p> Fill in only the fields you would like to update</p>
+        </b-field>
 
-        <b-field :type="{'is-danger': errors.has('new-password')}" :message="errors.first('new-password')">
+        <b-field label="New password" :type="{'is-danger': errors.has('new-password')}" :message="errors.first('new-password')">
           <b-input placeholder="New password" type="password" v-model="new_password" name="new-password"
             v-validate="'min:8'" />
         </b-field>
-        <b-field :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
+        <b-field label="Updated first name" :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
           <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'alpha'" />
         </b-field>
-        <b-field :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
+        <b-field label="Updated last name" :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
           <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'alpha'" />
         </b-field>
         <div v-if="getIsAdmin">
-          <b-field :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
-            <b-input placeholder="Updated email" type="text" v-model="email" name="email" v-validate="'email'" />
+          <b-field label="Updated email" :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
+            <b-input placeholder="Updated email" type="text" v-model="new_email" name="email" v-validate="'email'" />
           </b-field>
-          <b-checkbox v-model="admin" true-value="Admin" false-value="non-Admin">
-            <p> Administrator privileges </p>
-            {{ getIsAdmin }}
+          <b-checkbox v-model="admin">
+            <b> Administrator privileges </b>
           </b-checkbox>
 
         </div>
@@ -50,7 +51,6 @@ export default {
       new_surname: null,
       new_email: null,
       admin: null
-      // todo zamienic na checkbox z adminem
     }
   },
   methods: {
@@ -66,9 +66,9 @@ export default {
             current_password: value,
             new_password: this.new_password,
             new_name: this.new_name,
-            new_surname: this.new_surname
-            // new_email: this.new_email,
-            // isAdmin: this.admin
+            new_surname: this.new_surname,
+            new_email: this.new_email,
+            isAdmin: this.admin
           })
             .then(() => {
               this.$toast.open({
@@ -104,13 +104,20 @@ export default {
   },
   computed: {
     getIsAdmin () {
-      return false // this.$store.getters.getIsAdmin  // todo
+      console.log('BOŻE')
+
+      return this.$store.getters.getIsAdmin // todo
     }
   },
   mounted () {
     EventBus.$on('failedRegistering', (msg) => {
       this.errorMsg = msg
     })
+    var userData = this.$store.getters.getUserData
+    this.new_name = userData.name
+    this.new_surname = userData.surname
+    this.new_email = userData.email
+    this.admin = userData.isAdmin
   },
   beforeDestroy () {
     EventBus.$off('failedRegistering')
@@ -118,12 +125,3 @@ export default {
 }
 
 </script>
-
-<style scoped lang="scss">
-  .new_form_styling {
-    // width: 38%;
-    overflow-x: hidden;
-
-  }
-
-</style>

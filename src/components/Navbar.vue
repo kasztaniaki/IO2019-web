@@ -30,7 +30,7 @@
                     </a>
 
                     <b-dropdown-item custom aria-role="menuitem">
-                        Logged as <b>{{ getEmail }}</b>
+                        Logged as <b>{{ getFirstName }} {{getLastName}}</b>
                     </b-dropdown-item>
                     <hr class="dropdown-divider">
                     <b-dropdown-item @click="editUserData()" aria-role="menuitem">
@@ -82,6 +82,12 @@ export default {
     },
     getEmail () {
       return this.$store.getters.getUserData.email
+    },
+    getFirstName () {
+      return this.$store.getters.getUserData.name
+    },
+    getLastName () {
+      return this.$store.getters.getUserData.surname
     }
   }
 }
