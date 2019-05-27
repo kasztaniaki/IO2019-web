@@ -211,7 +211,7 @@ export default {
           position: 'is-bottom',
           type: 'is-success'
         })
-        loadMachinesData()
+        this.loadMachinesData()
       })
         .catch(error => {
           if (error) {
