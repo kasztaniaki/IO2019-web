@@ -28,93 +28,94 @@
 
         </div>
 
-
       </section>
       <footer class="modal-card-foot">
         <button class="button" type="button" @click="$parent.close()">Close</button>
 
-        <button type="submit" class="button is-primary" @click="prompt()">Save</button>
+        <button class="button is-primary" @click="prompt()">Save</button>
       </footer>
     </form>
   </div>
 </template>
 
 <script>
-  import EventBus from './EventBus'
+import EventBus from './EventBus'
 
-  export default {
-    data() {
-      return {
-        old_password: null,
-        new_password: null,
-        new_name: null,
-        new_surname: null,
-        new_email: null,
-        admin: null
-        // todo zamienic na checkbox z adminem
-      }
-    },
-    methods: {
-      prompt() {
-        this.$dialog.prompt({
-          message: `Provide your current password`,
-          inputAttrs: {
-            placeholder: 'Password',
-            type: 'password'
-          },
-          onConfirm: (value) => {
-            this.$store.dispatch('editUser', {
-                current_password: value,
-                new_password: this.new_password,
-                new_name: this.new_name,
-                new_surname: this.new_surname,
-                // new_email: this.new_email,
-                // isAdmin: this.admin
+export default {
+  data () {
+    return {
+      old_password: null,
+      new_password: null,
+      new_name: null,
+      new_surname: null,
+      new_email: null,
+      admin: null
+      // todo zamienic na checkbox z adminem
+    }
+  },
+  methods: {
+    prompt () {
+      this.$dialog.prompt({
+        message: `Provide your current password`,
+        inputAttrs: {
+          placeholder: 'Password',
+          type: 'password'
+        },
+        onConfirm: (value) => {
+          this.$store.dispatch('editUser', {
+            current_password: value,
+            new_password: this.new_password,
+            new_name: this.new_name,
+            new_surname: this.new_surname
+            // new_email: this.new_email,
+            // isAdmin: this.admin
+          })
+            .then(() => {
+              this.$toast.open({
+                message: `Data changed succesfully!`,
+                position: 'is-top',
+                type: 'is-success'
               })
-              .then(() => {
+              this.$router.push('/pools')
+            })
+            .catch(error => {
+              if (error) {
                 this.$toast.open({
-                  message: `Data changed succesfully!`,
+                  message: `Error. Provided password is invalid!`,
                   position: 'is-top',
-                  type: 'is-success'
+                  type: 'is-danger'
                 })
-                this.$router.push('/pools')
-              })
-              .catch(error => {
-                if (error) {
-                  this.$toast.open({
-                    message: `Error. Provided password is invalid!`,
-                    position: 'is-top',
-                    type: 'is-danger'
-                  })
-                }
-              })
-          }
-        })
-      },
-      validateBeforeSubmit() {
-        this.$validator.validateAll().catch((error) => {
+              }
+            })
+        }
+      })
+    },
+    validateBeforeSubmit () {
+      this.$validator.validateAll().catch((error) => {
+        if (error) {
           this.$toast.open({
             message: 'Form is not valid! Please check the fields.',
             type: 'is-danger',
             position: 'is-top'
           })
-        })
-      }
-    },
-    computed: {
-      getIsAdmin() {
-        return false // this.$store.getters.getIsAdmin  // todo
-      },
-    },
-    mounted() {
-      EventBus.$on('failedRegistering', (msg) => {
-        this.errorMsg = msg
+        }
       })
-    },
-    beforeDestroy() {
-      EventBus.$off('failedRegistering')
     }
+  },
+  computed: {
+    getIsAdmin () {
+      return false // this.$store.getters.getIsAdmin  // todo
+    }
+  },
+  mounted () {
+    EventBus.$on('failedRegistering', (msg) => {
+      this.errorMsg = msg
+    })
+  },
+  beforeDestroy () {
+    EventBus.$off('failedRegistering')
   }
+}
 
 </script>
 

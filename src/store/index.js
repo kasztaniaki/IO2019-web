@@ -9,13 +9,13 @@ Vue.use(Vuex)
 
 const state = {
   userData: {
-    email: "",
-    name: "",
-    surname: "",
-    isAdmin: ""
+    email: '',
+    name: '',
+    surname: '',
+    isAdmin: ''
   },
   jwt: {
-    token: ""
+    token: ''
   }
 }
 

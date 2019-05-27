@@ -13,11 +13,11 @@ export default {
   components: {
     'Navbar': Navbar
   },
-  mounted() {
+  mounted () {
     var token = this.$store.getters.getJwt
-    console.log(token);
-    
-    this.$api.setHeader("Auth-Token",token)
+    console.log(token)
+
+    this.$api.setHeader('Auth-Token', token)
   }
 }
 </script>

@@ -20,7 +20,7 @@
             v-validate="{ required: true, is: newPassword }" />
         </b-field>
 
-        <button type="submit" class="button is-primary" @click="changePassword()"> Save </button>
+        <button class="button is-primary" @click="changePassword()"> Save </button>
       </div>
     </form>
   </div>

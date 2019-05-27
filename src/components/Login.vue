@@ -12,7 +12,7 @@
             v-validate="'required|min:8'" />
         </b-field>
 
-        <button type="submit" class="button is-primary" @click="authenticate()"> Log in </button>
+        <button class="button is-primary" @click="authenticate()"> Log in </button>
       </div>
       <div class="information">
         <p>Don't have an account? <router-link to="/users/signup">Sign up</router-link> </p>
@@ -22,54 +22,55 @@
 </template>
 
 <script>
-  import EventBus from './EventBus'
+import EventBus from './EventBus'
 
-  export default {
-    data() {
-      return {
-        email: null,
-        password: null,
-        errorMsg: null
-      }
+export default {
+  data () {
+    return {
+      email: null,
+      password: null,
+      errorMsg: null
+    }
+  },
+  methods: {
+    authenticate () {
+      this.$store.dispatch('login', {
+        email: this.email,
+        password: this.password
+      })
+        .then(() => {
+          var token = this.$store.getters.getJwt
+          this.$api.setHeader('Auth-Token', token)
+          this.$router.push('/')
+        }
+        )
     },
-    methods: {
-      authenticate() {
-        this.$store.dispatch('login', {
-            email: this.email,
-            password: this.password
-          })
-          .then(() => {
-            var token = this.$store.getters.getJwt
-            this.$api.setHeader("Auth-Token",token)
-            this.$router.push('/')}
-            )
-      },
-      validateBeforeSubmit() {
-        this.$validator.validateAll().then((result) => {
-          if (result) {
-            this.$toast.open({
-              message: 'Form is valid!',
-              type: 'is-success',
-              position: 'is-bottom'
-            })
-            return
-          }
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
           this.$toast.open({
-            message: 'Form is not valid! Please check the fields.',
-            type: 'is-danger',
+            message: 'Form is valid!',
+            type: 'is-success',
             position: 'is-bottom'
           })
+          return
+        }
+        this.$toast.open({
+          message: 'Form is not valid! Please check the fields.',
+          type: 'is-danger',
+          position: 'is-bottom'
         })
-      }
-    },
-    mounted() {
-      EventBus.$on('failedAuthentication', (msg) => {
-        this.errorMsg = msg
       })
-    },
-    beforeDestroy() {
-      EventBus.$off('failedAuthentication')
     }
+  },
+  mounted () {
+    EventBus.$on('failedAuthentication', (msg) => {
+      this.errorMsg = msg
+    })
+  },
+  beforeDestroy () {
+    EventBus.$off('failedAuthentication')
   }
+}
 
 </script>
