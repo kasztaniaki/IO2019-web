@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <form @submit.prevent="validateBeforeSubmit">
+    <form>
       <p class="message"> Log in with your email address </p>
       <div class="form_styling">
         <b-field :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
@@ -43,24 +43,24 @@
             this.$api.setHeader("Auth-Token",token)
             this.$router.push('/')}
             )
-      },
-      validateBeforeSubmit() {
-        this.$validator.validateAll().then((result) => {
-          if (result) {
-            this.$toast.open({
-              message: 'Form is valid!',
-              type: 'is-success',
-              position: 'is-bottom'
-            })
-            return
-          }
+          .catch((error) => {
           this.$toast.open({
-            message: 'Form is not valid! Please check the fields.',
+            message: 'Login failed. Please chceck your login and password',
             type: 'is-danger',
-            position: 'is-bottom'
+            position: 'is-top'
           })
         })
-      }
+      },
+      // validateBeforeSubmit() {
+      //   this.$validator.validateAll()
+      //   .catch((error) => {
+      //     this.$toast.open({
+      //       message: 'Login failed. Please chceck your login and password',
+      //       type: 'is-danger',
+      //       position: 'is-top'
+      //     })
+      //   })
+      // }
     },
     mounted() {
       EventBus.$on('failedAuthentication', (msg) => {

@@ -64,16 +64,16 @@
         this.$validator.validateAll().then((result) => {
           if (result) {
             this.$toast.open({
-              message: 'Form is valid!',
+              message: 'Registration successful. You are logged now!',
               type: 'is-success',
-              position: 'is-bottom'
+              position: 'is-top'
             })
             return
           }
           this.$toast.open({
             message: 'Form is not valid! Please check the fields.',
             type: 'is-danger',
-            position: 'is-bottom'
+            position: 'is-top'
           })
         })
       }

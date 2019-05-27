@@ -30,7 +30,7 @@
                     </a>
 
                     <b-dropdown-item custom aria-role="menuitem">
-                        Logged as <b>{{ getEmail }}</b>
+                        Logged as <b>{{ getFirstName }} {{ getLastName }}</b>
                     </b-dropdown-item>
                     <hr class="dropdown-divider">
                     <b-dropdown-item @click="editUserData()" aria-role="menuitem">
@@ -61,7 +61,7 @@ export default {
     return {
       menuIcon: 'caret-down',
       changePasswordIcon: 'lock',
-      contactAdminIcon: 'at'
+      contactAdminIcon: 'at',
     }
   },
   methods: {
@@ -71,6 +71,7 @@ export default {
     },
     editUserData () {
       this.$modal.open({
+        // props: ['email', 'name', 'surname'],
         parent: this,
         component: EditUser
       })
@@ -82,6 +83,12 @@ export default {
     },
     getEmail () {
       return this.$store.getters.getUserData.email
+    },
+    getFirstName() {
+      return this.$store.getters.getUserData.name
+    },
+    getLastName() {
+      return this.$store.getters.getUserData.surname
     }
   }
 }

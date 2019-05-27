@@ -19,11 +19,10 @@
         </b-field>
         <div v-if="getIsAdmin">
           <b-field :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
-            <b-input placeholder="Updated email" type="text" v-model="email" name="email" v-validate="'email'" />
+            <b-input placeholder="Updated email" type="text" v-model="new_email" name="email" v-validate="'email'" />
           </b-field>
-          <b-checkbox v-model="admin" true-value="Admin" false-value="non-Admin">
+          <b-checkbox v-model="admin" true-value='true' false-value='false'>
             <p> Administrator privileges </p>
-            {{ getIsAdmin }}
           </b-checkbox>
 
         </div>
@@ -51,7 +50,6 @@
         new_surname: null,
         new_email: null,
         admin: null
-        // todo zamienic na checkbox z adminem
       }
     },
     methods: {
@@ -68,8 +66,8 @@
                 new_password: this.new_password,
                 new_name: this.new_name,
                 new_surname: this.new_surname,
-                // new_email: this.new_email,
-                // isAdmin: this.admin
+                new_email: this.new_email,
+                isAdmin: this.admin
               })
               .then(() => {
                 this.$toast.open({
@@ -103,7 +101,7 @@
     },
     computed: {
       getIsAdmin() {
-        return false // this.$store.getters.getIsAdmin  // todo
+        return this.$store.getters.getIsAdmin
       },
     },
     mounted() {

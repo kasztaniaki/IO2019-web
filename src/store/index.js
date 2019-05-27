@@ -9,13 +9,13 @@ Vue.use(Vuex)
 
 const state = {
   userData: {
-    email: "",
-    name: "",
-    surname: "",
-    isAdmin: ""
+    email: '',
+    name: '',
+    surname: '',
+    isAdmin: ''
   },
   jwt: {
-    token: ""
+    token: ''
   }
 }
 
@@ -28,12 +28,23 @@ const actions = {
     console.log('EMAIL PO SETCIE ' + myCurrent.email)
     return authenticate(userData)
       .then(response => {
-        console.log(':::::::::::::::::RESPONSE ' + response)
-        console.log(':::::::::::::::::DATA ' + response.data.data)
-        console.log(':::::::::::::::::EMAIL ' + response.data.UserData.Email)
-
+        console.log(':::::::::TOKEN ' + response.data.Token)
         context.commit('setJwtToken', response.data.Token)
-        //         context.commit('setIsAdmin', response.data) // todo podpodmieniac dane
+        console.log('TOKEN PO SETCIE ' + store.getters.getJwt)
+
+        console.log(':::::::::NAME ' + response.data.UserData.Name)
+        context.commit('setName', response.data.UserData.Name)
+        console.log('NAME PO SETCIE ' + store.getters.getUserData.name)
+
+        console.log(':::::::::SURNAME ' + response.data.UserData.Surname)
+        context.commit('setSurname', response.data.UserData.Surname)
+        console.log('SURNAME PO SETCIE ' + store.getters.getUserData.surname)
+
+
+        console.log(':::::::::ISADMIN ' + response.data.UserData.IsAdmin)
+        context.commit('setIsAdmin', response.data.UserData.IsAdmin)
+        console.log('ISADMIN PO SETCIE ' + store.getters.getUserData.isAdmin)
+
         var current = store.getters.getJwt
         console.log('JWT PO LOGINIE ' + current)
         // var adminField = store.getters.getIsAdmin //todo uncomment
@@ -56,20 +67,22 @@ const actions = {
   },
   editUser (context, userData) {
     console.log(userData)
-    return authenticate({ email: store.getters.getUserData.email, password: userData.current_password }) // weryfy with the old password
-      .then(res => {
-        return editUser({ email: store.getters.getUserData.email, new_name: userData.new_name, new_surname: userData.new_surname, new_password: userData.new_password })
+    console.log("~~~~~EMAIL " + store.getters.getUserData.email)
+    console.log("~~~~~~PASSWORD " + userData.current_password)
+    // return authenticate({ email: store.getters.getUserData.email, password: userData.current_password }) // weryfy with the old password
+      // .then(res => {
+        // todo when in admin mode sendemail should be the email of the person who is updated
+        return editUser({ email: store.getters.getUserData.email, new_name: userData.new_name, new_surname: userData.new_surname, new_password: userData.new_password, is_admin: userData.isAdmin, new_email: userData.new_email })
           .then(console.log('OK'))
-          // newResponse => context.commit('setJwtToken', { jwt: newResponse.data })
           .catch(error => {
             console.log('Error while changing user data: ', error)
             EventBus.emit('failedChangingUserData: ', error)
           })
-      })
-      .catch(error => {
-        console.log('Old password does not match: ', error)
+      // })
+      // .catch(error => {
+        // console.log('Old password does not match: ', error)
         EventBus.emit('failedChangingPassword: ', error)
-      })
+      // })
   },
   logout (context) {
     context.commit('clearJwtToken')
@@ -84,34 +97,37 @@ const mutations = {
   },
   setJwtToken (state, payload) {
     console.log('setJwtToken payload = ', payload)
-    localStorage.setItem('token', payload)
+    // localStorage.setItem('token', payload)
     console.log('SAMO JTW ', payload)
     console.log('TYP JTW ', typeof (payload))
     state.jwt.token = payload
   },
   setIsAdmin (state, payload) {
     console.log('SET ADMIN payload = ', payload)
-    state.userData.isAdmin = payload.is_admin
+    state.userData.isAdmin = payload
     console.log('ADMIN FIELD AFTER SET = ', store.getters.getUserData.isAdmin)
   },
   setName (state, payload) {
     console.log('SET NAME payload = ', payload)
-    state.userData.name = payload.name
+    state.userData.name = payload
     console.log('NAME FIELD AFTER SET = ', store.getters.getUserData.name)
   },
-  setSetSurname (state, payload) {
+  setSurname (state, payload) {
     console.log('SET SURNAME payload = ', payload)
-    state.userData.surname = payload.surname
+    state.userData.surname = payload
     console.log('SURNAME FIELD AFTER SET = ', store.getters.getUserData.surname)
   },
   clearJwtToken (state) {
-    localStorage.removeItem('token')
+    // localStorage.removeItem('token')
     state.jwt.token = ''
-    console.log(state.jwt.token)
+    console.log(':::::TOKEN AFTER CLEAN ' + state.jwt.token)
   },
   clearUserData (state) {
     state.userData.email = ''
     console.log(state.userData.email)
+    state.userData.name = ''
+    state.userData.surname = ''
+    state.userData.isAdmin = ''
   }
 }
 
@@ -126,7 +142,7 @@ const getters = {
     return state.jwt.token
   },
   getIsAdmin (state) {
-    return true // todo state.isAdmin
+    return Boolean(state.userData.isAdmin)
   }
 }
 
