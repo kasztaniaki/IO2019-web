@@ -82,3 +82,16 @@ export function cancelReservationReq (reservationID, type) {
     Type: type
   })
 }
+
+export function addReservationReq (reservationProps) {
+  return axios.post(`${API_URL}/reservations/create`, reservationProps, {
+    headers: { 'Content-Type': 'application/json' }
+  })
+}
+
+export function editReservationReq (reservationProps) {
+  console.log(reservationProps)
+  return axios.post(`${API_URL}/reservations/edit`, reservationProps, {
+    headers: { 'Content-Type': 'application/json' }
+  })
+}
