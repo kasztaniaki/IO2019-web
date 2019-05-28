@@ -81,7 +81,7 @@ export default {
           userEmail: user.Email
         },
         events: {
-          'edit': (event) => {
+          'close': () => {
             this.loadUsers()
           }
         }

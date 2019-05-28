@@ -80,7 +80,7 @@ export default {
                 position: 'is-top',
                 type: 'is-success'
               })
-              this.$emit('edit')
+              this.$emit('close')
             })
             .catch(error => {
               if (error) {
