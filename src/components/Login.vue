@@ -44,6 +44,15 @@ export default {
           this.$router.push('/')
         }
         )
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: 'Incorrect email or password.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          }
+        })
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {

@@ -34,15 +34,13 @@
                     </b-dropdown-item>
                     <hr class="dropdown-divider">
                     <b-dropdown-item @click="editUserData()" aria-role="menuitem">
-                        <!-- <router-link to="/users/password"> -->
                           <b-icon pack="fas" icon="lock" size="is-small"></b-icon>
                           Edit profile
-                        <!-- </router-link> -->
                     </b-dropdown-item>
-                    <b-dropdown-item value="home" aria-role="menuitem">
+                    <!-- <b-dropdown-item value="home" aria-role="menuitem">
                         <b-icon pack="fas" icon="at" size="is-small"></b-icon>
                         Contact admin
-                    </b-dropdown-item>
+                    </b-dropdown-item> -->
                 </b-dropdown>
 
                 <a class="navbar-item">

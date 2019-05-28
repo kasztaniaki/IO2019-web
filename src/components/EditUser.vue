@@ -23,7 +23,7 @@
           <b-field label="Updated email" :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
             <b-input placeholder="Updated email" type="text" v-model="new_email" name="email" v-validate="'email'" />
           </b-field>
-          <b-checkbox v-model="admin">
+          <b-checkbox v-model="is_admin">
             <b> Administrator privileges </b>
           </b-checkbox>
 
@@ -50,7 +50,7 @@ export default {
       new_name: null,
       new_surname: null,
       new_email: null,
-      admin: null
+      is_admin: null
     }
   },
   methods: {
@@ -68,7 +68,7 @@ export default {
             new_name: this.new_name,
             new_surname: this.new_surname,
             new_email: this.new_email,
-            isAdmin: this.admin
+            is_admin: this.is_admin
           })
             .then(() => {
               this.$toast.open({
@@ -103,9 +103,7 @@ export default {
   },
   computed: {
     getIsAdmin () {
-      console.log('BOŻE')
-
-      return this.$store.getters.getIsAdmin // todo
+      return this.$store.getters.getIsAdmin
     }
   },
   mounted () {
@@ -116,17 +114,10 @@ export default {
     this.new_name = userData.name
     this.new_surname = userData.surname
     this.new_email = userData.email
-    this.admin = userData.isAdmin
+    this.is_admin = userData.is_admin
   },
   beforeDestroy () {
     EventBus.$off('failedRegistering')
   }
 }
-
 </script>
-
-<style>
-.modal-card {
-margin: 0
-}
-</style>

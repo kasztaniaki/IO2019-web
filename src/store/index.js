@@ -12,7 +12,7 @@ const state = {
     email: '',
     name: '',
     surname: '',
-    isAdmin: ''
+    is_admin: ''
   },
   jwt: {
     token: ''
@@ -21,11 +21,7 @@ const state = {
 
 const actions = {
   login (context, userData) {
-    console.log('EMAIL PRZED SETEM ' + state.userData.email)
     context.commit('setUserData', userData)
-    console.log('USERDATA ' + userData)
-    var myCurrent = store.getters.getUserData
-    console.log('EMAIL PO SETCIE ' + myCurrent.email)
     return authenticate(userData)
       .then(response => {
         context.commit('setJwtToken', response.data.Token)
@@ -39,8 +35,6 @@ const actions = {
       })
   },
   register (context, userData) {
-    console.log(userData)
-    console.log({ email: state.userData.email })
     return register(userData)
       .then(context.dispatch('login', { email: userData.email, password: userData.password }))
       .catch(error => {
@@ -49,15 +43,14 @@ const actions = {
       })
   },
   editUser (context, userData) {
-    console.log(userData)
-    return authenticate({ email: store.getters.getUserData.email, password: userData.current_password }) // weryfy with the old password
+    return authenticate({ email: store.getters.getUserData.email, password: userData.current_password })
       .then(res => {
         return editUser({
           email: store.getters.getUserData.email,
           new_name: userData.new_name,
           new_surname: userData.new_surname,
           new_password: userData.new_password,
-          is_admin: userData.isAdmin,
+          is_admin: userData.is_admin,
           new_email: userData.new_email
         })
           .then(console.log('OK'))
@@ -80,39 +73,27 @@ const actions = {
 
 const mutations = {
   setUserData (state, payload) {
-    console.log('setUserData payload = ', payload)
     state.userData.email = payload.email
   },
   setJwtToken (state, payload) {
-    console.log('setJwtToken payload = ', payload)
     localStorage.setItem('token', payload)
-    console.log('SAMO JTW ', payload)
-    console.log('TYP JTW ', typeof (payload))
     state.jwt.token = payload
   },
   setIsAdmin (state, payload) {
-    console.log('SET ADMIN payload = ', payload)
-    state.userData.isAdmin = payload
-    console.log('ADMIN FIELD AFTER SET = ', store.getters.getUserData.isAdmin)
+    state.userData.is_admin = payload
   },
   setName (state, payload) {
-    console.log('SET NAME payload = ', payload)
     state.userData.name = payload
-    console.log('NAME FIELD AFTER SET = ', store.getters.getUserData.name)
   },
   setSurname (state, payload) {
-    console.log('SET SURNAME payload = ', payload)
     state.userData.surname = payload
-    console.log('SURNAME FIELD AFTER SET = ', store.getters.getUserData.surname)
   },
   clearJwtToken (state) {
     localStorage.removeItem('token')
     state.jwt.token = ''
-    console.log(state.jwt.token)
   },
   clearUserData (state) {
     state.userData.email = ''
-    console.log(state.userData.email)
   }
 }
 
@@ -127,7 +108,7 @@ const getters = {
     return state.jwt.token
   },
   getIsAdmin (state) {
-    return state.userData.isAdmin
+    return state.userData.is_admin
   }
 }
 
