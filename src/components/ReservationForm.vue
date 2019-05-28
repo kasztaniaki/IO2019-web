@@ -10,16 +10,13 @@
               <b-datepicker
                 inline
                 v-model="selectedDate">
-
-                <section>
-                  <div class="buttons column is-center">
-                    <b-button type="is-primary" outlined v-for="(slot, index) in timeSlots" :key="index" aria-role="listitem" @click.native="selectedSlot = index">
-                      <label class="label">
+                  <b-field grouped group-multiline>
+                    <b-radio-button type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index">
+                      <span>
                       {{ slot['start'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') + " - " + slot['end'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') }}
-                      </label>
-                    </b-button>
-                  </div>
-                </section>
+                      </span>
+                    </b-radio-button>
+                  </b-field>
               </b-datepicker>
             </div>
           </div>
@@ -92,11 +89,8 @@ export default {
         endDate: endDate
       }
 
-      console.log(startDate)
-      console.log(endDate)
-
-      // this.$emit('saveReservation', reservationProps)
-      // this.$emit('close')
+      this.$emit('saveReservation', reservationProps)
+      this.$emit('close')
     }
   }
 }

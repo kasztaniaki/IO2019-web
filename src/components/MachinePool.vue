@@ -86,7 +86,7 @@
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
-import SingleReservationForm from '@/components/SingleReservationForm.vue'
+import ReservationForm from '@/components/ReservationForm.vue'
 import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
 
 export default {
@@ -232,7 +232,7 @@ export default {
       this.$modal.open({
         parent: this,
         props: reservationProps,
-        component: SingleReservationForm,
+        component: ReservationForm,
         hasModalCard: true,
         events: {
           'saveReservation': (reservationProps) => {
