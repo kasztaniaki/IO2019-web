@@ -1,7 +1,7 @@
 <template>
   <div class="modal-card" style="width:500px">
     <header class="modal-card-head">
-      <p class="modal-card-title">Reservation for <b>{{ this.poolID }}</b></p>
+      <p class="modal-card-title"><b>{{ this.PoolName }}</b></p>
     </header>
     <section class="modal-card-body">
         <b-field>
@@ -28,7 +28,7 @@
               value="machinesCount"
               v-model="machinesCount"
               :min=0
-              :max="poolMaxCount"
+              :max="this.MaxCount"
               expanded>
             </b-numberinput>
           </b-field>
@@ -44,13 +44,6 @@
         @click="saveForm()">
           Save
       </b-button>
-      <b-button
-        class="button level-right"
-        type="is-danger"
-        icon-left="times"
-        @click="saveForm()">
-          Cancel
-      </b-button>
     </footer>
   </div>
 </template>
@@ -60,17 +53,35 @@ import { TIME_SLOTS } from '@/consts.js'
 
 export default {
   props: {
-    poolID: {
-      type: String
+    PoolName: {
+      type: String,
+      default: ''
     },
-    poolMaxCount: {
-      type: Number
+    PoolID: {
+      type: String,
+      default: ''
+    },
+    MaxCount: {
+      tpye: Number,
+      default: 10000
+    },
+    Count: {
+      type: Number,
+      default: 0
+    },
+    StartDate: {
+      type: Date,
+      default: null
+    },
+    ReservationID: {
+      type: Number,
+      default: null
     }
   },
   data () {
     return {
-      selectedDate: new Date(),
-      machinesCount: 0,
+      selectedDate: this.StartDate,
+      machinesCount: this.Count,
       timeSlots: TIME_SLOTS,
       selectedSlot: null
     }
@@ -79,14 +90,16 @@ export default {
     saveForm () {
       const startTime = this.timeSlots[this.selectedSlot]['start']
       const endTime = this.timeSlots[this.selectedSlot]['end']
-      const startDate = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDay(), startTime.getHours(), startTime.getMinutes())
-      const endDate = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDay(), endTime.getHours(), endTime.getMinutes())
+      const startDate = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDate(), startTime.getHours(), startTime.getMinutes())
+      const endDate = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDate(), endTime.getHours(), endTime.getMinutes())
 
       const reservationProps = {
-        poolID: this.poolID,
-        poolMaxCount: this.poolMaxCount,
-        startDate: startDate,
-        endDate: endDate
+        PoolID: this.PoolID,
+        Count: this.machinesCount,
+        StartDate: startDate,
+        EndDate: endDate,
+        ReservationID: this.ReservationID,
+        Email: this.$store.getters.getUserData.email
       }
 
       this.$emit('saveReservation', reservationProps)
