@@ -76,7 +76,12 @@
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
-        <b-button @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">Reserve</b-button>
+        <b-button
+          icon-left="calendar-alt"
+          icon-pack="far"
+          @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+          Reservation
+        </b-button>
       </template>
     </b-table>
   </div>
