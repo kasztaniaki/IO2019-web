@@ -2,9 +2,6 @@ import axios from 'axios'
 
 const API_URL = process.env.VUE_APP_API_URL
 
-// WROCTU w register userData to: imie, nazwisko, email i haslo
-// a w authenticate powinno byc tylko email i haslo
-
 export default {
   http: axios,
   setHeader (header, value) {
@@ -60,4 +57,11 @@ export function removePoolReq (poolId) {
 
 export function resetDBReq () {
   return axios.get(`${API_URL}/init_db`)
+}
+
+export function editUser (userData) {
+  return axios.post(`${API_URL}/users/edit_user`, userData, {
+    params: { email: userData.email },
+    headers: { 'Content-Type': 'application/json' }
+  })
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <form @submit.prevent="validateBeforeSubmit">
+    <form>
       <p class="message"> Create an account </p>
       <div class="form_styling">
         <b-field :type="{'is-danger': errors.has('firstname')}" :message="errors.first('firstname')">
@@ -18,7 +18,9 @@
         <b-field :type="{'is-danger': errors.has('password')}" :message="errors.first('password')">
           <b-input placeholder="Password" type="password" v-model="password" name="password"
             v-validate="'required|min:8'" />
+
         </b-field>
+                        <password v-model="password" :strength-meter-only="true"/>
 
         <b-field :type="{'is-danger': errors.has('confirm-password')}" :message="[{'The confirm password field is required' : errors.firstByRule('confirm-password', 'required'),
                 'The confirm password is not valid' : errors.firstByRule('confirm-password', 'is')}]">
@@ -26,11 +28,11 @@
             v-validate="{ required: true, is: password }" />
         </b-field>
 
-        <button type="submit" class="button is-primary" @click="register()"> Sign up </button>
+        <button class="button is-primary" @click.prevent="validateBeforeSubmit()"> Sign up </button>
       </div>
 
       <div class="information">
-        <p>Already have an account? <a href="http://localhost:8080/#/users/signin">Log in</a> </p>
+        <p>Already have an account? <router-link to="/users/signin">Log in</router-link> </p>
       </div>
     </form>
   </div>
@@ -38,8 +40,10 @@
 
 <script>
 import EventBus from './EventBus'
+import Password from 'vue-password-strength-meter'
 
 export default {
+  components: { Password },
   data () {
     return {
       firstname: null,
@@ -52,25 +56,43 @@ export default {
   },
   methods: {
     register () {
-      this.$store.dispatch('register', { firstname: this.firstname, lastname: this.lastname, email: this.email, password: this.password })
-        .then(() => this.$router.push('/'))
+      this.$store.dispatch('register', {
+        firstname: this.firstname,
+        lastname: this.lastname,
+        email: this.email,
+        password: this.password
+      })
+        .then(() => {
+          this.$toast.open({
+            message: 'You are successfully registered and logged!',
+            type: 'is-success',
+            position: 'is-top'
+          })
+          this.$router.push('/')
+        })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: 'Cannot register. The e-mail is already used.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          }
+        })
     },
     validateBeforeSubmit () {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
-          this.$toast.open({
-            message: 'Form is valid!',
-            type: 'is-success',
-            position: 'is-bottom'
-          })
-          return
-        }
-        this.$toast.open({
-          message: 'Form is not valid! Please check the fields.',
-          type: 'is-danger',
-          position: 'is-bottom'
+      this.$validator.validateAll()
+        .then((result) => {
+          if (!result) {
+            this.$toast.open({
+              message: 'Form is not valid! Please check the fields.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          } else {
+            this.register()
+          }
         })
-      })
     }
   },
   mounted () {
@@ -82,6 +104,7 @@ export default {
     EventBus.$off('failedChangingPassword')
   }
 }
+
 </script>
 
 <style lang="scss">
@@ -99,4 +122,5 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
+
 </style>
