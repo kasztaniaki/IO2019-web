@@ -43,6 +43,11 @@ export default {
               component: ImportErrors,
               props: {
                 import_errors: error.response.data.errors[0]
+              },
+              events: {
+                'force': () => {
+                  this.sendRequest(true)
+                }
               }
             })
             this.$parent.isLoading = false

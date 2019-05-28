@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <form @submit.prevent="validateBeforeSubmit">
+    <form>
       <p class="message"> Log in with your email address </p>
       <div class="form_styling">
         <b-field :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
@@ -9,13 +9,13 @@
 
         <b-field :type="{'is-danger': errors.has('password')}" :message="errors.first('password')">
           <b-input placeholder="Password" type="password" password-reveal v-model="password" name="password"
-            v-validate="'required|min:8'" />
+            v-validate="'required'" />
         </b-field>
 
-        <button type="submit" class="button is-primary" @click="authenticate()"> Log in </button>
+        <button class="button is-primary" @click.prevent="authenticate()"> Log in </button>
       </div>
       <div class="information">
-        <p>Don't have an account? <a href="http://localhost:8080/#/users/signup">Sign up</a> </p>
+        <p>Don't have an account? <router-link to="/users/signup">Sign up</router-link> </p>
       </div>
     </form>
   </div>
@@ -34,24 +34,37 @@ export default {
   },
   methods: {
     authenticate () {
-      this.$store.dispatch('login', { email: this.email, password: this.password })
-        .then(() => this.$router.push('/'))
+      this.$store.dispatch('login', {
+        email: this.email,
+        password: this.password
+      })
+        .then(() => {
+          var token = this.$store.getters.getJwt
+          this.$api.setHeader('Auth-Token', token)
+          this.$router.push('/')
+        }
+        )
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: 'Incorrect email or password.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          }
+        })
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
-        if (result) {
+        if (!result) {
           this.$toast.open({
-            message: 'Form is valid!',
-            type: 'is-success',
-            position: 'is-bottom'
+            message: 'Form is not valid! Please check the fields.',
+            type: 'is-danger',
+            position: 'is-top'
           })
-          return
+        } else {
+          this.authenticate()
         }
-        this.$toast.open({
-          message: 'Form is not valid! Please check the fields.',
-          type: 'is-danger',
-          position: 'is-bottom'
-        })
       })
     }
   },
@@ -64,4 +77,5 @@ export default {
     EventBus.$off('failedAuthentication')
   }
 }
+
 </script>
