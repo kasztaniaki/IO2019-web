@@ -2,24 +2,32 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 
-import { authenticate, register, updatePassword } from '@/api'
+import { authenticate, register, editUser } from '@/api'
 import EventBus, { isValidJwt } from '@/components/EventBus'
 
 Vue.use(Vuex)
 
 const state = {
-  userData: { email: 'ala@makota.d17' }, // todo dehardcode
-  jwt: ''
+  userData: {
+    email: '',
+    name: '',
+    surname: '',
+    is_admin: ''
+  },
+  jwt: {
+    token: ''
+  }
 }
 
 const actions = {
   login (context, userData) {
-    context.commit('setUserData', { userData })
-    console.log(userData)
+    context.commit('setUserData', userData)
     return authenticate(userData)
       .then(response => {
-        context.commit('setJwtToken', { jwt: response.data })
-        console.log(state.jwt)
+        context.commit('setJwtToken', response.data.Token)
+        context.commit('setIsAdmin', response.data.UserData.IsAdmin)
+        context.commit('setName', response.data.UserData.Name)
+        context.commit('setSurname', response.data.UserData.Surname)
       })
       .catch(error => {
         console.log('Error Authenticating: ', error)
@@ -27,9 +35,6 @@ const actions = {
       })
   },
   register (context, userData) {
-    // context.commit('setUserData', { userData }) //todo commented because I think it is done in the login() method
-    console.log(userData)
-    console.log({ email: state.userData.email })
     return register(userData)
       .then(context.dispatch('login', { email: userData.email, password: userData.password }))
       .catch(error => {
@@ -37,14 +42,22 @@ const actions = {
         EventBus.emit('failedRegistering: ', error)
       })
   },
-  changePassword (context, userData) {
-    return authenticate({ email: state.userData.email, password: userData.oldPassword }) // weryfy with the old password
+  editUser (context, userData) {
+    return authenticate({ email: store.getters.getUserData.email, password: userData.current_password })
       .then(res => {
-        return updatePassword({ email: state.userData.email, password: userData.newPassword })
-          .then(newResponse => context.commit('setJwtToken', { jwt: newResponse.data })) // todo werify the newResponse
+        return editUser({
+          email: store.getters.getUserData.email,
+          new_name: userData.new_name,
+          new_surname: userData.new_surname,
+          new_password: userData.new_password,
+          is_admin: userData.is_admin,
+          new_email: userData.new_email
+        })
+          .then(console.log('OK'))
+          // newResponse => context.commit('setJwtToken', { jwt: newResponse.data })
           .catch(error => {
-            console.log('Error while changing password: ', error)
-            EventBus.emit('failedChangingPassword: ', error)
+            console.log('Error while changing user data: ', error)
+            EventBus.emit('failedChangingUserData: ', error)
           })
       })
       .catch(error => {
@@ -53,7 +66,6 @@ const actions = {
       })
   },
   logout (context) {
-    // WROCTU wywolanie this.$store.dispatch('logout') + zeby guzik do logowania dzialal + naprawic ten warn z navbarem
     context.commit('clearJwtToken')
     context.commit('clearUserData')
   }
@@ -61,31 +73,43 @@ const actions = {
 
 const mutations = {
   setUserData (state, payload) {
-    console.log('setUserData payload = ', payload)
-    state.userData.email = payload.userData.email
+    state.userData.email = payload.email
   },
   setJwtToken (state, payload) {
-    console.log('setJwtToken payload = ', payload)
-    localStorage.setItem('token', payload.jwt)
-    state.jwt = payload.jwt
+    state.jwt.token = payload
+  },
+  setIsAdmin (state, payload) {
+    state.userData.is_admin = payload
+  },
+  setName (state, payload) {
+    state.userData.name = payload
+  },
+  setSurname (state, payload) {
+    state.userData.surname = payload
   },
   clearJwtToken (state) {
-    localStorage.removeItem('token')
-    state.jwt = ''
-    console.log(state.jwt)
+    state.jwt.token = ''
   },
   clearUserData (state) {
     state.userData.email = ''
-    console.log(state.userData.email)
+    state.userData.name = ''
+    state.userData.surname = ''
+    state.userData.is_admin = ''
   }
 }
 
 const getters = {
   isAuthenticated (state) {
-    return isValidJwt(state.jwt)
+    return isValidJwt(store.getters.getJwt)
   },
   getUserData (state) {
     return state.userData
+  },
+  getJwt (state) {
+    return state.jwt.token
+  },
+  getIsAdmin (state) {
+    return state.userData.is_admin
   }
 }
 

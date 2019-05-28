@@ -19,7 +19,6 @@
         </div>
         <div v-if="isAuthenticated" class="navbar-end">
                 <b-dropdown
-                    v-model="navigation"
                     position="is-bottom-left"
                     aria-role="menu">
                     <a
@@ -31,19 +30,17 @@
                     </a>
 
                     <b-dropdown-item custom aria-role="menuitem">
-                        Logged as <b>{{ getEmail }}</b>
+                        Logged as <b>{{ getFirstName }} {{getLastName}}</b>
                     </b-dropdown-item>
                     <hr class="dropdown-divider">
-                    <b-dropdown-item has-link aria-role="menuitem">
-                        <router-link to="/users/password">
-                            <b-icon pack="fas" icon="lock" size="is-small"></b-icon>
-                            Change password
-                        </router-link>
+                    <b-dropdown-item @click="editUserData()" aria-role="menuitem">
+                          <b-icon pack="fas" icon="lock" size="is-small"></b-icon>
+                          Edit profile
                     </b-dropdown-item>
-                    <b-dropdown-item value="home" aria-role="menuitem">
+                    <!-- <b-dropdown-item value="home" aria-role="menuitem">
                         <b-icon pack="fas" icon="at" size="is-small"></b-icon>
                         Contact admin
-                    </b-dropdown-item>
+                    </b-dropdown-item> -->
                 </b-dropdown>
 
                 <a class="navbar-item">
@@ -56,6 +53,7 @@
 </template>
 
 <script>
+import EditUser from '@/components/EditUser.vue'
 export default {
   data () {
     return {
@@ -67,15 +65,28 @@ export default {
   methods: {
     logout () {
       this.$store.dispatch('logout')
-        .then(() => this.$router.push('/users/signin'))
+      // .then(() => this.$router.push('/users/signin'))
+    },
+    editUserData () {
+      this.$modal.open({
+        parent: this,
+        component: EditUser,
+        width: 720
+      })
     }
   },
   computed: {
     isAuthenticated () {
-      return this.$store.getters.isAuthenticated // if you want to simulate the logged state replace with: true
+      return this.$store.getters.isAuthenticated
     },
     getEmail () {
       return this.$store.getters.getUserData.email
+    },
+    getFirstName () {
+      return this.$store.getters.getUserData.name
+    },
+    getLastName () {
+      return this.$store.getters.getUserData.surname
     }
   }
 }

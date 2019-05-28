@@ -3,7 +3,7 @@ import Vue from 'vue'
 const EventBus = new Vue()
 
 export function isValidJwt (jwt) {
-  if (!jwt || jwt.split('.').length < 3) { // Boolean('') is false
+  if (!jwt || jwt.split('.').length < 3) {
     return false
   }
   const data = JSON.parse(atob(jwt.split('.')[1]))
