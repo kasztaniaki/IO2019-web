@@ -18,7 +18,9 @@
         <b-field :type="{'is-danger': errors.has('password')}" :message="errors.first('password')">
           <b-input placeholder="Password" type="password" v-model="password" name="password"
             v-validate="'required|min:8'" />
+
         </b-field>
+                        <password v-model="password" :strength-meter-only="true"/>
 
         <b-field :type="{'is-danger': errors.has('confirm-password')}" :message="[{'The confirm password field is required' : errors.firstByRule('confirm-password', 'required'),
                 'The confirm password is not valid' : errors.firstByRule('confirm-password', 'is')}]">
@@ -38,8 +40,10 @@
 
 <script>
 import EventBus from './EventBus'
+import Password from 'vue-password-strength-meter'
 
 export default {
+  components: { Password },
   data () {
     return {
       firstname: null,

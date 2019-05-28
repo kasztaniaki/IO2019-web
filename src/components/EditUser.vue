@@ -127,6 +127,6 @@ export default {
 
 <style>
 .modal-card {
-margin: 0 
+margin: 0
 }
 </style>
