@@ -126,30 +126,7 @@ export default {
       this.isLoading = true
       loadReservationsReq(startDate, endDate, showCancelled)
         .then(response => {
-          let weekdays = [ [], [], [], [], [], [], [] ]
-          var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-          for (const res of response.data.reservation) {
-            res.StartDate = new Date(res.StartDate)
-            res.EndDate = new Date(res.EndDate)
-            var weekday = new Date(res.StartDate).getUTCDay()
-            weekdays[(weekday + 7 - 1) % 7].push(res)
-          }
-          let slots = []
-          let inserted = true
-          let j = 0
-          while (inserted) {
-            inserted = false
-            let slot = {}
-            for (let i = 0; i < 7; i++) {
-              if (weekdays[i].length > j) {
-                slot[names[i]] = weekdays[i][j]
-                inserted = true
-              }
-            }
-            if (inserted) slots.push(slot)
-            j += 1
-          }
-          this.reservations = slots
+          this.reservations = this.processResponse(response)
           this.isLoading = false
         })
         .catch(error => {
@@ -157,6 +134,38 @@ export default {
             console.log(error)
           }
         })
+    },
+    processResponse (response) {
+      var reservations = this.sortReservations(response.data.reservation)
+      let weekdays = [ [], [], [], [], [], [], [] ]
+      var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+      for (const res of reservations) {
+        res.StartDate = new Date(res.StartDate)
+        res.EndDate = new Date(res.EndDate)
+        var weekday = new Date(res.StartDate).getUTCDay()
+        weekdays[(weekday + 7 - 1) % 7].push(res)
+      }
+      let slots = []
+      let inserted = true
+      let j = 0
+      while (inserted) {
+        inserted = false
+        let slot = {}
+        for (let i = 0; i < 7; i++) {
+          if (weekdays[i].length > j) {
+            slot[names[i]] = weekdays[i][j]
+            inserted = true
+          }
+        }
+        if (inserted) slots.push(slot)
+        j += 1
+      }
+      return slots
+    },
+    sortReservations (reservations) {
+      return reservations.sort(function (a, b) {
+        return new Date(a.StartDate) - new Date(b.StartDate)
+      })
     },
     filterReservations (res, weekday) {
       return this.isWeekday(res, weekday) && this.filterPools(res) && this.filterUsers(res)
