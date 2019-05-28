@@ -65,3 +65,20 @@ export function editUser (userData) {
     headers: { 'Content-Type': 'application/json' }
   })
 }
+
+export function loadUsersReq () {
+  return axios.get(`${API_URL}/users`)
+}
+
+export function loadReservationsReq (startDate, endDate, showCancelled) {
+  return axios.get(`${API_URL}/reservations`, {
+    params: { startDate: startDate, endDate: endDate, showCancelled: showCancelled }
+  })
+}
+
+export function cancelReservationReq (reservationID, type) {
+  return axios.post(`${API_URL}/reservations/cancel`, {
+    ReservationID: reservationID,
+    Type: type
+  })
+}
