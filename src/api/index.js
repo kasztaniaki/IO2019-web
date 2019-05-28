@@ -72,8 +72,9 @@ export function loadReservationsReq (startDate, endDate, showCancelled) {
   })
 }
 
-export function removeReservationReq (reservationID) {
-  return axios.post(`${API_URL}/reservations/remove`, {
-    params: { reservationID: reservationID }
+export function cancelReservationReq (reservationID, type) {
+  return axios.post(`${API_URL}/reservations/cancel`, {
+    ReservationID: reservationID,
+    Type: type
   })
 }

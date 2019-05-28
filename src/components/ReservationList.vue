@@ -49,7 +49,8 @@
     <b-table class="container" :data=reservations :loading="isLoading">
       <template slot-scope="props">
         <b-table-column
-          label="Mon">
+          label="Mon"
+          width="165">
             <ReservationCard
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -57,15 +58,17 @@
               v-if="filterReservations(props.row.mon,1)"/>
           </b-table-column>
         <b-table-column
-          label="Tue">
+          label="Tue"
+          width="165">
             <ReservationCard
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.tue"
-              v-if="filterReservations(props.row.thu,2)"/>
+              v-if="filterReservations(props.row.tue,2)"/>
           </b-table-column>
         <b-table-column
-          label="Wed">
+          label="Wed"
+          width="165">
             <ReservationCard
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -73,7 +76,8 @@
               v-if="filterReservations(props.row.wed,3)"/>
           </b-table-column>
         <b-table-column
-          label="Thu">
+          label="Thu"
+          width="165">
             <ReservationCard
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
@@ -81,7 +85,8 @@
               v-if="filterReservations(props.row.thu,4)"/>
           </b-table-column>
         <b-table-column
-          label="Fri">
+          label="Fri"
+          width="165">
             <ReservationCard
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
@@ -89,7 +94,8 @@
               v-if="filterReservations(props.row.fri,5)"/>
           </b-table-column>
         <b-table-column
-          label="Sat">
+          label="Sat"
+          width="165">
             <ReservationCard
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -97,11 +103,13 @@
               v-if="filterReservations(props.row.sat,6)"/>
           </b-table-column>
         <b-table-column
-          label="Sun">
+          label="Sun"
+          width="165">
             <ReservationCard
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
-              :reservationData="props.row.sun" v-if="filterReservations(props.row.sun,7)"/>
+              :reservationData="props.row.sun"
+              v-if="filterReservations(props.row.sun,0)"/>
           </b-table-column>
       </template>
     </b-table>
@@ -115,15 +123,16 @@ import ReservationCard from '@/components/ReservationCard.vue'
 export default {
   methods: {
     loadReservations (startDate, endDate, showCancelled) {
+      this.isLoading = true
       loadReservationsReq(startDate, endDate, showCancelled)
         .then(response => {
           let weekdays = [ [], [], [], [], [], [], [] ]
           var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-          for (const res of response.data.reservations) {
+          for (const res of response.data.reservation) {
             res.StartDate = new Date(res.StartDate)
             res.EndDate = new Date(res.EndDate)
             var weekday = new Date(res.StartDate).getUTCDay()
-            weekdays[weekday - 1].push(res)
+            weekdays[(weekday + 7 - 1) % 7].push(res)
           }
           let slots = []
           let inserted = true
@@ -141,33 +150,11 @@ export default {
             j += 1
           }
           this.reservations = slots
+          this.isLoading = false
         })
         .catch(error => {
           if (error) {
-            let weekdays = [ [], [], [], [], [], [], [] ]
-            var names = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-            for (const res of this.reservations) {
-              res.StartDate = new Date(res.StartDate)
-              res.EndDate = new Date(res.EndDate)
-              var weekday = new Date(res.StartDate).getUTCDay()
-              weekdays[weekday - 1].push(res)
-            }
-            let slots = []
-            let inserted = true
-            let j = 0
-            while (inserted) {
-              inserted = false
-              let slot = {}
-              for (let i = 0; i < 7; i++) {
-                if (weekdays[i].length > j) {
-                  slot[names[i]] = weekdays[i][j]
-                  inserted = true
-                }
-              }
-              if (inserted) slots.push(slot)
-              j += 1
-            }
-            this.reservations = slots
+            console.log(error)
           }
         })
     },
@@ -177,8 +164,6 @@ export default {
     isWeekday (res, weekday) {
       if (res) {
         var isThisWeek = new Date(res.StartDate) > new Date(this.weekstart) && new Date(res.StartDate) < new Date(this.weekend)
-        console.log(isThisWeek)
-
         return new Date(res.StartDate).getUTCDay() === weekday && isThisWeek
       }
     },
@@ -189,14 +174,14 @@ export default {
     },
     filterUsers (res) {
       if (this.selectedUser && this.selectedUser !== 'None') {
-        return this.selectedUser === res.UserID
+        return this.selectedUser === res.UserEmail
       } else return true
     },
     weekChange (diff) {
       diff = diff * 7
       this.weekstart = new Date(this.weekstart.setDate(this.weekstart.getDate() + diff))
       this.weekend = new Date(this.weekend.setDate(this.weekend.getDate() + diff))
-      this.loadReservations(this.weekstart, this.weekend)
+      this.loadReservations(this.weekstart, this.weekend, false)
     },
     loadPools () { // todo error handling
       loadPoolsReq()
@@ -235,9 +220,6 @@ export default {
     return {
       slots: [],
       isLoading: false,
-      text: '',
-      query: '',
-      highlighting: true,
       weekstart: null,
       weekend: null,
       dateOptions: { year: 'numeric', month: 'numeric', day: 'numeric' },
@@ -245,60 +227,7 @@ export default {
       users: [],
       selectedPool: null,
       selectedUser: null,
-      reservations: [
-        {
-          Name: 'Łukasz',
-          Surname: 'Zając',
-          UserID: 'kiicek.z@gmail.com',
-
-          PoolName: 'Green Lights 4 Girls',
-          PoolID: 's7n-girls',
-
-          StartDate: '2019-05-20T17:15:41.227Z',
-          EndDate: '2019-05-20T17:15:41.227Z',
-          Count: 13,
-          Cancelled: false
-        },
-        {
-          Name: 'Michał',
-          Surname: 'Idzik',
-          UserID: '2',
-
-          PoolName: 'Gramatyki grafowe',
-          PoolID: 's7n-gram',
-
-          StartDate: '2019-05-20T17:15:41.227Z',
-          EndDate: '2019-05-20T17:15:41.227Z',
-          Count: 13,
-          Cancelled: false
-        },
-        {
-          Name: 'Jolanta',
-          Surname: 'Konieczna',
-          UserID: '3',
-
-          PoolName: 'Technologie Aplikacji Internetowych',
-          PoolID: 's7n-tai-auto',
-
-          StartDate: '2019-05-20T17:15:41.227Z',
-          EndDate: '2019-05-20T17:15:41.227Z',
-          Count: 13,
-          Cancelled: false
-        },
-        {
-          Name: 'Łukasz',
-          Surname: 'Zając',
-          UserID: '4',
-
-          PoolName: 'Technologie Aplikacji Internetowych',
-          PoolID: 's7n-tai-auto',
-
-          StartDate: '2019-05-20T17:15:41.227Z',
-          EndDate: '2019-05-20T17:15:41.227Z',
-          Count: 13,
-          Cancelled: false
-        }
-      ]
+      reservations: []
     }
   },
   components: {
