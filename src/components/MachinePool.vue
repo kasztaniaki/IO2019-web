@@ -1,35 +1,78 @@
 <template>
   <div>
     <div class="level">
-      <ImportButton v-on:import="loadMachinesData()" class="level-left" :disabled="isLoading"/>
-      <b-button v-if="editable" class="level-right" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
-      <b-button @click="resetDB()">
+      <div class="level-left">
+        <ImportButton v-on:import="loadMachinesData()" class="level-item" :disabled="isLoading"/>
+        <b-button v-if="editable" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
+      </div>
+      <div class="level-right">
+        <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
+        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
+        <b-button @click="resetDB()">
         db reset
-      </b-button>
+        </b-button>
+      </div>
     </div>
-    <b-table class="container" :data="machines" :columns="columns" :loading="isLoading">
+    <b-table class="container" :data=machines :loading="isLoading">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
-        <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
-        <b-table-column field="operatingSystem" label="OS">{{props.row.OSName}}</b-table-column>
-        <b-table-column field="maximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
-        <b-table-column field="enabled" label="Enabled">
-          <b-icon
-            id="enabled-icon"
-            v-if="props.row.Enabled"
-            pack="fas"
-            icon="check-circle"
-            size="is-small"
-          ></b-icon>
-          <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle" size="is-small"></b-icon>
+        <b-table-column sortable v-if="match(props.row)"
+          field="ID"
+          label="ID"
+          width="120">
+            <div v-highlight="highlightOptions">
+              {{props.row.ID}}
+            </div>
+          </b-table-column>
+        <b-table-column sortable v-if="match(props.row)"
+          field="Name"
+          label="Name"
+          width="500">
+          <div v-highlight="highlightOptions">
+            {{props.row.Name}}
+            </div>
         </b-table-column>
-        <b-table-column field="description" label="Description">
-          <MachineDescription :description="props.row.InstalledSoftware"/>
+        <b-table-column sortable v-if="match(props.row)"
+          field="OSName"
+          label="OS"
+          width="100">
+          <div v-highlight="highlightOptions">
+            {{props.row.OSName}}
+            </div>
         </b-table-column>
-        <b-table-column field="edit" :visible="editable">
+        <b-table-column sortable v-if="match(props.row)"
+          field="MaximumCount"
+          label="Maximum Count"
+          width="100">
+            {{props.row.MaximumCount}}
+        </b-table-column>
+        <b-table-column v-if="match(props.row)"
+          field="Enabled"
+          label="Enabled"
+          width="100">
+            <b-icon
+              id="enabled-icon"
+              v-if="props.row.Enabled"
+              pack="fas"
+              icon="check-circle"
+              size="is-small">
+            </b-icon>
+            <b-icon v-else
+              id="disabled-icon"
+              pack="fas"
+              icon="times-circle"
+              size="is-small">
+            </b-icon>
+        </b-table-column>
+        <b-table-column v-if="match(props.row)"
+          field="Description"
+          label="Description"
+          width="500">
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
+        </b-table-column>
+        <b-table-column v-if="match(props.row)" field="edit" :visible="editable">
           <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
         </b-table-column>
-        <b-table-column field="remove" :visible="editable">
+        <b-table-column v-if="match(props.row)" field="remove" :visible="editable">
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
@@ -50,15 +93,32 @@ export default {
       this.isLoading = true
       loadPoolsReq()
         .then(response => {
-          console.log('omg to dziala')
-          console.log(response.data.pools)
-          console.log(response)
           this.isLoading = false
           this.machines = response.data.pools
         })
         .catch(error => {
           console.log(error)
         })
+    },
+    match (row) {
+      if (this.query.length < 3) return true
+      var re = RegExp(this.query, 'i')
+      for (const key in row) {
+        if (row.hasOwnProperty(key)) {
+          const field = row[key]
+          if (field.toString().match(re)) return true
+        }
+      }
+      return false
+    },
+    filterPools () {
+      this.query = this.text
+    },
+    clearFilter () {
+      console.log('halko')
+
+      this.query = ''
+      this.text = ''
     },
     showPoolForm (poolId = '', poolProps = {}) {
       this.$modal.open({
@@ -149,6 +209,7 @@ export default {
           position: 'is-bottom',
           type: 'is-success'
         })
+        loadMachinesData()
       })
         .catch(error => {
           if (error) {
@@ -164,35 +225,31 @@ export default {
   data () {
     return {
       machines: [],
-      columns: [
-        {
-          field: 'poolID',
-          label: 'ID',
-          width: '40'
-        },
-        {
-          field: 'displayName',
-          label: 'Name'
-        },
-        {
-          field: 'maximumCount',
-          label: 'Maximum count'
-        },
-        {
-          field: 'enabled',
-          label: 'Enabled',
-          centered: true
-        },
-        {
-          field: 'description',
-          label: 'Description'
-        }
-      ],
-      isLoading: false
+      isLoading: false,
+      text: '',
+      query: '',
+      highlighting: true
+    }
+  },
+  computed: {
+    highlightOptions () {
+      return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
     }
   },
   mounted () {
     this.loadMachinesData()
+  },
+  filters: {
+    highlight: function (value, query) {
+      var re = RegExp(query, 'i')
+      var result = value.toString().replace(re, function (matchedText, a, b) {
+        if (matchedText !== '') {
+          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
+          return res
+        } else return ''
+      })
+      return result
+    }
   },
   components: {
     MachineDescription,
@@ -205,5 +262,22 @@ export default {
       type: Boolean
     }
   }
+
 }
 </script>
+
+<style lang="scss">
+#enabled-icon {
+  color: green;
+}
+#disabled-icon {
+  color: red;
+}
+.highlight{
+  padding: 3px 0px;
+  border-color:hsl(141, 71%, 48%);
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  margin: 0px -2px 0px -2px;
+}
+</style>
