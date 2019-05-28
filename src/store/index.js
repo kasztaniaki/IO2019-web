@@ -76,7 +76,6 @@ const mutations = {
     state.userData.email = payload.email
   },
   setJwtToken (state, payload) {
-    localStorage.setItem('token', payload)
     state.jwt.token = payload
   },
   setIsAdmin (state, payload) {
@@ -89,7 +88,6 @@ const mutations = {
     state.userData.surname = payload
   },
   clearJwtToken (state) {
-    localStorage.removeItem('token')
     state.jwt.token = ''
   },
   clearUserData (state) {
