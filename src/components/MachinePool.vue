@@ -1,32 +1,75 @@
 <template>
   <div>
     <div class="level">
-      <ImportButton v-on:import="loadMachinesData()" class="level-left" :disabled="isLoading"/>
-      <b-button v-if="editable" class="level-right" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
-      <b-button @click="resetDB()">
+      <div class="level-left">
+        <ImportButton v-on:import="loadMachinesData()" class="level-item" :disabled="isLoading"/>
+        <b-button v-if="editable" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
+      </div>
+      <div class="level-right">
+        <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
+        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
+        <b-button @click="resetDB()">
         db reset
-      </b-button>
+        </b-button>
+      </div>
     </div>
     <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">{{props.row.ID}}</b-table-column>
-        <b-table-column field="displayName" label="Name">{{props.row.Name}}</b-table-column>
-        <b-table-column field="operatingSystem" label="OS">{{props.row.OSName}}</b-table-column>
-        <b-table-column field="maximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
-        <b-table-column field="enabled" label="Enabled">
-          <b-icon
-            id="enabled-icon"
-            v-if="props.row.Enabled"
-            pack="fas"
-            icon="check-circle"
-            size="is-small"
-          ></b-icon>
-          <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle" size="is-small"></b-icon>
+        <b-table-column sortable v-if="match(props.row)"
+          field="ID"
+          label="ID"
+          width="120">
+            <div v-highlight="highlightOptions">
+              {{props.row.ID}}
+            </div>
+          </b-table-column>
+        <b-table-column sortable v-if="match(props.row)"
+          field="Name"
+          label="Name"
+          width="500">
+          <div v-highlight="highlightOptions">
+            {{props.row.Name}}
+            </div>
         </b-table-column>
-        <b-table-column field="description" label="Description">
-          <MachineDescription :description="props.row.InstalledSoftware" :expanded="props.row==selectedRow"/>
+        <b-table-column sortable v-if="match(props.row)"
+          field="OSName"
+          label="OS"
+          width="100">
+          <div v-highlight="highlightOptions">
+            {{props.row.OSName}}
+            </div>
         </b-table-column>
-        <b-table-column width="55" field="edit" :visible="editable">
+        <b-table-column sortable v-if="match(props.row)"
+          field="MaximumCount"
+          label="Maximum Count"
+          width="100">
+            {{props.row.MaximumCount}}
+        </b-table-column>
+        <b-table-column v-if="match(props.row)"
+          field="Enabled"
+          label="Enabled"
+          width="100">
+            <b-icon
+              id="enabled-icon"
+              v-if="props.row.Enabled"
+              pack="fas"
+              icon="check-circle"
+              size="is-small">
+            </b-icon>
+            <b-icon v-else
+              id="disabled-icon"
+              pack="fas"
+              icon="times-circle"
+              size="is-small">
+            </b-icon>
+        </b-table-column>
+        <b-table-column v-if="match(props.row)"
+          field="Description"
+          label="Description"
+          width="500">
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
+        </b-table-column>
+        <b-table-column width="55" field="edit" v-if="match(props.row)" :visible="editable">
           <div class="my-button">
             <b-button v-show="props.row==selectedRow" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
           </div>
@@ -58,6 +101,26 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    match (row) {
+      if (this.query.length < 3) return true
+      var re = RegExp(this.query, 'i')
+      for (const key in row) {
+        if (row.hasOwnProperty(key)) {
+          const field = row[key]
+          if (field.toString().match(re)) return true
+        }
+      }
+      return false
+    },
+    filterPools () {
+      this.query = this.text
+    },
+    clearFilter () {
+      console.log('halko')
+
+      this.query = ''
+      this.text = ''
     },
     showPoolForm (poolId = '', poolProps = {}) {
       this.$modal.open({
@@ -152,6 +215,7 @@ export default {
           position: 'is-bottom',
           type: 'is-success'
         })
+        this.loadMachinesData()
       })
         .catch(error => {
           if (error) {
@@ -168,11 +232,31 @@ export default {
     return {
       machines: [],
       isLoading: false,
+      text: '',
+      query: '',
+      highlighting: true,
       selectedRow: null
+    }
+  },
+  computed: {
+    highlightOptions () {
+      return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
     }
   },
   mounted () {
     this.loadMachinesData()
+  },
+  filters: {
+    highlight: function (value, query) {
+      var re = RegExp(query, 'i')
+      var result = value.toString().replace(re, function (matchedText, a, b) {
+        if (matchedText !== '') {
+          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
+          return res
+        } else return ''
+      })
+      return result
+    }
   },
   components: {
     MachineDescription,
@@ -185,11 +269,26 @@ export default {
       type: Boolean
     }
   }
+
 }
 </script>
 
 <style lang="scss">
 @import "@/variables.scss";
+
+#enabled-icon {
+  color: green;
+}
+#disabled-icon {
+  color: red;
+}
+.highlight{
+  padding: 3px 0px;
+  border-color:hsl(141, 71%, 48%);
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  margin: 0px -2px 0px -2px;
+}
 
 .selected-row{
   background-color: $selected !important;

@@ -2,8 +2,12 @@ import axios from 'axios'
 
 const API_URL = process.env.VUE_APP_API_URL
 
-// WROCTU w register userData to: imie, nazwisko, email i haslo
-// a w authenticate powinno byc tylko email i haslo
+export default {
+  http: axios,
+  setHeader (header, value) {
+    this.http.defaults.headers.common[header] = value
+  }
+}
 
 export function authenticate (userData) {
   return axios.post(`${API_URL}/users/signin`, userData)
@@ -59,15 +63,26 @@ export function loadUsersReq () {
   return axios.get(`${API_URL}/users`)
 }
 
-export function removeUserReq (idToRemove) {
-  console.log(idToRemove)
-
+export function removeUserReq (emailToRemove) {
   return axios.post(`${API_URL}/users/remove_user`, null, {
     params: {
-      id: idToRemove
+      email: emailToRemove
     },
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
+  })
+}
+
+export function editUser (userData) {
+  return axios.post(`${API_URL}/users/edit_user`, userData, {
+    params: { email: userData.email },
+    headers: { 'Content-Type': 'application/json' }
+  })
+}
+
+export function getUserReq (email) {
+  return axios.get(`${API_URL}/user`, {
+    params: { email: email }
   })
 }

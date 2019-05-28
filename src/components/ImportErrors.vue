@@ -37,8 +37,8 @@ export default {
   },
   methods: {
     forceImport () {
-      this.$parent.$parent.sendRequest(true)
-      this.$parent.close()
+      this.$emit('force')
+      this.$emit('close')
     }
   },
   data () {

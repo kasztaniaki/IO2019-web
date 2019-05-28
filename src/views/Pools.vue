@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <MachinePool/>
+    <MachinePool editable/>
   </div>
 </template>
 

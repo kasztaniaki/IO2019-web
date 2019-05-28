@@ -1,12 +1,10 @@
 <template>
-  <b-field class="file">
     <b-upload v-model="file" accept=".csv">
       <a class="button is-primary">
         <b-icon icon="upload"></b-icon>
         <span>Click to upload</span>
       </a>
     </b-upload>
-  </b-field>
 </template>
 
 <script>
@@ -45,6 +43,11 @@ export default {
               component: ImportErrors,
               props: {
                 import_errors: error.response.data.errors[0]
+              },
+              events: {
+                'force': () => {
+                  this.sendRequest(true)
+                }
               }
             })
             this.$parent.isLoading = false
