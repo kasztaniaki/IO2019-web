@@ -1,6 +1,17 @@
 <template>
     <nav class="navbar level container" role="navigation" aria-label="main navigation">
-      <div class="navbar-menu">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="https://bulma.io">
+          <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+        </a>
+
+        <a role="button" :class="navbarActive" @click="toggle=!toggle" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-list">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div id="navbar-list" :class="navbarActive" class="navbar-menu">
         <div class="navbar-start">
           <a class="navbar-item">
             <router-link to="/">Home</router-link>
@@ -59,7 +70,8 @@ export default {
     return {
       menuIcon: 'caret-down',
       changePasswordIcon: 'lock',
-      contactAdminIcon: 'at'
+      contactAdminIcon: 'at',
+      toggle: false
     }
   },
   methods: {
@@ -87,7 +99,13 @@ export default {
     },
     getLastName () {
       return this.$store.getters.getUserData.surname
+    },
+    navbarActive () {
+      return this.toggle ? 'is-active' : ''
     }
   }
 }
 </script>
+
+<style lang="scss">
+</style>
