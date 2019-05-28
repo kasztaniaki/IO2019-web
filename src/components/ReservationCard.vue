@@ -36,7 +36,7 @@
         class="card-footer-item my-card-footer-item my-button"
         icon-left="pen"
         type="is-info"
-        @click="editReservation(reservationData)">
+        @click="editReservationForm(reservationData)">
 
       </b-button>
       <b-button
@@ -51,8 +51,10 @@
 </template>
 
 <script>
-import { cancelReservationReq } from '@/api'
+import { cancelReservationReq, editReservationReq } from '@/api'
 import CancelReservationForm from '@/components/CancelReservationForm.vue'
+import ReservationForm from '@/components/ReservationForm.vue'
+
 export default {
   methods: {
     isReservationOwner (id) {
@@ -65,8 +67,43 @@ export default {
       }
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
     },
-    editReservation (resData) {
-      console.log('edit fired')
+    editReservationForm (resData) {
+      const reservationProps = {
+        PoolID: resData.PoolID,
+        PoolName: resData.PoolName,
+        StartDate: resData.StartDate,
+        Count: resData.Count,
+        ReservationID: resData.ReservationID
+      }
+
+      this.$modal.open({
+        parent: this,
+        props: reservationProps,
+        component: ReservationForm,
+        hasModalCard: true,
+        events: {
+          'saveReservation': (reservationProps) => {
+            this.editReservation(reservationProps)
+          }
+        }
+      })
+    },
+    editReservation (reservationProps) {
+      editReservationReq(reservationProps).then(response => {
+        this.$toast.open({
+          message: `Reservation added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
     },
     cancelReservationDialog (resData) {
       this.$modal.open({
