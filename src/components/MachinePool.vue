@@ -76,7 +76,7 @@
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
-        <b-button @click.native="showReservationForm(props.row.ID, props.row.MaximumCount)">Reserve</b-button>
+        <b-button @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">Reserve</b-button>
       </template>
     </b-table>
   </div>
@@ -87,7 +87,7 @@ import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
 import ReservationForm from '@/components/ReservationForm.vue'
-import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq, addReservationReq } from '@/api'
 
 export default {
   methods: {
@@ -223,23 +223,42 @@ export default {
           }
         })
     },
-    showReservationForm (poolID, poolMaxCount) {
-      const reservationProps = {
-        poolID,
-        poolMaxCount
+    addReservationForm (poolID, poolName, poolMaxCount) {
+      const poolProps = {
+        PoolName: poolName,
+        PoolID: poolID,
+        MaxCount: poolMaxCount
       }
 
       this.$modal.open({
         parent: this,
-        props: reservationProps,
+        props: poolProps,
         component: ReservationForm,
         hasModalCard: true,
         events: {
           'saveReservation': (reservationProps) => {
-            console.log(reservationProps)
+            this.addReservation(reservationProps)
           }
         }
       })
+    },
+    addReservation (reservationProps) {
+      addReservationReq(reservationProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Reservation added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: error,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
     }
   },
   data () {
