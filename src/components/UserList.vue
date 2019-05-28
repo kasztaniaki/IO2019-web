@@ -42,6 +42,7 @@
 <script>
 
 import { loadUsersReq, removeUserReq } from '@/api'
+import EditUser from '@/components/EditUser.vue'
 
 export default {
   methods: {
@@ -72,14 +73,19 @@ export default {
           })
       })
     },
-    editUser () {
-      // this.$modal.open({
-      //         parent: this,
-      //         component: EditUser, //TODO: component
-      //         props: {
-      //          //TODO: props for the component
-      //         }
-      //       })
+    editUser (user) {
+      this.$modal.open({
+        parent: this,
+        component: EditUser,
+        props: {
+          userEmail: user.Email
+        },
+        events: {
+          'edit': (event) => {
+            this.loadUsers()
+          }
+        }
+      })
     },
     rowClass (row, index) {
       if (this.selectedRow === row) return 'selected-row'

@@ -69,7 +69,7 @@
           width="500">
             <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
-        <b-table-column width="55" field="edit" :visible="editable">
+        <b-table-column width="55" field="edit" v-if="match(props.row)" :visible="editable">
           <div class="my-button">
             <b-button v-show="props.row==selectedRow" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
           </div>

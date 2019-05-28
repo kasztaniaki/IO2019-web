@@ -74,6 +74,9 @@ export default {
       this.$modal.open({
         parent: this,
         component: EditUser,
+        props: {
+          userEmail: this.getEmail
+        },
         width: 720
       })
     }

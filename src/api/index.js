@@ -80,3 +80,9 @@ export function editUser (userData) {
     headers: { 'Content-Type': 'application/json' }
   })
 }
+
+export function getUserReq (email) {
+  return axios.get(`${API_URL}/user`, {
+    params: { email: email }
+  })
+}

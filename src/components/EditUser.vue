@@ -41,11 +41,14 @@
 
 <script>
 import EventBus from './EventBus'
+import { getUserReq } from '@/api'
 
 export default {
+  props: {
+    userEmail: String
+  },
   data () {
     return {
-      old_password: null,
       new_password: null,
       new_name: null,
       new_surname: null,
@@ -63,6 +66,7 @@ export default {
         },
         onConfirm: (value) => {
           this.$store.dispatch('editUser', {
+            email: this.userEmail,
             current_password: value,
             new_password: this.new_password,
             new_name: this.new_name,
@@ -76,6 +80,7 @@ export default {
                 position: 'is-top',
                 type: 'is-success'
               })
+              this.$emit('edit')
             })
             .catch(error => {
               if (error) {
@@ -113,11 +118,13 @@ export default {
     EventBus.$on('failedRegistering', (msg) => {
       this.errorMsg = msg
     })
-    var userData = this.$store.getters.getUserData
-    this.new_name = userData.name
-    this.new_surname = userData.surname
-    this.new_email = userData.email
-    this.is_admin = userData.is_admin
+    getUserReq(this.userEmail)
+      .then(response => {
+        this.new_name = response.data.user.Name
+        this.new_surname = response.data.user.Surname
+        this.new_email = response.data.user.Email
+        this.is_admin = response.data.user.IsAdmin
+      })
   },
   beforeDestroy () {
     EventBus.$off('failedRegistering')
