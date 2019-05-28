@@ -1,59 +1,37 @@
 <template>
-  <div class="modal-card" style="width:800px;height:800px">
+  <div class="modal-card" style="width:800px">
     <header class="modal-card-head">
       <p class="modal-card-title">Reservation for <b>{{ this.poolID }}</b></p>
     </header>
     <section class="modal-card-body">
-      <b-tabs expanded>
-        <b-tab-item label="Start">
-          <b-field>
-            <div class="box">
-              <div class="columns">
-                <div class="column">
-                  <b-datepicker
-                    inline
-                    v-model="startDate">
-                  </b-datepicker>
-                </div>
-
-                <div class="column is-narrow">
-                  <b-clockpicker
-                    inline
-                    rounded
-                    v-model="startTime"
-                    hour-format="24">
-                  </b-clockpicker>
-                </div>
-              </div>
+        <b-field>
+          <div class="columns">
+            <div class="column">
+              <b-datepicker
+                inline
+                v-model="selectedDate">
+              </b-datepicker>
             </div>
-          </b-field>
-        </b-tab-item>
 
-        <b-tab-item label="End">
-          <b-field>
-            <div class="box">
-              <div class="columns">
-              <div class="column is-narrow">
-                <b-datepicker
-                  inline
-                  v-model="endDate">
-                </b-datepicker>
-              </div>
+            <div class="column">
+                <label v-if="selectedSlot !== null" class="label">{{ this.slots[selectedSlot]['start'].getHours() }}</label>
 
-              <div class="column is-half">
-                <b-clockpicker
-                  inline
-                  rounded
-                  v-model="endTime"
-                  hour-format="24">
-                </b-clockpicker>
-              </div>
+              <b-dropdown aria-role="list" v-model="selectedSlot">
+                <button class="button is-primary" slot="trigger">
+                    <span>Time</span>
+                    <b-icon icon="menu-down"></b-icon>
+                </button>
+
+                <b-dropdown-item v-for="(slot, index) in slots" :key="index" :value="index" aria-role="listitem">
+                  <label class="label">
+                    {{ slot['start'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') + " - " + slot['end'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') }}
+                  </label>
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
-            </div>
-          </b-field>
-        </b-tab-item>
-      </b-tabs>
-      <div class="columns is-centered">
+          </div>
+        </b-field>
+      <div class="columns">
         <div class="column is-7">
           <b-field label="Machines Count">
             <b-numberinput
@@ -72,15 +50,18 @@
         class="button"
         type="is-success"
         icon-left="check"
-        :disabled="startDate === null || endDate === null"
+        :disabled="selectedDate === null || selectedSlot === null"
         @click="saveForm()">
           Save
       </b-button>
+      <b-button @click="timeSlots()">Test</b-button>
     </footer>
   </div>
 </template>
 
 <script>
+import { TIME_SLOTS } from '@/consts.js'
+
 export default {
   props: {
     poolID: {
@@ -92,26 +73,36 @@ export default {
   },
   data () {
     return {
-      startDate: new Date(),
-      startTime: new Date(),
-      endDate: new Date(),
-      endTime: new Date(),
-      machinesCount: 0
+      selectedDate: new Date(),
+      machinesCount: 0,
+      slots: TIME_SLOTS,
+      selectedSlot: null
     }
   },
   methods: {
     saveForm () {
+      const startTime = this.slots[this.selectedSlot]['start']
+      const endTime = this.slots[this.selectedSlot]['end']
+      const startDate = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDay(), startTime.getHours(), startTime.getMinutes())
+      const endDate = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDay(), endTime.getHours(), endTime.getMinutes())
+
       const reservationProps = {
         poolID: this.poolID,
         poolMaxCount: this.poolMaxCount,
-        startDate: this.startDate,
-        startTime: this.startTime,
-        endDate: this.endDate,
-        endTime: this.endTime
+        startDate: startDate,
+        endDate: endDate
       }
 
-      this.$emit('saveReservation', reservationProps)
-      this.$emit('close')
+      console.log(startDate)
+      console.log(endDate)
+
+      // this.$emit('saveReservation', reservationProps)
+      // this.$emit('close')
+    },
+    timeSlots () {
+      this.slots.forEach(slot => {
+        console.log(slot['start'].getHours() + ':' + slot['start'].getMinutes())
+      })
     }
   }
 }
