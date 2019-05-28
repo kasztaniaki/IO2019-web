@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <form @submit.prevent="validateBeforeSubmit">
+    <form>
       <p class="message"> Create an account </p>
       <div class="form_styling">
         <b-field :type="{'is-danger': errors.has('firstname')}" :message="errors.first('firstname')">
@@ -28,7 +28,7 @@
             v-validate="{ required: true, is: password }" />
         </b-field>
 
-        <button class="button is-primary" @click="register()"> Sign up </button>
+        <button class="button is-primary" @click.prevent="validateBeforeSubmit()"> Sign up </button>
       </div>
 
       <div class="information">
@@ -62,24 +62,37 @@ export default {
         email: this.email,
         password: this.password
       })
-        .then(() => this.$router.push('/'))
-    },
-    validateBeforeSubmit () {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
+        .then(() => {
           this.$toast.open({
             message: 'You are successfully registered and logged!',
             type: 'is-success',
             position: 'is-top'
           })
-          return
-        }
-        this.$toast.open({
-          message: 'Form is not valid! Please check the fields.',
-          type: 'is-danger',
-          position: 'is-top'
+          this.$router.push('/')
         })
-      })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: 'Cannot register. The e-mail is already used.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          }
+        })
+    },
+    validateBeforeSubmit () {
+      this.$validator.validateAll()
+        .then((result) => {
+          if (!result) {
+            this.$toast.open({
+              message: 'Form is not valid! Please check the fields.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          } else {
+            this.register()
+          }
+        })
     }
   },
   mounted () {

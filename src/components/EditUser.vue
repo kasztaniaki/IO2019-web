@@ -1,6 +1,6 @@
 <template>
   <div class="modal-card" style="width: auto">
-    <form @submit.prevent="validateBeforeSubmit">
+    <form>
       <header class="modal-card-head">
         <p class="modal-card-title">Update account data</p>
       </header>
@@ -33,7 +33,7 @@
       <footer class="modal-card-foot">
         <button class="button" type="button" @click="$parent.close()">Close</button>
 
-        <button class="button is-primary" @click="prompt()">Save</button>
+        <button class="button is-primary" @click.prevent="validateBeforeSubmit()">Save</button>
       </footer>
     </form>
   </div>
@@ -80,7 +80,7 @@ export default {
             .catch(error => {
               if (error) {
                 this.$toast.open({
-                  message: `Error. Provided password is invalid!`,
+                  message: `Provided password is invalid!`,
                   position: 'is-top',
                   type: 'is-danger'
                 })
@@ -90,15 +90,18 @@ export default {
       })
     },
     validateBeforeSubmit () {
-      this.$validator.validateAll().catch((error) => {
-        if (error) {
-          this.$toast.open({
-            message: 'Form is not valid! Please check the fields.',
-            type: 'is-danger',
-            position: 'is-top'
-          })
-        }
-      })
+      this.$validator.validateAll()
+        .then((result) => {
+          if (!result) {
+            this.$toast.open({
+              message: 'Form is not valid! Please check the fields.',
+              type: 'is-danger',
+              position: 'is-top'
+            })
+          } else {
+            this.prompt()
+          }
+        })
     }
   },
   computed: {
