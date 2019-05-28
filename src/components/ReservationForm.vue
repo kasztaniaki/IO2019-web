@@ -13,7 +13,7 @@
                   <b-field grouped group-multiline>
                     <b-radio-button type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index">
                       <span>
-                      {{ slot['start'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') + " - " + slot['end'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') }}
+                      {{ printTimeSlot(slot) }}
                       </span>
                     </b-radio-button>
                   </b-field>
@@ -104,6 +104,9 @@ export default {
 
       this.$emit('saveReservation', reservationProps)
       this.$emit('close')
+    },
+    printTimeSlot (slot) {
+      return slot['start'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') + ' - ' + slot['end'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':')
     }
   }
 }
