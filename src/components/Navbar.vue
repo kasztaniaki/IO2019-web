@@ -67,18 +67,19 @@ export default {
   methods: {
     logout () {
       this.$store.dispatch('logout')
-        .then(() => this.$router.push('/users/signin'))
+        // .then(() => this.$router.push('/users/signin'))
     },
     editUserData () {
       this.$modal.open({
         parent: this,
-        component: EditUser
+        component: EditUser,
+          width: 720
       })
     }
   },
   computed: {
     isAuthenticated () {
-      return this.$store.getters.isAuthenticated // if you want to simulate the logged state replace with: true
+      return this.$store.getters.isAuthenticated 
     },
     getEmail () {
       return this.$store.getters.getUserData.email

@@ -1,8 +1,8 @@
 <template>
-  <div class="modal-card">
+  <div class="modal-card" style="width: auto">
     <form @submit.prevent="validateBeforeSubmit">
       <header class="modal-card-head">
-        <p class="modal-card-title">Update your account data</p>
+        <p class="modal-card-title">Update account data</p>
       </header>
       <section class="modal-card-body">
         <b-field>
@@ -76,7 +76,6 @@ export default {
                 position: 'is-top',
                 type: 'is-success'
               })
-              this.$router.push('/pools')
             })
             .catch(error => {
               if (error) {
@@ -125,3 +124,9 @@ export default {
 }
 
 </script>
+
+<style>
+.modal-card {
+margin: 0 
+}
+</style>
