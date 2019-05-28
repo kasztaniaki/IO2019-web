@@ -9,7 +9,6 @@
             <div class="column">
               <b-datepicker
                 inline
-                v-on:dblclick.native="timeSlots()"
                 v-model="selectedDate">
 
                 <section>
@@ -25,8 +24,8 @@
             </div>
           </div>
         </b-field>
-      <div class="columns">
-        <div class="column is-7">
+      <div class="columns is-centered">
+        <div class="column">
           <b-field label="Machines Count">
             <b-numberinput
               value="machinesCount"
@@ -41,14 +40,20 @@
     </section>
     <footer class="modal-card-foot">
       <b-button
-        class="button"
+        class="button level-left"
         type="is-success"
         icon-left="check"
         :disabled="selectedDate === null || selectedSlot === null"
         @click="saveForm()">
           Save
       </b-button>
-      <b-button @click="timeSlots()">Test</b-button>
+      <b-button
+        class="button level-right"
+        type="is-danger"
+        icon-left="times"
+        @click="saveForm()">
+          Cancel
+      </b-button>
     </footer>
   </div>
 </template>
