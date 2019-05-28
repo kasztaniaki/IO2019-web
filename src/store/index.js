@@ -94,6 +94,9 @@ const mutations = {
   },
   clearUserData (state) {
     state.userData.email = ''
+    state.userData.name = ''
+    state.userData.surname = ''
+    state.userData.is_admin = ''
   }
 }
 
