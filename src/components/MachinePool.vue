@@ -2,13 +2,13 @@
   <div>
     <div class="level">
       <div class="level-left">
-        <ImportButton v-on:import="loadMachinesData()" class="level-item" :disabled="isLoading"/>
-        <b-button v-if="editable" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
+        <ImportButton v-if="isAdmin" v-on:import="loadMachinesData()" class="level-item" :disabled="isLoading"/>
+        <b-button v-if="isAdmin" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
       </div>
       <div class="level-right">
         <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
         <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
-        <b-button @click="resetDB()">
+        <b-button v-if="isAdmin" @click="resetDB()">
         db reset
         </b-button>
       </div>
