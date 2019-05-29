@@ -95,6 +95,7 @@ export default {
           position: 'is-top',
           type: 'is-success'
         })
+        this.$emit('edit')
       })
         // eslint-disable-next-line
         .catch(error => {

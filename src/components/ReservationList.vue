@@ -51,7 +51,7 @@
         <b-table-column
           label="Mon"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.mon"
@@ -60,7 +60,7 @@
         <b-table-column
           label="Tue"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.tue"
@@ -69,7 +69,7 @@
         <b-table-column
           label="Wed"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.wed"
@@ -78,7 +78,7 @@
         <b-table-column
           label="Thu"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
               :reservationData="props.row.thu"
@@ -87,7 +87,7 @@
         <b-table-column
           label="Fri"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
               :reservationData="props.row.fri"
@@ -96,7 +96,7 @@
         <b-table-column
           label="Sat"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.sat"
@@ -105,7 +105,7 @@
         <b-table-column
           label="Sun"
           width="165">
-            <ReservationCard
+            <ReservationCard @edit="loadReservations()"
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
               :reservationData="props.row.sun"
