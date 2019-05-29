@@ -76,6 +76,12 @@
           <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
           </b-button>
         </b-table-column>
+        <b-button
+          icon-left="calendar-alt"
+          icon-pack="far"
+          @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+          Reservation
+        </b-button>
       </template>
     </b-table>
   </div>
@@ -85,7 +91,8 @@
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
-import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
+import ReservationForm from '@/components/ReservationForm.vue'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq, addReservationReq } from '@/api'
 
 export default {
   methods: {
@@ -219,6 +226,43 @@ export default {
               type: 'is-success'
             })
           }
+        })
+    },
+    addReservationForm (poolID, poolName, poolMaxCount) {
+      const poolProps = {
+        PoolName: poolName,
+        PoolID: poolID,
+        MaxCount: poolMaxCount
+      }
+
+      this.$modal.open({
+        parent: this,
+        props: poolProps,
+        component: ReservationForm,
+        hasModalCard: true,
+        events: {
+          'saveReservation': (reservationProps) => {
+            this.addReservation(reservationProps)
+          }
+        }
+      })
+    },
+    addReservation (reservationProps) {
+      addReservationReq(reservationProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Reservation added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: error,
+            position: 'is-top',
+            type: 'is-danger'
+          })
         })
     }
   },

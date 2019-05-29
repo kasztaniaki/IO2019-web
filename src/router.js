@@ -28,6 +28,11 @@ export default new Router({
       path: '/users/signin',
       name: 'signin',
       component: () => import('./views/Signin.vue')
+    },
+    {
+      path: '/reservations',
+      name: 'reservations',
+      component: () => import('./views/Reservations.vue')
     }
   ]
 })
