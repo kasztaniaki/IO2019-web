@@ -13,8 +13,7 @@ import { importFile } from '@/api'
 export default {
   data () {
     return {
-      file: null,
-      errors: []
+      file: null
     }
   },
   methods: {
@@ -43,7 +42,7 @@ export default {
               parent: this,
               component: ImportErrors,
               props: {
-                errors: error.response.data.errors[0]
+                import_errors: error.response.data.errors[0]
               },
               events: {
                 'force': () => {
@@ -51,6 +50,7 @@ export default {
                 }
               }
             })
+            this.$parent.isLoading = false
             // this.file = null
           }
         })

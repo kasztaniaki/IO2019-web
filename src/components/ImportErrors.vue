@@ -4,7 +4,7 @@
             <p class="modal-card-title">Errors</p>
         </header>
         <section class="modal-card-body">
-            <b-table :data="errors"
+            <b-table :data="import_errors"
                     :row-class="(row,index) => row.error" :selected.sync="selected" focusable>
                 <template slot-scope="props">
                     <b-table-column field="line" label="#">{{props.row.line}}</b-table-column>
@@ -23,7 +23,7 @@
 <script>
 export default {
   props: {
-    errors: Array
+    import_errors: Array
   },
   filters: {
     overflow: function (value, selected) {
@@ -43,7 +43,7 @@ export default {
   },
   data () {
     return {
-      selected: this.errors[0]
+      selected: this.import_errors[0]
     }
   }
 }

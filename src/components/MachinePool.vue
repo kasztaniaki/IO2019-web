@@ -13,12 +13,12 @@
         </b-button>
       </div>
     </div>
-    <b-table class="container" :data=machines :loading="isLoading">
+    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props">
         <b-table-column sortable v-if="match(props.row)"
           field="ID"
           label="ID"
-          width="120">
+          style="width: 10%">
             <div v-highlight="highlightOptions">
               {{props.row.ID}}
             </div>
@@ -26,7 +26,7 @@
         <b-table-column sortable v-if="match(props.row)"
           field="Name"
           label="Name"
-          width="500">
+          style="width: 25%">
           <div v-highlight="highlightOptions">
             {{props.row.Name}}
             </div>
@@ -34,7 +34,7 @@
         <b-table-column sortable v-if="match(props.row)"
           field="OSName"
           label="OS"
-          width="100">
+          style="width: 5%">
           <div v-highlight="highlightOptions">
             {{props.row.OSName}}
             </div>
@@ -42,13 +42,13 @@
         <b-table-column sortable v-if="match(props.row)"
           field="MaximumCount"
           label="Maximum Count"
-          width="100">
+          style="width: 5%">
             {{props.row.MaximumCount}}
         </b-table-column>
         <b-table-column v-if="match(props.row)"
           field="Enabled"
           label="Enabled"
-          width="100">
+          style="width:5%">
             <b-icon
               id="enabled-icon"
               v-if="props.row.Enabled"
@@ -66,15 +66,38 @@
         <b-table-column v-if="match(props.row)"
           field="Description"
           label="Description"
-          width="500">
-            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions"/>
+          style="45%">
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
-        <b-table-column v-if="match(props.row)" field="edit" :visible="editable">
-          <b-button icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
-        </b-table-column>
-        <b-table-column v-if="match(props.row)" field="remove" :visible="editable">
-          <b-button icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)">
-          </b-button>
+        <b-table-column
+          style="5%"
+          field="edit"
+          v-if="match(props.row)"
+          :visible="editable">
+          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
+            <b-button
+              size="is-small"
+              icon-left="pen"
+              type="is-info"
+              @click.native="showPoolForm(props.row.ID, props.row)">
+            </b-button>
+          </div>
+          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
+            <b-button
+              size="is-small"
+              icon-left="trash"
+              type="is-danger"
+              @click.native="confirmPoolDelete(props.row.ID)">
+            </b-button>
+          </div>
+          <div class="my-button" v-show="props.row==selectedRow">
+            <b-button
+              icon-left="calendar-plus"
+              icon-pack="far"
+              size="is-small"
+              type="is-success"
+              @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+            </b-button></div>
         </b-table-column>
       </template>
     </b-table>
@@ -85,7 +108,8 @@
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
-import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq } from '@/api'
+import ReservationForm from '@/components/ReservationForm.vue'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq, addReservationReq } from '@/api'
 
 export default {
   methods: {
@@ -95,6 +119,10 @@ export default {
         .then(response => {
           this.isLoading = false
           this.machines = response.data.pools
+          for (const pool of this.machines) {
+            this.$set(pool.InstalledSoftware, 'expanded', false)
+          }
+          this.selectedRow=this.machines[0]
         })
         .catch(error => {
           console.log(error)
@@ -202,6 +230,10 @@ export default {
           })
         })
     },
+    rowClass (row, index) {
+      if (this.selectedRow === row) return 'selected-row'
+      else return ''
+    },
     resetDB () {
       resetDBReq().then(response => {
         this.$toast.open({
@@ -220,6 +252,43 @@ export default {
             })
           }
         })
+    },
+    addReservationForm (poolID, poolName, poolMaxCount) {
+      const poolProps = {
+        PoolName: poolName,
+        PoolID: poolID,
+        MaxCount: poolMaxCount
+      }
+
+      this.$modal.open({
+        parent: this,
+        props: poolProps,
+        component: ReservationForm,
+        hasModalCard: true,
+        events: {
+          'saveReservation': (reservationProps) => {
+            this.addReservation(reservationProps)
+          }
+        }
+      })
+    },
+    addReservation (reservationProps) {
+      addReservationReq(reservationProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Reservation added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: error,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
     }
   },
   data () {
@@ -228,12 +297,16 @@ export default {
       isLoading: false,
       text: '',
       query: '',
-      highlighting: true
+      highlighting: true,
+      selectedRow: null
     }
   },
   computed: {
     highlightOptions () {
       return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
+    },
+    isAdmin () {
+      return this.$store.getters.getIsAdmin
     }
   },
   mounted () {
@@ -267,6 +340,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "@/variables.scss";
+
 #enabled-icon {
   color: green;
 }
@@ -279,5 +354,21 @@ export default {
   border-style: solid;
   border-width: 0px 2px 0px 2px;
   margin: 0px -2px 0px -2px;
+}
+
+.selected-row{
+  background-color: $selected !important;
+  color: $dark !important;
+};
+.my-button {
+  padding-bottom: 10px;
+  padding-top: 6px
+}
+
+#enabled-icon {
+  color: green;
+}
+#disabled-icon {
+  color: red;
 }
 </style>

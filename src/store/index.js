@@ -36,7 +36,7 @@ const actions = {
   },
   register (context, userData) {
     return register(userData)
-      .then(context.dispatch('login', { email: userData.email, password: userData.password }))
+      .then(() => new Promise(resolve => setTimeout(() => resolve(context.dispatch('login', { email: userData.email, password: userData.password })), 500)))
       .catch(error => {
         console.log('Error Registering: ', error)
         EventBus.emit('failedRegistering: ', error)
@@ -46,7 +46,7 @@ const actions = {
     return authenticate({ email: store.getters.getUserData.email, password: userData.current_password })
       .then(res => {
         return editUser({
-          email: store.getters.getUserData.email,
+          email: userData.email,
           new_name: userData.new_name,
           new_surname: userData.new_surname,
           new_password: userData.new_password,
