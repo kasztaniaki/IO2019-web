@@ -36,7 +36,7 @@ const actions = {
   },
   register (context, userData) {
     return register(userData)
-      .then(context.dispatch('login', { email: userData.email, password: userData.password }))
+      .then(() => new Promise(resolve => setTimeout(() => resolve(context.dispatch('login', { email: userData.email, password: userData.password })), 500)))
       .catch(error => {
         console.log('Error Registering: ', error)
         EventBus.emit('failedRegistering: ', error)
