@@ -14,14 +14,14 @@
             v-validate="'min:8'" />
         </b-field>
         <b-field label="Updated first name" :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
-          <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'alpha'" />
+          <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'required|alpha'" />
         </b-field>
         <b-field label="Updated last name" :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
-          <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'alpha'" />
+          <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'required|alpha'" />
         </b-field>
         <div v-if="getIsAdmin">
           <b-field label="Updated email" :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
-            <b-input placeholder="Updated email" type="text" v-model="new_email" name="email" v-validate="'email'" />
+            <b-input placeholder="Updated email" type="text" v-model="new_email" name="email" v-validate="'required|email'" />
           </b-field>
           <b-checkbox v-model="is_admin">
             <b> Administrator privileges </b>
