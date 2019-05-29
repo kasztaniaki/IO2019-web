@@ -59,15 +59,26 @@ export function resetDBReq () {
   return axios.get(`${API_URL}/init_db`)
 }
 
+export function loadUsersReq () {
+  return axios.get(`${API_URL}/users`)
+}
+
+export function removeUserReq (emailToRemove) {
+  return axios.post(`${API_URL}/users/remove_user`, null, {
+    params: {
+      email: emailToRemove
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+}
+
 export function editUser (userData) {
   return axios.post(`${API_URL}/users/edit_user`, userData, {
     params: { email: userData.email },
     headers: { 'Content-Type': 'application/json' }
   })
-}
-
-export function loadUsersReq () {
-  return axios.get(`${API_URL}/users`)
 }
 
 export function loadReservationsReq (startDate, endDate, showCancelled) {
@@ -93,5 +104,10 @@ export function editReservationReq (reservationProps) {
   console.log(reservationProps)
   return axios.post(`${API_URL}/reservations/edit`, reservationProps, {
     headers: { 'Content-Type': 'application/json' }
+  })
+}
+export function getUserReq (email) {
+  return axios.get(`${API_URL}/user`, {
+    params: { email: email }
   })
 }

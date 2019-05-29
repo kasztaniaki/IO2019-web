@@ -12,7 +12,7 @@
             v-validate="'required'" />
         </b-field>
 
-        <button class="button is-primary" @click.prevent="authenticate()"> Log in </button>
+        <button class="button is-primary" @click.prevent="validateBeforeSubmit()"> Log in </button>
       </div>
       <div class="information">
         <p>Don't have an account? <router-link to="/users/signup">Sign up</router-link> </p>

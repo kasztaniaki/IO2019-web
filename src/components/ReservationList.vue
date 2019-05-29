@@ -46,7 +46,7 @@
 
       </div>
     </div>
-    <b-table class="container" :data=reservations :loading="isLoading">
+    <b-table class="container reservation-table" :data=reservations :loading="isLoading">
       <template slot-scope="props">
         <b-table-column
           label="Mon"
@@ -255,4 +255,8 @@ export default {
   .my-button {
     border-color: transparent !important;
   }
+  .reservation-table td {
+  border: 0px !important;
+  padding: 2px !important;
+}
 </style>

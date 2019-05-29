@@ -21,9 +21,6 @@
           </div>
         </b-field>
       </div>
-      <div @click="toggleDescription()" class="column is-narrow">
-        <b-icon pack="fas" :icon="icon" size="is-small"></b-icon>
-      </div>
     </div>
   </div>
 </template>
@@ -33,23 +30,12 @@ export default {
   props: {
     description: Array,
     query: String,
-    highlightOptions: Object
+    highlightOptions: Object,
+    expanded: Boolean
   },
   data () {
     return {
-      expanded: false,
       icon: 'chevron-down'
-    }
-  },
-  methods: {
-    toggleDescription () {
-      console.log(this.$data.expanded)
-      this.$data.expanded = !this.$data.expanded
-      if (this.$data.expanded) {
-        this.$data.icon = 'chevron-up'
-      } else {
-        this.$data.icon = 'chevron-down'
-      }
     }
   }
 }

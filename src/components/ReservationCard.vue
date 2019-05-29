@@ -180,11 +180,6 @@ export default {
   padding: 0.6em
 }
 
-td {
-  border: 0px !important;
-  padding: 2px !important;
-}
-
 .my-button {
   border-radius: 0px !important;
 }

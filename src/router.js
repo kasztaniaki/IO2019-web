@@ -33,6 +33,11 @@ export default new Router({
       path: '/reservations',
       name: 'reservations',
       component: () => import('./views/Reservations.vue')
+    },
+    {
+      path: '/admin/users',
+      name: 'users',
+      component: () => import('./views/Users.vue')
     }
   ]
 })

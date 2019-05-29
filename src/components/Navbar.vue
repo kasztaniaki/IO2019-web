@@ -2,15 +2,10 @@
     <nav class="navbar level container" role="navigation" aria-label="main navigation">
       <div class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item">
-            <router-link to="/">Home</router-link>
-          </a>
-          <a class="navbar-item">
-            <router-link to="/pools">Pools</router-link>
-          </a>
-          <a class="navbar-item">
-            <router-link to="/reservations">Reservations</router-link>
-          </a>
+            <router-link class="navbar-item" to="/">Home</router-link>
+            <router-link class="navbar-item" to="/pools">Pools</router-link>
+            <router-link class="navbar-item" to="/reservations">Reservations</router-link>
+            <router-link class="navbar-item" to="/admin/users">Users</router-link>
         </div>
         <div v-if="!isAuthenticated" class="navbar-end">
                 <a class="navbar-item">
@@ -74,6 +69,9 @@ export default {
       this.$modal.open({
         parent: this,
         component: EditUser,
+        props: {
+          userEmail: this.getEmail
+        },
         width: 720
       })
     }
@@ -94,3 +92,11 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+@import "@/variables.scss";
+
+.router-link-exact-active{
+  background-color: $primary !important;
+  color: white !important;
+}
+</style>
