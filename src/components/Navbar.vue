@@ -1,8 +1,8 @@
 <template>
     <nav class="navbar level container" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="https://bulma.io">
-          <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+        <a class="navbar-item">
+          <router-link to="/"><img src="../assets/logo.png" width="50" height="28"></router-link>
         </a>
 
         <a role="button" :class="navbarActive" @click="toggle=!toggle" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbar-list">
@@ -13,9 +13,6 @@
       </div>
       <div id="navbar-list" :class="navbarActive" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item">
-            <router-link to="/">Home</router-link>
-          </a>
           <a class="navbar-item">
             <router-link to="/pools">Pools</router-link>
           </a>
