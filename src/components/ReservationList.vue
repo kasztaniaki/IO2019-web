@@ -50,7 +50,7 @@
       <template slot-scope="props">
         <b-table-column
           label="Mon"
-          width="165">
+          style="width: 14.28%">
             <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -59,7 +59,7 @@
           </b-table-column>
         <b-table-column
           label="Tue"
-          width="165">
+          style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -68,7 +68,7 @@
           </b-table-column>
         <b-table-column
           label="Wed"
-          width="165">
+          style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -77,7 +77,7 @@
           </b-table-column>
         <b-table-column
           label="Thu"
-          width="165">
+          style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
@@ -86,7 +86,7 @@
           </b-table-column>
         <b-table-column
           label="Fri"
-          width="165">
+          style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
@@ -95,7 +95,7 @@
           </b-table-column>
         <b-table-column
           label="Sat"
-          width="165">
+          style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
@@ -104,7 +104,7 @@
           </b-table-column>
         <b-table-column
           label="Sun"
-          width="165">
+          style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
@@ -251,11 +251,11 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .my-button {
     border-color: transparent !important;
   }
-  .reservation-table td {
+  td {
   border: 0px !important;
   padding: 2px !important;
 }

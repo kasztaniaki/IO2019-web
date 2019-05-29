@@ -18,7 +18,7 @@
         <b-table-column sortable v-if="match(props.row)"
           field="ID"
           label="ID"
-          width="120">
+          style="width: 10%">
             <div v-highlight="highlightOptions">
               {{props.row.ID}}
             </div>
@@ -26,7 +26,7 @@
         <b-table-column sortable v-if="match(props.row)"
           field="Name"
           label="Name"
-          width="500">
+          style="width: 25%">
           <div v-highlight="highlightOptions">
             {{props.row.Name}}
             </div>
@@ -34,7 +34,7 @@
         <b-table-column sortable v-if="match(props.row)"
           field="OSName"
           label="OS"
-          width="100">
+          style="width: 5%">
           <div v-highlight="highlightOptions">
             {{props.row.OSName}}
             </div>
@@ -42,13 +42,13 @@
         <b-table-column sortable v-if="match(props.row)"
           field="MaximumCount"
           label="Maximum Count"
-          width="100">
+          style="width: 5%">
             {{props.row.MaximumCount}}
         </b-table-column>
         <b-table-column v-if="match(props.row)"
           field="Enabled"
           label="Enabled"
-          width="100">
+          style="width:5%">
             <b-icon
               id="enabled-icon"
               v-if="props.row.Enabled"
@@ -66,23 +66,39 @@
         <b-table-column v-if="match(props.row)"
           field="Description"
           label="Description"
-          width="500">
+          style="45%">
             <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
-        <b-table-column width="55" field="edit" v-if="match(props.row)" :visible="editable">
-          <div class="my-button">
-            <b-button v-show="props.row==selectedRow" size="is-small" icon-left="edit" type="is-light" @click.native="showPoolForm(props.row.ID, props.row)"></b-button>
+        <b-table-column
+          style="5%"
+          field="edit"
+          v-if="match(props.row)"
+          :visible="editable">
+          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
+            <b-button
+              size="is-small"
+              icon-left="pen"
+              type="is-info"
+              @click.native="showPoolForm(props.row.ID, props.row)">
+            </b-button>
           </div>
-          <b-button v-show="props.row==selectedRow" size="is-small" icon-left="trash" type="is-danger" @click.native="confirmPoolDelete(props.row.ID)"></b-button>
-          <b-button v-show="props.row==selectedRow"
-          icon-left="calendar-alt"
-          icon-pack="far"
-          @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
-          Reservation
-        </b-button>
-          
+          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
+            <b-button
+              size="is-small"
+              icon-left="trash"
+              type="is-danger"
+              @click.native="confirmPoolDelete(props.row.ID)">
+            </b-button>
+          </div>
+          <div class="my-button" v-show="props.row==selectedRow">
+            <b-button
+              icon-left="calendar-plus"
+              icon-pack="far"
+              size="is-small"
+              type="is-success"
+              @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+            </b-button></div>
         </b-table-column>
-        
       </template>
     </b-table>
   </div>
@@ -106,6 +122,7 @@ export default {
           for (const pool of this.machines) {
             this.$set(pool.InstalledSoftware, 'expanded', false)
           }
+          this.selectedRow=this.machines[0]
         })
         .catch(error => {
           console.log(error)
@@ -287,6 +304,9 @@ export default {
   computed: {
     highlightOptions () {
       return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
+    },
+    isAdmin () {
+      return this.$store.getters.getIsAdmin
     }
   },
   mounted () {

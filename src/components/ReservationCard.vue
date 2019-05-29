@@ -166,7 +166,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .my-card-footer-item {
   border-color: transparent !important;
@@ -178,6 +178,11 @@ export default {
 .my-card-content{
   border: none !important;
   padding: 0.6em
+}
+
+td {
+  border: 0px !important;
+  padding: 2px !important;
 }
 
 .my-button {
