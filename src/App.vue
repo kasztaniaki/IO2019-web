@@ -1,22 +1,30 @@
 <template>
   <div id="app">
-    <nav class="navbar level container" role="navigation" aria-label="main navigation">
-      <div class="navbar-menu">
-        <div class="navbar-start">
-          <a class="navbar-item">
-            <router-link to="/">Home</router-link>
-          </a>
-          <a class="navbar-item">
-            <router-link to="/pools">Pools</router-link>
-          </a>
-        </div>
-      </div>
-    </nav>
+    <navbar></navbar>
     <router-view/>
   </div>
 </template>
 
-<style>
+<script>
+import Navbar from './components/Navbar'
+
+export default {
+  name: 'App',
+  components: {
+    'Navbar': Navbar
+  },
+  mounted () {
+    var token = this.$store.getters.getJwt
+    console.log(token)
+
+    this.$api.setHeader('Auth-Token', token)
+  }
+}
+</script>
+
+<style lang='scss'>
+@import "@/variables.scss";
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -36,4 +44,19 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+  .message {
+    padding: 4px;
+    font-size: large;
+  }
+
+  .information {
+    text-align: left;
+  }
+
+  .form_styling {
+    width: 38%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 </style>

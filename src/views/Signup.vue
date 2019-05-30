@@ -1,15 +1,15 @@
 <template>
   <div class="container">
-    <MachinePool editable/>
+    <Register/>
   </div>
 </template>
 
 <script>
-import MachinePool from '@/components/MachinePool.vue'
+import Register from '@/components/Register.vue'
 export default {
-  name: 'Pools',
+  name: 'SignUp',
   components: {
-    MachinePool
+    Register
   }
 }
 </script>

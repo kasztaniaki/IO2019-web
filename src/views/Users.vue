@@ -1,15 +1,15 @@
 <template>
   <div class="container">
-    <MachinePool editable/>
+    <UserList/>
   </div>
 </template>
 
 <script>
-import MachinePool from '@/components/MachinePool.vue'
+import UserList from '@/components/UserList.vue'
 export default {
-  name: 'Pools',
+  name: 'Users',
   components: {
-    MachinePool
+    UserList
   }
 }
 </script>

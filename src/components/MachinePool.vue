@@ -1,29 +1,103 @@
 <template>
   <div>
     <div class="level">
-      <ImportButton v-on:import="loadMachinesData()" class="level-left"/>
+      <div class="level-left">
+        <ImportButton v-if="isAdmin" v-on:import="loadMachinesData()" class="level-item" :disabled="isLoading"/>
+        <b-button v-if="isAdmin" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
+      </div>
+      <div class="level-right">
+        <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
+        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
+        <b-button v-if="isAdmin" @click="resetDB()">
+        db reset
+        </b-button>
+      </div>
     </div>
-    <b-table class="container" :data="data.machines" :columns="columnss">
+    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props">
-        <b-table-column field="poolID" label="ID">{{props.row.PoolID}}</b-table-column>
-        <b-table-column field="displayName" label="Name">{{props.row.DisplayName}}</b-table-column>
-        <b-table-column
-          field="operatingSystem"
-          label="OS"
-        >{{props.row.OSName}} {{props.row.OSVersion}}</b-table-column>
-        <b-table-column field="maximumCount" label="Maximum Count">{{props.row.MaximumCount}}</b-table-column>
-        <b-table-column field="enabled" label="Enabled">
-          <b-icon
-            id="enabled-icon"
-            v-if="props.row.Enabled"
-            pack="fas"
-            icon="check-circle"
-            size="is-small"
-          ></b-icon>
-          <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle" size="is-small"></b-icon>
+        <b-table-column sortable v-if="match(props.row)"
+          field="ID"
+          label="ID"
+          style="width: 10%">
+            <div v-highlight="highlightOptions">
+              {{props.row.ID}}
+            </div>
+          </b-table-column>
+        <b-table-column sortable v-if="match(props.row)"
+          field="Name"
+          label="Name"
+          style="width: 25%">
+          <div v-highlight="highlightOptions">
+            {{props.row.Name}}
+            </div>
         </b-table-column>
-        <b-table-column field="description" label="Description">
-          <MachineDescription :description="props.row.InstalledSoftware"/>
+        <b-table-column sortable v-if="match(props.row)"
+          field="OSName"
+          label="OS"
+          style="width: 5%">
+          <div v-highlight="highlightOptions">
+            {{props.row.OSName}}
+            </div>
+        </b-table-column>
+        <b-table-column sortable v-if="match(props.row)"
+          field="MaximumCount"
+          label="Maximum Count"
+          style="width: 5%">
+            {{props.row.MaximumCount}}
+        </b-table-column>
+        <b-table-column v-if="match(props.row)"
+          field="Enabled"
+          label="Enabled"
+          style="width:5%">
+            <b-icon
+              id="enabled-icon"
+              v-if="props.row.Enabled"
+              pack="fas"
+              icon="check-circle"
+              size="is-small">
+            </b-icon>
+            <b-icon v-else
+              id="disabled-icon"
+              pack="fas"
+              icon="times-circle"
+              size="is-small">
+            </b-icon>
+        </b-table-column>
+        <b-table-column v-if="match(props.row)"
+          field="Description"
+          label="Description"
+          style="45%">
+            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
+        </b-table-column>
+        <b-table-column
+          style="5%"
+          field="edit"
+          v-if="match(props.row)"
+          :visible="editable">
+          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
+            <b-button
+              size="is-small"
+              icon-left="pen"
+              type="is-info"
+              @click.native="showPoolForm(props.row.ID, props.row)">
+            </b-button>
+          </div>
+          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
+            <b-button
+              size="is-small"
+              icon-left="trash"
+              type="is-danger"
+              @click.native="confirmPoolDelete(props.row.ID)">
+            </b-button>
+          </div>
+          <div class="my-button" v-show="props.row==selectedRow">
+            <b-button
+              icon-left="calendar-plus"
+              icon-pack="far"
+              size="is-small"
+              type="is-success"
+              @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+            </b-button></div>
         </b-table-column>
       </template>
     </b-table>
@@ -33,67 +107,264 @@
 <script>
 import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
+import EditPoolForm from '@/components/EditPoolForm.vue'
+import ReservationForm from '@/components/ReservationForm.vue'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq, addReservationReq } from '@/api'
+
 export default {
   methods: {
     loadMachinesData () {
-      this.$http
-        .get('http://127.0.0.1:5000/pools')
+      this.isLoading = true
+      loadPoolsReq()
         .then(response => {
-          console.log(response.data.pools)
-
-          this.data.machines = response.data.pools
+          this.isLoading = false
+          this.machines = response.data.pools
+          for (const pool of this.machines) {
+            this.$set(pool.InstalledSoftware, 'expanded', false)
+          }
+          this.selectedRow=this.machines[0]
         })
         .catch(error => {
           console.log(error)
         })
+    },
+    match (row) {
+      if (this.query.length < 3) return true
+      var re = RegExp(this.query, 'i')
+      for (const key in row) {
+        if (row.hasOwnProperty(key)) {
+          const field = row[key]
+          if (field.toString().match(re)) return true
+        }
+      }
+      return false
+    },
+    filterPools () {
+      this.query = this.text
+    },
+    clearFilter () {
+      console.log('halko')
+
+      this.query = ''
+      this.text = ''
+    },
+    showPoolForm (poolId = '', poolProps = {}) {
+      this.$modal.open({
+        parent: this,
+        component: EditPoolForm,
+        hasModalCard: true,
+        props: poolProps,
+        events: {
+          'poolRequest': (poolProps) => {
+            if (poolId !== '') {
+              this.editPool(poolId, poolProps)
+            } else {
+              this.addPool(poolProps)
+            }
+          }
+        }
+      })
+    },
+    confirmPoolDelete (poolId) {
+      this.$dialog.confirm({
+        title: 'Deleting pool',
+        message: `Are you sure you want to <b>delete</b> pool ${poolId}? This action cannot be undone.`,
+        confirmText: 'Delete Pool',
+        type: 'is-danger',
+        hasIcon: true,
+        onConfirm: () => this.removePool(poolId)
+      })
+    },
+    addPool (poolProps) {
+      addPoolReq(poolProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    editPool (poolId, poolProps) {
+      console.log(poolProps)
+      editPoolReq(poolId, poolProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool edited successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    removePool (poolId) {
+      removePoolReq(poolId).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Pool removed successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: `Error`,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
+    },
+    rowClass (row, index) {
+      if (this.selectedRow === row) return 'selected-row'
+      else return ''
+    },
+    resetDB () {
+      resetDBReq().then(response => {
+        this.$toast.open({
+          message: `Db reset`,
+          position: 'is-bottom',
+          type: 'is-success'
+        })
+        this.loadMachinesData()
+      })
+        .catch(error => {
+          if (error) {
+            this.$toast.open({
+              message: `db reset error`,
+              position: 'is-bottom',
+              type: 'is-success'
+            })
+          }
+        })
+    },
+    addReservationForm (poolID, poolName, poolMaxCount) {
+      const poolProps = {
+        PoolName: poolName,
+        PoolID: poolID,
+        MaxCount: poolMaxCount
+      }
+
+      this.$modal.open({
+        parent: this,
+        props: poolProps,
+        component: ReservationForm,
+        hasModalCard: true,
+        events: {
+          'saveReservation': (reservationProps) => {
+            this.addReservation(reservationProps)
+          }
+        }
+      })
+    },
+    addReservation (reservationProps) {
+      addReservationReq(reservationProps).then(response => {
+        this.loadMachinesData()
+        this.$toast.open({
+          message: `Reservation added successfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        // eslint-disable-next-line
+        .catch(error => {
+          this.$toast.open({
+            message: error,
+            position: 'is-top',
+            type: 'is-danger'
+          })
+        })
     }
-  },
-  watch: {
-    machines: function (oldValue, newValue) {}
   },
   data () {
     return {
-      data: {
-        machines: []
-      },
-      columnss: [
-        {
-          field: 'poolID',
-          label: 'ID',
-          width: '40',
-          numeric: true
-        },
-        {
-          field: 'displayName',
-          label: 'Name'
-        },
-        {
-          field: 'maximumCount',
-          label: 'Maximum count'
-        },
-        {
-          field: 'enabled',
-          label: 'Enabled',
-          centered: true
-        },
-        {
-          field: 'description',
-          label: 'Description'
-        }
-      ]
+      machines: [],
+      isLoading: false,
+      text: '',
+      query: '',
+      highlighting: true,
+      selectedRow: null
+    }
+  },
+  computed: {
+    highlightOptions () {
+      return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
+    },
+    isAdmin () {
+      return this.$store.getters.getIsAdmin
     }
   },
   mounted () {
     this.loadMachinesData()
   },
+  filters: {
+    highlight: function (value, query) {
+      var re = RegExp(query, 'i')
+      var result = value.toString().replace(re, function (matchedText, a, b) {
+        if (matchedText !== '') {
+          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
+          return res
+        } else return ''
+      })
+      return result
+    }
+  },
   components: {
     MachineDescription,
-    ImportButton
+    ImportButton,
+    // eslint-disable-next-line
+    EditPoolForm
+  },
+  props: {
+    editable: {
+      type: Boolean
+    }
   }
+
 }
 </script>
 
 <style lang="scss">
+@import "@/variables.scss";
+
+#enabled-icon {
+  color: green;
+}
+#disabled-icon {
+  color: red;
+}
+.highlight{
+  padding: 3px 0px;
+  border-color:hsl(141, 71%, 48%);
+  border-style: solid;
+  border-width: 0px 2px 0px 2px;
+  margin: 0px -2px 0px -2px;
+}
+
+.selected-row{
+  background-color: $selected !important;
+  color: $dark !important;
+};
+.my-button {
+  padding-bottom: 10px;
+  padding-top: 6px
+}
+
 #enabled-icon {
   color: green;
 }
