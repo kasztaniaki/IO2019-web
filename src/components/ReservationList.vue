@@ -55,6 +55,8 @@
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.mon"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.mon,1)"/>
           </b-table-column>
         <b-table-column
@@ -64,6 +66,8 @@
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.tue"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.tue,2)"/>
           </b-table-column>
         <b-table-column
@@ -73,6 +77,8 @@
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.wed"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.wed,3)"/>
           </b-table-column>
         <b-table-column
@@ -82,6 +88,8 @@
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
               :reservationData="props.row.thu"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.thu,4)"/>
           </b-table-column>
         <b-table-column
@@ -91,6 +99,8 @@
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
               :reservationData="props.row.fri"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.fri,5)"/>
           </b-table-column>
         <b-table-column
@@ -100,6 +110,8 @@
               @user="(user) => selectedUser = user"
               @pool="(pool) => selectedPool = pool"
               :reservationData="props.row.sat"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.sat,6)"/>
           </b-table-column>
         <b-table-column
@@ -109,6 +121,8 @@
               @pool="(pool) => selectedPool = pool"
               @user="(user) => selectedUser = user"
               :reservationData="props.row.sun"
+              :selectedUser.sync="selectedUser"
+              :selectedPool.sync="selectedPool"
               v-if="filterReservations(props.row.sun,0)"/>
           </b-table-column>
       </template>

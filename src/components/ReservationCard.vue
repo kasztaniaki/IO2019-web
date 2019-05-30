@@ -1,8 +1,12 @@
 <template>
   <div class="card" :style="{'background-color': poolColor(reservationData.PoolID)}">
     <div class="card-content my-card-content has-text-white">
-        <div @click="$emit('user',reservationData.UserEmail)" class="element clickable">
-          <b-icon
+        <div @click="userFilterToggle(reservationData.UserEmail, $event)" :class="{clicked : selectedUser===reservationData.UserEmail}" class="element clickable">
+          <b-icon v-if="selectedUser===reservationData.UserEmail"
+            icon="times-circle"
+            size="is-small">
+          </b-icon>
+          <b-icon v-else
             icon="user"
             size="is-small">
           </b-icon>
@@ -15,14 +19,18 @@
           </b-icon>
           {{new Date(reservationData.StartDate).toLocaleString('pl-PL', timeOptions)}} - {{new Date(reservationData.EndDate).toLocaleString('pl-PL',timeOptions)}}
         </div>
-        <div @click="$emit('pool',reservationData.PoolID)" class="element clickable">
-          <b-icon
+        <div @click="poolFilterToggle(reservationData.PoolID, $event)" :class="{clicked : selectedPool===reservationData.PoolID}" class="element clickable">
+          <b-icon v-if="selectedPool===reservationData.PoolID"
+            icon="times-circle"
+            size="is-small">
+          </b-icon>
+          <b-icon v-else
             icon="desktop"
             size="is-small">
           </b-icon>
           {{reservationData.PoolName}}
         </div>
-        <div @click="$emit('pool',reservationData.PoolID)" class="element">
+        <div class="element">
           <b-icon
             icon="database"
             size="is-small">
@@ -63,9 +71,19 @@ export default {
     poolColor (id) {
       var hash = 0
       for (var i = 0; i < id.length; i++) {
-        hash = id.charCodeAt(i) * 33 + hash
+        hash = id.charCodeAt(i) * 34 + hash
       }
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
+    },
+    userFilterToggle (data, event) {
+      this.userClicked = !this.userClicked
+      if (this.userClicked) this.$emit('user', data)
+      else this.$emit('user', 'None')
+    },
+    poolFilterToggle (data, event) {
+      this.poolClicked = !this.poolClicked
+      if (this.poolClicked) this.$emit('pool', data)
+      else this.$emit('pool', 'None')
     },
     editReservationForm (resData) {
       const reservationProps = {
@@ -150,18 +168,18 @@ export default {
           }
         })
     }
-
   },
   props: {
-    reservationData: Object
+    reservationData: Object,
+    selectedUser: Object,
+    selectedPool: Object
   },
   data () {
     return {
-      timeOptions: { hour: 'numeric', minute: 'numeric' }
+      timeOptions: { hour: 'numeric', minute: 'numeric' },
+      userClicked: false,
+      poolClicked: false
     }
-  },
-  mounted () {
-    this.poolColor('s7n-prog')
   }
 }
 </script>
@@ -192,9 +210,10 @@ td {
   padding: 0.3em;
   margin: -0.3em;
 }
-.clickable:hover {
+.clickable:hover, .clicked {
   background-color: white;
   color: black;
+  cursor: pointer;
 }
 
 </style>
