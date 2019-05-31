@@ -1,8 +1,11 @@
 <template>
   <div class="card" :style="{'background-color': poolColor(reservationData.PoolID)}">
     <div class="card-content my-card-content has-text-white">
-        <div @click="userFilterToggle(reservationData.UserEmail, $event)" :class="{clicked : selectedUser===reservationData.UserEmail}" class="element clickable">
-          <b-icon v-if="selectedUser===reservationData.UserEmail"
+        <div
+          @click="userFilterToggle(reservationData.UserEmail, $event)"
+          :class="{clicked : selectedUsers.filter(user => { return user.Email === reservationData.UserEmail }).length > 0}"
+          class="element clickable">
+          <b-icon v-if="selectedUsers.filter(user => { return user.Email === reservationData.UserEmail }).length > 0"
             icon="times-circle"
             size="is-small">
           </b-icon>
@@ -19,8 +22,10 @@
           </b-icon>
           {{new Date(reservationData.StartDate).toLocaleString('pl-PL', timeOptions)}} - {{new Date(reservationData.EndDate).toLocaleString('pl-PL',timeOptions)}}
         </div>
-        <div @click="poolFilterToggle(reservationData.PoolID, $event)" :class="{clicked : selectedPool===reservationData.PoolID}" class="element clickable">
-          <b-icon v-if="selectedPool===reservationData.PoolID"
+        <div @click="poolFilterToggle(reservationData.PoolID, $event)"
+          :class="{clicked : selectedPools.filter(pool => { return pool.ID === reservationData.PoolID }).length > 0}"
+          class="element clickable">
+          <b-icon v-if="(selectedPools.filter(pool => { return pool.ID === reservationData.PoolID }).length > 0)"
             icon="times-circle"
             size="is-small">
           </b-icon>
@@ -64,6 +69,18 @@ import CancelReservationForm from '@/components/CancelReservationForm.vue'
 import ReservationForm from '@/components/ReservationForm.vue'
 
 export default {
+  props: {
+    reservationData: Object,
+    selectedUsers: Array,
+    selectedPools: Array
+  },
+  data () {
+    return {
+      timeOptions: { hour: 'numeric', minute: 'numeric' },
+      userClicked: false,
+      poolClicked: false
+    }
+  },
   methods: {
     isReservationOwner (id) {
       return this.$store.getters.getUserData.email === id
@@ -77,13 +94,11 @@ export default {
     },
     userFilterToggle (data, event) {
       this.userClicked = !this.userClicked
-      if (this.userClicked) this.$emit('user', data)
-      else this.$emit('user', 'None')
+      this.$emit('user', this.reservationData.UserEmail)
     },
     poolFilterToggle (data, event) {
       this.poolClicked = !this.poolClicked
-      if (this.poolClicked) this.$emit('pool', data)
-      else this.$emit('pool', 'None')
+      this.$emit('pool', this.reservationData.PoolID)
     },
     editReservationForm (resData) {
       const reservationProps = {
@@ -167,18 +182,6 @@ export default {
             console.log(error)
           }
         })
-    }
-  },
-  props: {
-    reservationData: Object,
-    selectedUser: Object,
-    selectedPool: Object
-  },
-  data () {
-    return {
-      timeOptions: { hour: 'numeric', minute: 'numeric' },
-      userClicked: false,
-      poolClicked: false
     }
   }
 }

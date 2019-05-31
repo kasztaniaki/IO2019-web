@@ -52,13 +52,11 @@
             <b-icon
               id="enabled-icon"
               v-if="props.row.Enabled"
-              pack="fas"
               icon="check-circle"
               size="is-small">
             </b-icon>
             <b-icon v-else
               id="disabled-icon"
-              pack="fas"
               icon="times-circle"
               size="is-small">
             </b-icon>
@@ -122,7 +120,7 @@ export default {
           for (const pool of this.machines) {
             this.$set(pool.InstalledSoftware, 'expanded', false)
           }
-          this.selectedRow=this.machines[0]
+          this.selectedRow = this.machines[0]
         })
         .catch(error => {
           console.log(error)
