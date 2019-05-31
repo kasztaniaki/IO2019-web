@@ -2,24 +2,19 @@
   <div>
     <b-table class="container" :data="users" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
       <template slot-scope="props" class="row">
-        <b-table-column field="Admin" class="is-narrow">
-            <div class="row">
-              <b-icon
-                v-if="props.row.IsAdmin"
-                pack="fas"
-                icon="user-cog"
-                size="is-small"
-              ></b-icon>
-            </div>
-        </b-table-column>
-        <b-table-column field="Name" label="Name" width="300">
+        <b-table-column field="Name" label="Name" style="width: 30%">
             <div class="row">
               {{props.row.Name}} {{props.row.Surname}}
             </div>
         </b-table-column>
-        <b-table-column field="Email" label="Email" width="700">
+        <b-table-column field="Email" label="Email" style="width: 30%">
             <div class="row">
               {{props.row.Email}}
+            </div>
+        </b-table-column>
+        <b-table-column label="Role">
+            <div class="row">
+              {{(props.row.IsAdmin) ? 'Administrator' : 'User'}}
             </div>
         </b-table-column>
         <b-table-column centered numeric field="Buttons" label="" width="90">
