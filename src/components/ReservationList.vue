@@ -14,23 +14,25 @@
               @click.native="weekChange(1)" ></b-button>
           </div>
         </div>
-        <b-taginput class="column" style="width: 400px"
+        <b-taginput class="column is-one-quarter"
           v-model="selectedPools"
           :data="filteredPools"
           autocomplete
           field="Name"
           placeholder="Filter by pool"
           closable
+          expanded
           open-on-focus
           @typing="getFilteredPools">
         </b-taginput>
-        <b-taginput class="column" style="width: 400px"
+        <b-taginput class="column is-one-quarter"
           v-model="selectedUsers"
           :data="filteredUsers"
           autocomplete
           field="Email"
           placeholder="Filter by user"
           closable
+          expanded
           open-on-focus
           @typing="getFilteredUsers">
           <template slot-scope="props">
