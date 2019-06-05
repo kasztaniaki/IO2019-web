@@ -32,8 +32,8 @@
       </section>
       <footer class="modal-card-foot">
         <button class="button" type="button" @click="$parent.close()">Close</button>
-
         <button class="button is-primary" @click.prevent="validateBeforeSubmit()">Save</button>
+        <button class="button is-danger" @click.prevent="deleteAccount()">Save</button>
       </footer>
     </form>
   </div>
@@ -107,6 +107,37 @@ export default {
             this.prompt()
           }
         })
+    },
+    deleteAccount () {
+      this.$$dialog.prompt({
+        message: `Provide your current password`,
+        inputAttrs: {
+          placeholder: 'Password',
+          type: 'password'
+        },
+        onConfirm: (value) => {
+          this.$store.dispatch('deleteAccount', {
+            current_password: value
+          })
+            .then(() => {
+              this.$toast.open({
+                message: `Account deleted!`,
+                position: 'is-top',
+                type: 'is-success'
+              })
+              this.$emit('close')
+            })
+            .catch(error => {
+              if (error) {
+                this.$toast.open({
+                  message: `Provided password is invalid!`,
+                  position: 'is-top',
+                  type: 'is-danger'
+                })
+              }
+            })
+        }
+      })
     }
   },
   computed: {
