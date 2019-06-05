@@ -64,11 +64,11 @@ export function loadUsersReq () {
 }
 
 export function removeUserReq (emailToRemove, password) {
-  return axios.post(`${API_URL}/users/remove_user`, null, {
-    params: {
-      email: emailToRemove,
-      password: password
-    },
+  return axios.post(`${API_URL}/users/remove_user`, {
+    email: emailToRemove,
+    password: password
+  },
+  {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
