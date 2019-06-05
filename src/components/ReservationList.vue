@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="columns">
-        <div class="column">
+        <div class="column is-4">
           <div class="level">
             <b-button class="level-item my-button"
               icon-left="chevron-left"
@@ -14,7 +14,13 @@
               @click.native="weekChange(1)" ></b-button>
           </div>
         </div>
-        <b-taginput class="column is-one-quarter"
+        <div class="column">
+          <b-button :class="(onlyUserInSelected($store.getters.getUserData.email)) ? 'is-primary' : 'is-default'"
+            @click="showOnlyUser($store.getters.getUserData.email)">
+            Show only mine
+          </b-button>
+        </div>
+        <b-taginput class="column"
           v-model="selectedPools"
           :data="filteredPools"
           autocomplete
@@ -25,7 +31,7 @@
           open-on-focus
           @typing="getFilteredPools">
         </b-taginput>
-        <b-taginput class="column is-one-quarter"
+        <b-taginput class="column"
           v-model="selectedUsers"
           :data="filteredUsers"
           autocomplete
@@ -247,6 +253,14 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    onlyUserInSelected (email) {
+      return this.selectedUsers.filter(user => { return user.Email === email }).length === 1 && this.selectedUsers.length === 1
+    },
+    showOnlyUser (email) {
+      if (this.onlyUserInSelected(email)) {
+        this.selectedUsers = []
+      } else this.selectedUsers = this.users.filter(user => { return user.Email === email })
     }
   },
   mounted () {
