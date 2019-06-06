@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 
-import { authenticate, register, editUser } from '@/api'
+import { authenticate, register, editUser, removeUserReq } from '@/api'
 import EventBus, { isValidJwt } from '@/components/EventBus'
 
 Vue.use(Vuex)
@@ -68,6 +68,16 @@ const actions = {
   logout (context) {
     context.commit('clearJwtToken')
     context.commit('clearUserData')
+  },
+  deleteAccount (context, password) {
+    return removeUserReq(store.getters.getUserData.email, password)
+      .then(res => {
+        context.commit('clearJwtToken')
+        context.commit('clearUserData')
+      })
+      .catch(err => {
+        if (err) console.log(err)
+      })
   }
 }
 

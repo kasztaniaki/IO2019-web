@@ -59,7 +59,7 @@ export default {
         confirmText: 'Delete User',
         type: 'is-danger',
         hasIcon: true,
-        onConfirm: () => removeUserReq(user.Email)
+        onConfirm: () => removeUserReq(user.Email, null)
           .then(response => {
             this.loadUsers()
           })
