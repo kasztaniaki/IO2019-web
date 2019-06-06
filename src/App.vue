@@ -15,7 +15,6 @@ export default {
   },
   mounted () {
     var token = this.$store.getters.getJwt
-    console.log(token)
 
     this.$api.setHeader('Auth-Token', token)
   }

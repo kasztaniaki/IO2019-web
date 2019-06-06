@@ -196,7 +196,6 @@ export default {
         })
     },
     editPool (poolId, poolProps) {
-      console.log(poolProps)
       editPoolReq(poolId, poolProps).then(response => {
         this.loadMachinesData()
         this.$toast.open({

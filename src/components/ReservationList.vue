@@ -237,7 +237,6 @@ export default {
         .then(response => {
           this.pools = response.data.pools
           this.getFilteredPools('')
-          console.log(this.pools)
         })
         .catch(error => {
           console.log(error)
@@ -248,7 +247,6 @@ export default {
         .then(response => {
           this.users = response.data.users
           this.getFilteredUsers('')
-          console.log(this.pools)
         })
         .catch(error => {
           console.log(error)

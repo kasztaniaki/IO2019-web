@@ -102,7 +102,6 @@ export function addReservationReq (reservationProps) {
 }
 
 export function editReservationReq (reservationProps) {
-  console.log(reservationProps)
   return axios.post(`${API_URL}/reservations/edit`, reservationProps, {
     headers: { 'Content-Type': 'application/json' }
   })

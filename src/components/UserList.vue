@@ -45,7 +45,6 @@ export default {
       this.isLoading = true
       loadUsersReq().then(response => {
         this.isLoading = false
-        console.log(response.data.users)
         this.users = response.data.users
       })
         .catch(error => {
