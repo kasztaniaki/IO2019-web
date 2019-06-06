@@ -1,50 +1,50 @@
 <template>
   <div>
-    <div class="level">
-      <div class="level-left">
-        <b-button class="level-item my-button"
-          icon-left="chevron-left"
-          @click.native="weekChange(-1)" ></b-button>
-
-        <div v-if="weekstart" class="level-item">
-          {{this.weekstart.toLocaleString('pl-PL', dateOptions)}} - {{this.weekend.toLocaleString('pl-PL', dateOptions)}}
+    <div class="columns">
+        <div class="column is-4">
+          <div class="level">
+            <b-button class="level-item my-button"
+              icon-left="chevron-left"
+              @click.native="weekChange(-1)" ></b-button>
+            <div v-if="weekstart" class="level-item">
+              {{this.weekstart.toLocaleString('pl-PL', dateOptions)}} - {{this.weekend.toLocaleString('pl-PL', dateOptions)}}
+            </div>
+            <b-button class="level-item my-button"
+              icon-left="chevron-right"
+              @click.native="weekChange(1)" ></b-button>
+          </div>
         </div>
-
-        <b-button class="level-item my-button"
-          icon-left="chevron-right"
-          @click.native="weekChange(1)" ></b-button>
-
-      </div>
-      <div class="level-right">
-        <div class="level-item">
-          Filter
+        <div class="column">
+          <b-button :class="(onlyUserInSelected($store.getters.getUserData.email)) ? 'is-primary' : 'is-default'"
+            @click="showOnlyUser($store.getters.getUserData.email)">
+            Show only mine
+          </b-button>
         </div>
-        <b-select class="level-item"
-          placeholder="Select pool"
-          icon="desktop"
-          v-model="selectedPool">
-          <option value="None">None</option>
-          <option
-              v-for="pool in pools"
-              :value="pool.ID"
-              :key="pool.ID">
-              {{ pool.Name }}
-          </option>
-        </b-select>
-        <b-select class="level-item"
-          placeholder="Select user"
-          icon="user"
-          v-model="selectedUser">
-          <option value="None">None</option>
-          <option
-              v-for="user in users"
-              :value="user.Email"
-              :key="user.Email">
-              {{ user.Name }} {{user.Surname}}
-          </option>
-        </b-select>
-
-      </div>
+        <b-taginput class="column"
+          v-model="selectedPools"
+          :data="filteredPools"
+          autocomplete
+          field="Name"
+          placeholder="Filter by pool"
+          closable
+          expanded
+          open-on-focus
+          @typing="getFilteredPools">
+        </b-taginput>
+        <b-taginput class="column"
+          v-model="selectedUsers"
+          :data="filteredUsers"
+          autocomplete
+          field="Email"
+          placeholder="Filter by user"
+          closable
+          expanded
+          open-on-focus
+          @typing="getFilteredUsers">
+          <template slot-scope="props">
+            {{props.option.Name}} {{props.option.Surname}}
+          </template>
+        </b-taginput>
     </div>
     <b-table class="container reservation-table" :data=reservations :loading="isLoading">
       <template slot-scope="props">
@@ -52,63 +52,77 @@
           label="Mon"
           style="width: 14.28%">
             <ReservationCard @edit="loadReservations()"
-              @user="(user) => selectedUser = user"
-              @pool="(pool) => selectedPool = pool"
+              @user="(Email) => toggleUserSelected(Email)"
+              @pool="(id) => togglePoolSelected(id)"
               :reservationData="props.row.mon"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.mon,1)"/>
           </b-table-column>
         <b-table-column
           label="Tue"
           style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
-              @user="(user) => selectedUser = user"
-              @pool="(pool) => selectedPool = pool"
+              @user="(Email) => toggleUserSelected(Email)"
+              @pool="(id) => togglePoolSelected(id)"
               :reservationData="props.row.tue"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.tue,2)"/>
           </b-table-column>
         <b-table-column
           label="Wed"
           style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
-              @user="(user) => selectedUser = user"
-              @pool="(pool) => selectedPool = pool"
+              @user="(Email) => toggleUserSelected(Email)"
+              @pool="(id) => togglePoolSelected(id)"
               :reservationData="props.row.wed"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.wed,3)"/>
           </b-table-column>
         <b-table-column
           label="Thu"
           style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
-              @pool="(pool) => selectedPool = pool"
-              @user="(user) => selectedUser = user"
+              @pool="(id) => togglePoolSelected(id)"
+              @user="(Email) => toggleUserSelected(Email)"
               :reservationData="props.row.thu"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.thu,4)"/>
           </b-table-column>
         <b-table-column
           label="Fri"
           style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
-              @pool="(pool) => selectedPool = pool"
-              @user="(user) => selectedUser = user"
+              @pool="(id) => togglePoolSelected(id)"
+              @user="(Email) => toggleUserSelected(Email)"
               :reservationData="props.row.fri"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.fri,5)"/>
           </b-table-column>
         <b-table-column
           label="Sat"
           style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
-              @user="(user) => selectedUser = user"
-              @pool="(pool) => selectedPool = pool"
+              @user="(Email) => toggleUserSelected(Email)"
+              @pool="(id) => togglePoolSelected(id)"
               :reservationData="props.row.sat"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.sat,6)"/>
           </b-table-column>
         <b-table-column
           label="Sun"
           style="width:14.28%">
             <ReservationCard @edit="loadReservations()"
-              @pool="(pool) => selectedPool = pool"
-              @user="(user) => selectedUser = user"
+              @pool="(id) => togglePoolSelected(id)"
+              @user="(Email) => toggleUserSelected(Email)"
               :reservationData="props.row.sun"
+              :selectedUsers.sync="selectedUsers"
+              :selectedPools.sync="selectedPools"
               v-if="filterReservations(props.row.sun,0)"/>
           </b-table-column>
       </template>
@@ -176,15 +190,41 @@ export default {
         return new Date(res.StartDate).getUTCDay() === weekday && isThisWeek
       }
     },
+    getFilteredPools (text) {
+      this.filteredPools = this.pools.filter((pool) => {
+        return (text === '' || pool.Name.toLowerCase().indexOf(text.toLowerCase()) >= 0)
+      })
+    },
+    getFilteredUsers (text) {
+      this.filteredUsers = this.users.filter((user) => {
+        return (text === '' || (user.Name + ' ' + user.Surname).toLowerCase().indexOf(text.toLowerCase()) >= 0)
+      })
+    },
     filterPools (res) {
-      if (this.selectedPool && this.selectedPool !== 'None') {
-        return this.selectedPool === res.PoolID
+      if (this.selectedPools && this.selectedPools.length > 0) {
+        return this.selectedPools.filter(pool => { return pool.ID === res.PoolID }).length > 0
       } else return true
     },
     filterUsers (res) {
-      if (this.selectedUser && this.selectedUser !== 'None') {
-        return this.selectedUser === res.UserEmail
+      if (this.selectedUsers && this.selectedUsers.length > 0) {
+        return this.selectedUsers.filter(user => { return user.Email === res.UserEmail }).length > 0
       } else return true
+    },
+    toggleUserSelected (Email) {
+      let userToToggle = this.users.find(user => user.Email === Email)
+      if (!this.selectedUsers.includes(userToToggle)) this.selectedUsers.push(userToToggle)
+      else {
+        let index = this.selectedUsers.findIndex((element) => element === userToToggle)
+        this.selectedUsers.splice(index, 1)
+      }
+    },
+    togglePoolSelected (id) {
+      let poolToToggle = this.pools.find(pool => pool.ID === id)
+      if (!this.selectedPools.includes(poolToToggle)) this.selectedPools.push(poolToToggle)
+      else {
+        let index = this.selectedPools.findIndex((element) => element === poolToToggle)
+        this.selectedPools.splice(index, 1)
+      }
     },
     weekChange (diff) {
       diff = diff * 7
@@ -196,6 +236,7 @@ export default {
       loadPoolsReq()
         .then(response => {
           this.pools = response.data.pools
+          this.getFilteredPools('')
           console.log(this.pools)
         })
         .catch(error => {
@@ -206,11 +247,20 @@ export default {
       loadUsersReq()
         .then(response => {
           this.users = response.data.users
+          this.getFilteredUsers('')
           console.log(this.pools)
         })
         .catch(error => {
           console.log(error)
         })
+    },
+    onlyUserInSelected (email) {
+      return this.selectedUsers.filter(user => { return user.Email === email }).length === 1 && this.selectedUsers.length === 1
+    },
+    showOnlyUser (email) {
+      if (this.onlyUserInSelected(email)) {
+        this.selectedUsers = []
+      } else this.selectedUsers = this.users.filter(user => { return user.Email === email })
     }
   },
   mounted () {
@@ -234,8 +284,10 @@ export default {
       dateOptions: { year: 'numeric', month: 'numeric', day: 'numeric' },
       pools: [],
       users: [],
-      selectedPool: null,
-      selectedUser: null,
+      selectedPools: [],
+      selectedUsers: [],
+      filteredPools: [],
+      filteredUsers: [],
       reservations: []
     }
   },

@@ -1,8 +1,8 @@
 <template>
     <b-upload v-model="file" accept=".csv">
       <a class="button is-primary">
-        <b-icon icon="upload"></b-icon>
-        <span>Click to upload</span>
+        <b-icon icon="upload" size="is-small"></b-icon>
+        <span>Import CSV</span>
       </a>
     </b-upload>
 </template>

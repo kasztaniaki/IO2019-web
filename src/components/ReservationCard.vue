@@ -1,8 +1,15 @@
 <template>
   <div class="card" :style="{'background-color': poolColor(reservationData.PoolID)}">
     <div class="card-content my-card-content has-text-white">
-        <div @click="$emit('user',reservationData.UserEmail)" class="element clickable">
-          <b-icon
+        <div
+          @click="userFilterToggle(reservationData.UserEmail, $event)"
+          :class="{clicked : selectedUsers.filter(user => { return user.Email === reservationData.UserEmail }).length > 0}"
+          class="element clickable">
+          <b-icon v-if="selectedUsers.filter(user => { return user.Email === reservationData.UserEmail }).length > 0"
+            icon="times-circle"
+            size="is-small">
+          </b-icon>
+          <b-icon v-else
             icon="user"
             size="is-small">
           </b-icon>
@@ -15,14 +22,20 @@
           </b-icon>
           {{new Date(reservationData.StartDate).toLocaleString('pl-PL', timeOptions)}} - {{new Date(reservationData.EndDate).toLocaleString('pl-PL',timeOptions)}}
         </div>
-        <div @click="$emit('pool',reservationData.PoolID)" class="element clickable">
-          <b-icon
+        <div @click="poolFilterToggle(reservationData.PoolID, $event)"
+          :class="{clicked : selectedPools.filter(pool => { return pool.ID === reservationData.PoolID }).length > 0}"
+          class="element clickable">
+          <b-icon v-if="(selectedPools.filter(pool => { return pool.ID === reservationData.PoolID }).length > 0)"
+            icon="times-circle"
+            size="is-small">
+          </b-icon>
+          <b-icon v-else
             icon="desktop"
             size="is-small">
           </b-icon>
           {{reservationData.PoolName}}
         </div>
-        <div @click="$emit('pool',reservationData.PoolID)" class="element">
+        <div class="element">
           <b-icon
             icon="database"
             size="is-small">
@@ -56,6 +69,18 @@ import CancelReservationForm from '@/components/CancelReservationForm.vue'
 import ReservationForm from '@/components/ReservationForm.vue'
 
 export default {
+  props: {
+    reservationData: Object,
+    selectedUsers: Array,
+    selectedPools: Array
+  },
+  data () {
+    return {
+      timeOptions: { hour: 'numeric', minute: 'numeric' },
+      userClicked: false,
+      poolClicked: false
+    }
+  },
   methods: {
     isReservationOwner (id) {
       return this.$store.getters.getUserData.email === id
@@ -63,9 +88,17 @@ export default {
     poolColor (id) {
       var hash = 0
       for (var i = 0; i < id.length; i++) {
-        hash = id.charCodeAt(i) * 33 + hash
+        hash = id.charCodeAt(i) * 34 + hash
       }
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
+    },
+    userFilterToggle (data, event) {
+      this.userClicked = !this.userClicked
+      this.$emit('user', this.reservationData.UserEmail)
+    },
+    poolFilterToggle (data, event) {
+      this.poolClicked = !this.poolClicked
+      this.$emit('pool', this.reservationData.PoolID)
     },
     editReservationForm (resData) {
       const reservationProps = {
@@ -150,18 +183,6 @@ export default {
           }
         })
     }
-
-  },
-  props: {
-    reservationData: Object
-  },
-  data () {
-    return {
-      timeOptions: { hour: 'numeric', minute: 'numeric' }
-    }
-  },
-  mounted () {
-    this.poolColor('s7n-prog')
   }
 }
 </script>
@@ -192,9 +213,10 @@ td {
   padding: 0.3em;
   margin: -0.3em;
 }
-.clickable:hover {
+.clickable:hover, .clicked {
   background-color: white;
   color: black;
+  cursor: pointer;
 }
 
 </style>

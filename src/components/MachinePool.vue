@@ -6,7 +6,12 @@
         <b-button v-if="isAdmin" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
       </div>
       <div class="level-right">
-        <b-input class="level-item" v-model="text" @keydown.enter.native="filterPools" placeholder="Search"></b-input>
+        <b-taginput
+          class="level-item"
+          v-model="filterTags"
+          @keydown.enter.native="filterPools"
+          placeholder="Search">
+        </b-taginput>
         <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
         <b-button v-if="isAdmin" @click="resetDB()">
         db reset
@@ -52,13 +57,11 @@
             <b-icon
               id="enabled-icon"
               v-if="props.row.Enabled"
-              pack="fas"
               icon="check-circle"
               size="is-small">
             </b-icon>
             <b-icon v-else
               id="disabled-icon"
-              pack="fas"
               icon="times-circle"
               size="is-small">
             </b-icon>
@@ -122,19 +125,20 @@ export default {
           for (const pool of this.machines) {
             this.$set(pool.InstalledSoftware, 'expanded', false)
           }
-          this.selectedRow=this.machines[0]
+          this.selectedRow = this.machines[0]
         })
         .catch(error => {
           console.log(error)
         })
     },
     match (row) {
-      if (this.query.length < 3) return true
-      var re = RegExp(this.query, 'i')
+      if (this.filterTags.length === 0) return true
       for (const key in row) {
         if (row.hasOwnProperty(key)) {
           const field = row[key]
-          if (field.toString().match(re)) return true
+          for (const tag of this.filterTags) {
+            if (field.toString().match(RegExp(tag, 'i'))) return true
+          }
         }
       }
       return false
@@ -143,8 +147,6 @@ export default {
       this.query = this.text
     },
     clearFilter () {
-      console.log('halko')
-
       this.query = ''
       this.text = ''
     },
@@ -295,7 +297,7 @@ export default {
     return {
       machines: [],
       isLoading: false,
-      text: '',
+      filterTags: [],
       query: '',
       highlighting: true,
       selectedRow: null
@@ -303,7 +305,7 @@ export default {
   },
   computed: {
     highlightOptions () {
-      return { keyword: this.query, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
+      return { keyword: this.filterTags, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
     },
     isAdmin () {
       return this.$store.getters.getIsAdmin
