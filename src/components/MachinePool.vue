@@ -12,13 +12,9 @@
           @keydown.enter.native="filterPools"
           placeholder="Search">
         </b-taginput>
-        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
-        <b-button v-if="isAdmin" @click="resetDB()">
-        db reset
-        </b-button>
       </div>
     </div>
-    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
+    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass" detailed :opened-detailed="[selectedRow]" :show-detail-icon="false">
       <template slot-scope="props">
         <b-table-column sortable v-if="match(props.row)"
           field="ID"
@@ -50,7 +46,7 @@
           style="width: 5%">
             {{props.row.MaximumCount}}
         </b-table-column>
-        <b-table-column v-if="match(props.row)"
+        <b-table-column centered v-if="match(props.row)"
           field="Enabled"
           label="Enabled"
           style="width:5%">
@@ -66,42 +62,35 @@
               size="is-small">
             </b-icon>
         </b-table-column>
-        <b-table-column v-if="match(props.row)"
-          field="Description"
-          label="Description"
-          style="45%">
-            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
-        </b-table-column>
+
         <b-table-column
-          style="5%"
+          style="width:25%"
           field="edit"
           v-if="match(props.row)"
           :visible="editable">
-          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
-            <b-button
-              size="is-small"
+            <div class="buttons is-centered" v-if="props.row==selectedRow">
+              <b-button v-show="props.row==selectedRow"
+                icon-left="calendar-plus"
+                icon-pack="far"
+                type="is-success"
+                @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+              </b-button>
+              <b-button v-show="props.row==selectedRow && isAdmin"
               icon-left="pen"
               type="is-info"
               @click.native="showPoolForm(props.row.ID, props.row)">
             </b-button>
-          </div>
-          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
-            <b-button
-              size="is-small"
+              <b-button v-show="props.row==selectedRow && isAdmin"
               icon-left="trash"
               type="is-danger"
               @click.native="confirmPoolDelete(props.row.ID)">
             </b-button>
           </div>
-          <div class="my-button" v-show="props.row==selectedRow">
-            <b-button
-              icon-left="calendar-plus"
-              icon-pack="far"
-              size="is-small"
-              type="is-success"
-              @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
-            </b-button></div>
+            <MachineDescription v-else :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
+      </template>
+      <template slot="detail" slot-scope="props">
+        <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
       </template>
     </b-table>
   </div>
@@ -357,11 +346,30 @@ export default {
   margin: 0px -2px 0px -2px;
 }
 
-.selected-row{
+.selected-row {
   background-color: $selected !important;
   color: $dark !important;
 };
-.my-button {
+
+.detail{
+  background-color: lighten($color: $selected, $amount: 2) !important;
+  color: $dark !important;
+  margin-bottom: 5px !important;
+}
+
+.detail-container {
+  margin-bottom: 8px;
+}
+
+.selected-row>td {
+  border: none;
+}
+
+.b-table .table tr.detail {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+.buttons {
   padding-bottom: 10px;
   padding-top: 6px
 }
