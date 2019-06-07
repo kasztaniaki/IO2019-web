@@ -18,8 +18,8 @@ export default {
       this.$router.push('/users/signin')
     },
     handleError (error) {
-      if (error.response.status === 401) this.commonError(error)
-      else this.authError(error)
+      if (error.response.status === 401) this.authError(error)
+      else this.commonError(error)
     }
   }
 }
