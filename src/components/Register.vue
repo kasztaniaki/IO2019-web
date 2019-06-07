@@ -79,14 +79,10 @@ export default {
     }
   },
   mounted () {
-    EventBus.$on('failedChangingPassword', (msg) => {
-      this.errorMsg = msg
-    })
     EventBus.$on('failedRegistering', (error) => this.handleError(error))
     EventBus.$on('successfulAuthentication', () => this.$router.push('/'))
   },
   beforeDestroy () {
-    EventBus.$off('failedChangingPassword')
     EventBus.$off('failedRegistering')
     EventBus.$off('successfulAuthentication')
   }
