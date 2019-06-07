@@ -4,20 +4,20 @@
       <p class="message"> Create an account </p>
       <div class="form_styling">
         <b-field :type="{'is-danger': errors.has('firstname')}" :message="errors.first('firstname')">
-          <b-input placeholder="First name" v-model="firstname" name="firstname" v-validate="'required|alpha'" />
+          <b-input placeholder="First name" v-model="firstname" name="first name" v-validate="'required|alpha|max:80'" />
         </b-field>
 
         <b-field :type="{'is-danger': errors.has('lastname')}" :message="errors.first('lastname')">
-          <b-input placeholder="Last name" v-model="lastname" name="lastname" v-validate="'required|alpha'" />
+          <b-input placeholder="Last name" v-model="lastname" name="last name" v-validate="'required|alpha|max:80'" />
         </b-field>
 
         <b-field :type="{'is-danger': errors.has('email')}" :message="errors.first('email')">
-          <b-input placeholder="Email" type="text" v-model="email" name="email" v-validate="'required|email'" />
+          <b-input placeholder="Email" type="text" v-model="email" name="email" v-validate="'required|email|max:80'" />
         </b-field>
 
         <b-field :type="{'is-danger': errors.has('password')}" :message="errors.first('password')">
           <b-input placeholder="Password" type="password" v-model="password" name="password"
-            v-validate="'required|min:8'" />
+            v-validate="'required|min:8|max:80'" />
 
         </b-field>
                         <password v-model="password" :strength-meter-only="true"/>
