@@ -60,7 +60,6 @@
 
 <script>
 import EditUser from '@/components/EditUser.vue'
-import EventBus from '@/components/EventBus.vue'
 
 export default {
   data () {

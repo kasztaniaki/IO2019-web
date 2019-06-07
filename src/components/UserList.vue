@@ -48,7 +48,8 @@ export default {
         this.users = response.data.users
       })
         .catch(error => {
-          console.log(error)
+          if (error.response.status === 401) this.authError(error)
+          else this.commonError(error)
         })
     },
     removeUser (user) {
@@ -63,7 +64,8 @@ export default {
             this.loadUsers()
           })
           .catch(error => {
-            console.log(error)
+            if (error.response.status === 401) this.authError(error)
+            else this.commonError(error)
           })
       })
     },

@@ -128,7 +128,8 @@ export default {
           this.selectedRow = this.machines[0]
         })
         .catch(error => {
-          console.log(error)
+          if (error.response.status === 401) this.authError(error)
+          else this.commonError(error)
         })
     },
     match (row) {
@@ -197,7 +198,6 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
         .catch(error => this.commonError(error))
     },
     removePool (poolId) {
@@ -209,7 +209,6 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
         .catch(error => this.commonError(error))
     },
     rowClass (row, index) {
@@ -255,7 +254,6 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
         .catch(error => this.commonError(error))
     }
   },

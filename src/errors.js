@@ -16,6 +16,10 @@ export default {
       })
       console.log(error.message)
       this.$router.push('/users/signin')
+    },
+    handleError (error) {
+      if (error.response.status === 401) this.commonError(error)
+      else this.authError(error)
     }
   }
 }
