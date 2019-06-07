@@ -143,11 +143,7 @@ export default {
           this.reservations = this.processResponse(response)
           this.isLoading = false
         })
-        .catch(error => {
-          if (error) {
-            console.log(error)
-          }
-        })
+        .catch(error => this.commonError(error))
     },
     processResponse (response) {
       var reservations = this.sortReservations(response.data.reservation)
@@ -238,9 +234,7 @@ export default {
           this.pools = response.data.pools
           this.getFilteredPools('')
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.commonError(error))
     },
     loadUsers () { // todo error handling
       loadUsersReq()
@@ -248,9 +242,7 @@ export default {
           this.users = response.data.users
           this.getFilteredUsers('')
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.commonError(error))
     },
     onlyUserInSelected (email) {
       return this.selectedUsers.filter(user => { return user.Email === email }).length === 1 && this.selectedUsers.length === 1

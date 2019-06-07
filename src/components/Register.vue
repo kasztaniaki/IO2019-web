@@ -62,23 +62,6 @@ export default {
         email: this.email,
         password: this.password
       })
-        .then(() => {
-          this.$toast.open({
-            message: 'You are successfully registered and logged!',
-            type: 'is-success',
-            position: 'is-top'
-          })
-          this.$router.push('/')
-        })
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: 'Cannot register. The e-mail is already used.',
-              type: 'is-danger',
-              position: 'is-top'
-            })
-          }
-        })
     },
     validateBeforeSubmit () {
       this.$validator.validateAll()
@@ -99,6 +82,7 @@ export default {
     EventBus.$on('failedChangingPassword', (msg) => {
       this.errorMsg = msg
     })
+    EventBus.$on('failedRegistering', (error) => this.commonError(error))
   },
   beforeDestroy () {
     EventBus.$off('failedChangingPassword')

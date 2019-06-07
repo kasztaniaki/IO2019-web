@@ -75,21 +75,7 @@ export default {
             is_admin: this.is_admin
           })
             .then(() => {
-              this.$toast.open({
-                message: `Data changed succesfully!`,
-                position: 'is-top',
-                type: 'is-success'
-              })
               this.$emit('close')
-            })
-            .catch(error => {
-              if (error) {
-                this.$toast.open({
-                  message: `Provided password is invalid!`,
-                  position: 'is-top',
-                  type: 'is-danger'
-                })
-              }
             })
         }
       })
@@ -122,22 +108,7 @@ export default {
         onConfirm: (value) => {
           this.$store.dispatch('deleteAccount', value)
             .then(() => {
-              this.$toast.open({
-                message: `Account deleted!`,
-                position: 'is-top',
-                type: 'is-success'
-              })
-              this.$router.push('/')
               this.$emit('close')
-            })
-            .catch(error => {
-              if (error) {
-                this.$toast.open({
-                  message: `Provided password is invalid!`,
-                  position: 'is-top',
-                  type: 'is-danger'
-                })
-              }
             })
         }
       })
@@ -149,8 +120,14 @@ export default {
     }
   },
   mounted () {
-    EventBus.$on('failedRegistering', (msg) => {
-      this.errorMsg = msg
+    EventBus.$on('failedAuthentication', (error) => this.commonError(error))
+    EventBus.$on('successfulDeletion', () => {
+      this.$toast.open({
+        message: `Account deleted!`,
+        position: 'is-top',
+        type: 'is-success'
+      })
+      this.$router.push('/')
     })
     getUserReq(this.userEmail)
       .then(response => {

@@ -38,21 +38,6 @@ export default {
         email: this.email,
         password: this.password
       })
-        .then(() => {
-          var token = this.$store.getters.getJwt
-          this.$api.setHeader('Auth-Token', token)
-          this.$router.push('/')
-        }
-        )
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: 'Incorrect email or password.',
-              type: 'is-danger',
-              position: 'is-top'
-            })
-          }
-        })
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
@@ -69,8 +54,11 @@ export default {
     }
   },
   mounted () {
-    EventBus.$on('failedAuthentication', (msg) => {
-      this.errorMsg = msg
+    EventBus.$on('failedAuthentication', (msg) => this.authError(msg))
+    EventBus.$on('successfulAuthentication', () => {
+      var token = this.$store.getters.getJwt
+      this.$api.setHeader('Auth-Token', token)
+      this.$router.push('/')
     })
   },
   beforeDestroy () {

@@ -186,14 +186,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.commonError(error))
     },
     editPool (poolId, poolProps) {
       editPoolReq(poolId, poolProps).then(response => {
@@ -205,13 +198,7 @@ export default {
         })
       })
         // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.commonError(error))
     },
     removePool (poolId) {
       removePoolReq(poolId).then(response => {
@@ -223,13 +210,7 @@ export default {
         })
       })
         // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.commonError(error))
     },
     rowClass (row, index) {
       if (this.selectedRow === row) return 'selected-row'
@@ -244,15 +225,7 @@ export default {
         })
         this.loadMachinesData()
       })
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: `db reset error`,
-              position: 'is-bottom',
-              type: 'is-success'
-            })
-          }
-        })
+        .catch(error => this.commonError(error))
     },
     addReservationForm (poolID, poolName, poolMaxCount) {
       const poolProps = {
@@ -283,13 +256,7 @@ export default {
         })
       })
         // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: error,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.commonError(error))
     }
   },
   data () {
