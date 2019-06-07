@@ -14,9 +14,9 @@
         </b-taginput>
       </div>
     </div>
-    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass" detailed :opened-detailed="[selectedRow]" :show-detail-icon="false">
+    <b-table class="container" :data="filteredMachines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass" detailed :opened-detailed="[selectedRow]" :show-detail-icon="false">
       <template slot-scope="props">
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="ID"
           label="ID"
           style="width: 10%">
@@ -24,7 +24,7 @@
               {{props.row.ID}}
             </div>
           </b-table-column>
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="Name"
           label="Name"
           style="width: 25%">
@@ -32,7 +32,7 @@
             {{props.row.Name}}
             </div>
         </b-table-column>
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="OSName"
           label="OS"
           style="width: 5%">
@@ -40,13 +40,13 @@
             {{props.row.OSName}}
             </div>
         </b-table-column>
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="MaximumCount"
           label="Maximum Count"
           style="width: 5%">
             {{props.row.MaximumCount}}
         </b-table-column>
-        <b-table-column centered v-if="match(props.row)"
+        <b-table-column centered
           field="Enabled"
           label="Enabled"
           style="width:5%">
@@ -66,7 +66,6 @@
         <b-table-column
           style="width:25%"
           field="edit"
-          v-if="match(props.row)"
           :visible="editable">
             <div class="buttons is-centered" v-if="props.row==selectedRow">
               <b-button v-show="props.row==selectedRow"
@@ -89,7 +88,7 @@
             <MachineDescription v-else :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
       </template>
-      <template slot="detail" slot-scope="props">
+      <template  slot="detail" slot-scope="props">
         <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
       </template>
     </b-table>
@@ -111,9 +110,6 @@ export default {
         .then(response => {
           this.isLoading = false
           this.machines = response.data.pools
-          for (const pool of this.machines) {
-            this.$set(pool.InstalledSoftware, 'expanded', false)
-          }
           this.selectedRow = this.machines[0]
         })
         .catch(error => {
@@ -131,9 +127,6 @@ export default {
         }
       }
       return false
-    },
-    filterPools () {
-      this.query = this.text
     },
     clearFilter () {
       this.query = ''
@@ -297,22 +290,13 @@ export default {
     },
     isAdmin () {
       return this.$store.getters.getIsAdmin
+    },
+    filteredMachines () {
+      return this.machines.filter(this.match)
     }
   },
   mounted () {
     this.loadMachinesData()
-  },
-  filters: {
-    highlight: function (value, query) {
-      var re = RegExp(query, 'i')
-      var result = value.toString().replace(re, function (matchedText, a, b) {
-        if (matchedText !== '') {
-          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
-          return res
-        } else return ''
-      })
-      return result
-    }
   },
   components: {
     MachineDescription,
