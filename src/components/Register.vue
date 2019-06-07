@@ -82,10 +82,11 @@ export default {
     EventBus.$on('failedChangingPassword', (msg) => {
       this.errorMsg = msg
     })
-    EventBus.$on('failedRegistering', (error) => this.commonError(error))
+    EventBus.$on('failedRegistering', (error) => this.handleError(error))
   },
   beforeDestroy () {
     EventBus.$off('failedChangingPassword')
+    EventBus.$off('failedRegistering')
   }
 }
 

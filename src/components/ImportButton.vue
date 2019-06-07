@@ -33,7 +33,7 @@ export default {
       // eslint-disable-next-line
           .catch(error => {
           if (error) {
-            this.commonError(error)
+            this.handleError(error)
             this.$modal.open({
               parent: this,
               component: ImportErrors,

@@ -47,10 +47,7 @@ export default {
         this.isLoading = false
         this.users = response.data.users
       })
-        .catch(error => {
-          if (error.response.status === 401) this.authError(error)
-          else this.commonError(error)
-        })
+        .catch(error => this.handleError(error))
     },
     removeUser (user) {
       this.$dialog.confirm({
@@ -63,10 +60,7 @@ export default {
           .then(response => {
             this.loadUsers()
           })
-          .catch(error => {
-            if (error.response.status === 401) this.authError(error)
-            else this.commonError(error)
-          })
+          .catch(error => this.handleError(error))
       })
     },
     editUser (user) {

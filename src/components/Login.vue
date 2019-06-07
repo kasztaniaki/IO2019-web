@@ -54,7 +54,7 @@ export default {
     }
   },
   mounted () {
-    EventBus.$on('failedAuthentication', (msg) => this.authError(msg))
+    EventBus.$on('failedAuthentication', (msg) => this.handleError(msg))
     EventBus.$on('successfulAuthentication', () => {
       var token = this.$store.getters.getJwt
       this.$api.setHeader('Auth-Token', token)
@@ -63,6 +63,7 @@ export default {
   },
   beforeDestroy () {
     EventBus.$off('failedAuthentication')
+    EventBus.$off('successfulAuthentication')
   }
 }
 

@@ -20,31 +20,35 @@
             Show only mine
           </b-button>
         </div>
-        <b-taginput class="column"
-          v-model="selectedPools"
-          :data="filteredPools"
-          autocomplete
-          field="Name"
-          placeholder="Filter by pool"
-          closable
-          expanded
-          open-on-focus
-          @typing="getFilteredPools">
-        </b-taginput>
-        <b-taginput class="column"
-          v-model="selectedUsers"
-          :data="filteredUsers"
-          autocomplete
-          field="Email"
-          placeholder="Filter by user"
-          closable
-          expanded
-          open-on-focus
-          @typing="getFilteredUsers">
-          <template slot-scope="props">
-            {{props.option.Name}} {{props.option.Surname}}
-          </template>
-        </b-taginput>
+        <form autocomplete="off">
+          <b-taginput class="column"
+            v-model="selectedPools"
+            :data="filteredPools"
+            autocomplete
+            field="Name"
+            placeholder="Filter by pool"
+            closable
+            expanded
+            open-on-focus
+            @typing="getFilteredPools">
+          </b-taginput>
+        </form>
+        <form autocomplete="off">
+          <b-taginput class="column"
+            v-model="selectedUsers"
+            :data="filteredUsers"
+            autocomplete="off"
+            field="Email"
+            placeholder="Filter by user"
+            closable
+            expanded
+            open-on-focus
+            @typing="getFilteredUsers">
+            <template slot-scope="props">
+              {{props.option.Name}} {{props.option.Surname}}
+            </template>
+          </b-taginput>
+        </form>
     </div>
     <b-table class="container reservation-table" :data=reservations :loading="isLoading">
       <template slot-scope="props">
@@ -143,7 +147,7 @@ export default {
           this.reservations = this.processResponse(response)
           this.isLoading = false
         })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     processResponse (response) {
       var reservations = this.sortReservations(response.data.reservation)
@@ -234,7 +238,7 @@ export default {
           this.pools = response.data.pools
           this.getFilteredPools('')
         })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     loadUsers () { // todo error handling
       loadUsersReq()
@@ -242,7 +246,7 @@ export default {
           this.users = response.data.users
           this.getFilteredUsers('')
         })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     onlyUserInSelected (email) {
       return this.selectedUsers.filter(user => { return user.Email === email }).length === 1 && this.selectedUsers.length === 1

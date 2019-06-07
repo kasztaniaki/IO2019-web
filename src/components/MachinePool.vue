@@ -127,10 +127,7 @@ export default {
           }
           this.selectedRow = this.machines[0]
         })
-        .catch(error => {
-          if (error.response.status === 401) this.authError(error)
-          else this.commonError(error)
-        })
+        .catch(error => this.handleError(error))
     },
     match (row) {
       if (this.filterTags.length === 0) return true
@@ -187,7 +184,7 @@ export default {
           type: 'is-success'
         })
       })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     editPool (poolId, poolProps) {
       editPoolReq(poolId, poolProps).then(response => {
@@ -198,7 +195,7 @@ export default {
           type: 'is-success'
         })
       })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     removePool (poolId) {
       removePoolReq(poolId).then(response => {
@@ -209,7 +206,7 @@ export default {
           type: 'is-success'
         })
       })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     rowClass (row, index) {
       if (this.selectedRow === row) return 'selected-row'
@@ -224,7 +221,7 @@ export default {
         })
         this.loadMachinesData()
       })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     },
     addReservationForm (poolID, poolName, poolMaxCount) {
       const poolProps = {
@@ -254,7 +251,7 @@ export default {
           type: 'is-success'
         })
       })
-        .catch(error => this.commonError(error))
+        .catch(error => this.handleError(error))
     }
   },
   data () {
