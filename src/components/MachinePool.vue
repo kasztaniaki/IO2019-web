@@ -14,7 +14,14 @@
         </b-taginput>
       </div>
     </div>
-    <b-table class="container" :data="filteredMachines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass" detailed :opened-detailed="[selectedRow]" :show-detail-icon="false">
+    <b-table class="container pool-table" v-if="this.machines.length > 0"
+      ref="table"
+      :data="filteredMachines"
+      :loading="isLoading"
+      :selected.sync="selectedRow"
+      :row-class="rowClass"
+      detailed
+      :show-detail-icon="false">
       <template slot-scope="props">
         <b-table-column sortable
           field="ID"
@@ -110,7 +117,6 @@ export default {
         .then(response => {
           this.isLoading = false
           this.machines = response.data.pools
-          this.selectedRow = this.machines[0]
         })
         .catch(error => {
           console.log(error)
@@ -286,7 +292,7 @@ export default {
   },
   computed: {
     highlightOptions () {
-      return { keyword: this.filterTags, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
+      return { keyword: (this.filterTags.length === 0) ? null : this.filterTags, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
     },
     isAdmin () {
       return this.$store.getters.getIsAdmin
@@ -297,6 +303,16 @@ export default {
   },
   mounted () {
     this.loadMachinesData()
+  },
+  watch: {
+    selectedRow: function (newValue, oldValue) {
+      if (oldValue !== null) {
+        this.$refs.table.openedDetailed.pop()
+      }
+      if (newValue !== null) {
+        this.$refs.table.openedDetailed.push(newValue)
+      }
+    }
   },
   components: {
     MachineDescription,
@@ -353,6 +369,11 @@ export default {
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
 }
+
+.pool-table td {
+  vertical-align: middle !important;
+}
+
 .buttons {
   padding-bottom: 10px;
   padding-top: 6px
