@@ -68,6 +68,8 @@ export default {
             type: 'is-success',
             position: 'is-top'
           })
+          var token = this.$store.getters.getJwt
+          this.$api.setHeader('Auth-Token', token)
           this.$router.push('/')
         })
         .catch(error => {
