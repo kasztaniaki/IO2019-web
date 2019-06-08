@@ -9,9 +9,11 @@
             <div class="column">
               <b-datepicker
                 inline
-                v-model="selectedDate">
+                v-model="selectedDate"
+                :min-date="today">
                   <b-field grouped group-multiline>
-                    <b-radio-button type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index">
+                    <b-radio-button type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index"
+                      :disabled="slot.start < now && today.getDate() === selectedDate.getDate()">
                       <span>
                       {{ printTimeSlot(slot) }}
                       </span>
@@ -71,7 +73,7 @@ export default {
     },
     StartDate: {
       type: Date,
-      default: null
+      default: new Date()
     },
     ReservationID: {
       type: Number,
@@ -79,7 +81,10 @@ export default {
     }
   },
   data () {
+    const today = new Date()
     return {
+      today: new Date(today.getUTCFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0),
+      now: new Date(today.getUTCFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), 0, 0),
       selectedDate: this.StartDate,
       machinesCount: this.Count,
       timeSlots: TIME_SLOTS,
