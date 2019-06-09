@@ -42,13 +42,21 @@
       <div class="columns is-centered">
         <div class="column">
           <b-field label="Machines Count">
-            <b-numberinput
-              value="machinesCount"
-              v-model="machinesCount"
-              :min=0
-              :max="this.MaxCount"
-              expanded>
-            </b-numberinput>
+            <div class="level columns">
+              <b-numberinput
+                class="level-item is-two-thirds column"
+                value="machinesCount"
+                controls-position="compact"
+                v-model="machinesCount"
+                :min=0
+                :max="this.maxCount"
+                expanded>
+              </b-numberinput>
+              <div
+                class="level-item column">
+                Available: {{maxCount}}
+              </div>
+            </div>
           </b-field>
         </div>
       </div>
@@ -68,6 +76,7 @@
 
 <script>
 import { TIME_SLOTS } from '@/consts.js'
+import { getPoolAvailabilityReq } from '@/api'
 
 export default {
   props: {
@@ -78,10 +87,6 @@ export default {
     PoolID: {
       type: String,
       default: ''
-    },
-    MaxCount: {
-      tpye: Number,
-      default: 10000
     },
     Count: {
       type: Number,
@@ -99,10 +104,11 @@ export default {
   data () {
     const today = new Date()
     return {
-      today: new Date(today.getUTCFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0),
-      now: new Date(today.getUTCFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), 0, 0),
+      today: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0),
+      now: new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), 0, 0),
       selectedDate: today,
       machinesCount: this.Count,
+      maxCount: 0,
       timeSlots: TIME_SLOTS,
       selectedSlot: null,
       start: null,
@@ -144,6 +150,23 @@ export default {
     },
     printTimeSlot (slot) {
       return slot['start'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') + ' - ' + slot['end'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':')
+    },
+    maxAvailableMachines () {
+      if (this.selectedSlot !== null) {
+        getPoolAvailabilityReq(this.PoolID, this.startTime, this.endTime)
+          .then(result => {
+            this.maxCount = result.data.availability
+          })
+          .catch(error => {
+            console.log(error) // todo replace this with proper error handling
+            this.maxCount = 0
+          })
+      } else this.maxCount = 0
+    }
+  },
+  watch: {
+    selectedSlot: function () {
+      this.maxAvailableMachines()
     }
   }
 }

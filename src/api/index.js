@@ -111,3 +111,13 @@ export function getUserReq (email) {
     params: { email: email }
   })
 }
+
+export function getPoolAvailabilityReq (id, startDate, endDate) {
+  return axios.get(`${API_URL}/pool_availability`, {
+    params: {
+      id: id,
+      startDate: startDate,
+      endDate: endDate
+    }
+  })
+}
