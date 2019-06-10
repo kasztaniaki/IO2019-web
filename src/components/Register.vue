@@ -4,7 +4,7 @@
       <p class="message"> Create an account </p>
       <div class="form_styling">
         <b-field :type="{'is-danger': errors.has('firstname')}" :message="errors.first('firstname')">
-          <b-input placeholder="First name" v-model="firstname" name="first name" v-validate="'required|alpha|max:80'" />
+          <b-input placeholder="First name" v-model="firstname" name="first name" v-validate="'required|max:80'" />
         </b-field>
 
         <b-field :type="{'is-danger': errors.has('lastname')}" :message="errors.first('lastname')">
