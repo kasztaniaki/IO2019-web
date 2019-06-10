@@ -102,11 +102,11 @@ export default {
     }
   },
   data () {
-    const today = new Date()
+    const today_ = new Date()
     return {
-      today: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0),
-      now: new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes(), 0, 0),
-      selectedDate: today,
+      today: new Date(today_.getFullYear(), today_.getMonth(), today_.getDate(), 0, 0, 0, 0),
+      now: new Date(today_.getFullYear(), today_.getMonth(), today_.getDate(), today_.getHours(), today_.getMinutes(), 0, 0),
+      selectedDate: today_,
       machinesCount: this.Count,
       maxCount: 0,
       timeSlots: TIME_SLOTS,
@@ -118,16 +118,40 @@ export default {
   computed: {
     startTime () {
       if (this.selectedSlot === -1) {
-        return this.start
+        return new Date(this.selectedDate.getUTCFullYear(),
+          this.selectedDate.getMonth(),
+          this.selectedDate.getDate(),
+          this.start.getHours(),
+          this.start.getMinutes(),
+          0, 0)
       } else {
-        return this.timeSlots[this.selectedSlot]['start']
+        var time = this.timeSlots[this.selectedSlot]['start']
+        console.log(this.selectedDate.getUTCDate())
+        var dt =  new Date(this.selectedDate.getFullYear(),
+          this.selectedDate.getMonth(),
+          this.selectedDate.getDate(),
+          time.getHours(),
+          time.getMinutes(),
+          0, 0)
+        return dt
       }
     },
     endTime () {
       if (this.selectedSlot === -1) {
-        return this.end
+        return new Date(this.selectedDate.getFullYear(),
+          this.selectedDate.getMonth(),
+          this.selectedDate.getDate(),
+          this.end.getHours(),
+          this.end.getMinutes(),
+          0, 0)
       } else {
-        return this.timeSlots[this.selectedSlot]['end']
+        var time = this.timeSlots[this.selectedSlot]['end']
+        return new Date(this.selectedDate.getFullYear(),
+          this.selectedDate.getMonth(),
+          this.selectedDate.getDate(),
+          time.getHours(),
+          time.getMinutes(),
+          0, 0)
       }
     }
   },
@@ -152,7 +176,7 @@ export default {
       return slot['start'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':') + ' - ' + slot['end'].toLocaleTimeString('pl-PL').split(':').slice(0, 2).join(':')
     },
     maxAvailableMachines () {
-      if (this.selectedSlot !== null) {
+      if (this.selectedSlot !== null && this.startTime !== null && this.endTime !== null) {
         getPoolAvailabilityReq(this.PoolID, this.startTime, this.endTime)
           .then(result => {
             this.maxCount = result.data.availability
@@ -166,6 +190,15 @@ export default {
   },
   watch: {
     selectedSlot: function () {
+      this.maxAvailableMachines()
+    },
+    start: function () {
+      this.maxAvailableMachines()
+    },
+    end: function () {
+      this.maxAvailableMachines()
+    },
+    selectedDate: function () {
       this.maxAvailableMachines()
     }
   }
