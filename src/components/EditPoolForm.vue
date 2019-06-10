@@ -45,10 +45,9 @@
         </b-field>
 
         <b-field label="Enabled">
-          <div @click="toggleEnabled">
-            <b-icon id="enabled-icon" v-if="newEnabled" pack="fas" icon="check-circle"></b-icon>
-            <b-icon v-else id="disabled-icon" pack="fas" icon="times-circle"></b-icon>
-          </div>
+          <b-switch v-model="newEnabled"
+            type="is-success">
+            </b-switch>
         </b-field>
 
         <label class="label">Description</label>
