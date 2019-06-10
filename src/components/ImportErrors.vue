@@ -27,7 +27,6 @@ export default {
   },
   filters: {
     overflow: function (value, selected) {
-
       if (!value) return ''
       if (value.toString().length > 100 && !selected) {
         return value.toString().substring(0, 100) + '...'
