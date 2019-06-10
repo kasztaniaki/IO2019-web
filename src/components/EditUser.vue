@@ -10,7 +10,7 @@
         </b-field>
 
         <b-field label="New password" :type="{'is-danger': errors.has('new-password')}" :message="errors.first('new-password')">
-          <b-input placeholder="New password" type="password" v-model="new_password" name="new-password"
+          <b-input autocomplete="new-password" placeholder="New password" type="password" v-model="new_password" name="new-password"
             v-validate="'min:8'" />
         </b-field>
         <b-field label="Updated first name" :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
@@ -31,7 +31,7 @@
 
       </section>
       <footer class="modal-card-foot">
-        <button class="button" type="button" @click="$parent.close()">Close</button>
+        <button class="button" type="button" @click.prevent="this.$emit('close')">Close</button>
         <button class="button is-primary" @click.prevent="validateBeforeSubmit()">Save</button>
         <button class="button is-danger" @click.prevent="deleteAccount()">Delete account</button>
       </footer>
@@ -75,21 +75,7 @@ export default {
             is_admin: this.is_admin
           })
             .then(() => {
-              this.$toast.open({
-                message: `Data changed succesfully!`,
-                position: 'is-top',
-                type: 'is-success'
-              })
               this.$emit('close')
-            })
-            .catch(error => {
-              if (error) {
-                this.$toast.open({
-                  message: `Provided password is invalid!`,
-                  position: 'is-top',
-                  type: 'is-danger'
-                })
-              }
             })
         }
       })
@@ -122,22 +108,7 @@ export default {
         onConfirm: (value) => {
           this.$store.dispatch('deleteAccount', value)
             .then(() => {
-              this.$toast.open({
-                message: `Account deleted!`,
-                position: 'is-top',
-                type: 'is-success'
-              })
-              this.$router.push('/')
               this.$emit('close')
-            })
-            .catch(error => {
-              if (error) {
-                this.$toast.open({
-                  message: `Provided password is invalid!`,
-                  position: 'is-top',
-                  type: 'is-danger'
-                })
-              }
             })
         }
       })
@@ -149,8 +120,14 @@ export default {
     }
   },
   mounted () {
-    EventBus.$on('failedRegistering', (msg) => {
-      this.errorMsg = msg
+    EventBus.$on('failedAuthentication', (error) => this.handleError(error))
+    EventBus.$on('successfulDeletion', () => {
+      this.$toast.open({
+        message: `Account deleted!`,
+        position: 'is-top',
+        type: 'is-success'
+      })
+      this.$router.push('/')
     })
     getUserReq(this.userEmail)
       .then(response => {
@@ -161,7 +138,8 @@ export default {
       })
   },
   beforeDestroy () {
-    EventBus.$off('failedRegistering')
+    EventBus.$off('failedAuthentication')
+    EventBus.$off('successfulDeletion')
   }
 }
 </script>

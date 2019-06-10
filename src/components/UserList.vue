@@ -47,9 +47,7 @@ export default {
         this.isLoading = false
         this.users = response.data.users
       })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.handleError(error))
     },
     removeUser (user) {
       this.$dialog.confirm({
@@ -62,9 +60,7 @@ export default {
           .then(response => {
             this.loadUsers()
           })
-          .catch(error => {
-            console.log(error)
-          })
+          .catch(error => this.handleError(error))
       })
     },
     editUser (user) {

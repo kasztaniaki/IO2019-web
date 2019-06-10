@@ -127,9 +127,7 @@ export default {
           }
           this.selectedRow = this.machines[0]
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.handleError(error))
     },
     match (row) {
       if (this.filterTags.length === 0) return true
@@ -186,14 +184,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     editPool (poolId, poolProps) {
       editPoolReq(poolId, poolProps).then(response => {
@@ -204,14 +195,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     removePool (poolId) {
       removePoolReq(poolId).then(response => {
@@ -222,14 +206,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     rowClass (row, index) {
       if (this.selectedRow === row) return 'selected-row'
@@ -244,15 +221,7 @@ export default {
         })
         this.loadMachinesData()
       })
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: `db reset error`,
-              position: 'is-bottom',
-              type: 'is-success'
-            })
-          }
-        })
+        .catch(error => this.handleError(error))
     },
     addReservationForm (poolID, poolName, poolMaxCount) {
       const poolProps = {
@@ -282,14 +251,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: error,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     }
   },
   data () {

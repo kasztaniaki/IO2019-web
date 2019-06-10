@@ -6,12 +6,14 @@ import highlight from 'vue-highlight-text/public/directive.min.js'
 import VeeValidate from 'vee-validate'
 import store from './store'
 import api from '@/api'
+import errorHandlers from './errors'
 
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/css/fontawesome.css'
 
 Vue.directive('highlight', highlight)
 Vue.prototype.$api = api
+Vue.mixin(errorHandlers)
 
 Vue.use(Buefy, {
   'defaultIconPack': 'fas'

@@ -62,25 +62,6 @@ export default {
         email: this.email,
         password: this.password
       })
-        .then(() => {
-          this.$toast.open({
-            message: 'You are successfully registered and logged!',
-            type: 'is-success',
-            position: 'is-top'
-          })
-          var token = this.$store.getters.getJwt
-          this.$api.setHeader('Auth-Token', token)
-          this.$router.push('/')
-        })
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: 'Cannot register. The e-mail is already used.',
-              type: 'is-danger',
-              position: 'is-top'
-            })
-          }
-        })
     },
     validateBeforeSubmit () {
       this.$validator.validateAll()
@@ -98,12 +79,12 @@ export default {
     }
   },
   mounted () {
-    EventBus.$on('failedChangingPassword', (msg) => {
-      this.errorMsg = msg
-    })
+    EventBus.$on('failedRegistering', (error) => this.handleError(error))
+    EventBus.$on('successfulAuthentication', () => this.$router.push('/'))
   },
   beforeDestroy () {
-    EventBus.$off('failedChangingPassword')
+    EventBus.$off('failedRegistering')
+    EventBus.$off('successfulAuthentication')
   }
 }
 
