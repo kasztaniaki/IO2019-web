@@ -111,3 +111,7 @@ export function getUserReq (email) {
     params: { email: email }
   })
 }
+
+export function resetPasswordReq (email) {
+  return axios.post(`${API_URL}/reset_password`, email)
+}
