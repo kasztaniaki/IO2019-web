@@ -13,7 +13,7 @@
           </b-field>
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-primary" @click.prevent="validateBeforeSubmit()">Reset Password</button>
+        <button class="button is-primary is-centered" @click.prevent="validateBeforeSubmit()">Reset Password</button>
       </footer>
     </form>
   </div>

@@ -12,11 +12,11 @@
             v-validate="'required'" />
         </b-field>
 
-        <div @click="forgotPassword()">
-          <p> Forgot Password?  </p>
+        <div class="clickable" align="left" @click="forgotPassword()">
+          <p> <font size="2">Forgot Password?</font> </p>
         </div>
 
-        <button class="button is-primary" @click.prevent="validateBeforeSubmit()"> Log in </button>
+        <button class="button is-primary is-centered" @click.prevent="validateBeforeSubmit()"> Log in </button>
       </div>
       <div class="information">
         <p>Don't have an account? <router-link to="/users/signup">Sign up</router-link> </p>
@@ -91,3 +91,11 @@ export default {
 }
 
 </script>
+
+<style lang="scss" scoped>
+.clickable:hover, .clicked {
+  background-color: white;
+  color: #7067ef;
+  cursor: pointer;
+}
+</style>
