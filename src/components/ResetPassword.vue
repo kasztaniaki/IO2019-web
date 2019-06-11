@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     resetPassword () {
-      resetPasswordReq(this.email)
+        resetPasswordReq({"email": this.email})
         .then(response => {
           this.$toast.open({
             message: `An email has been sent. Check your inbox.`,
