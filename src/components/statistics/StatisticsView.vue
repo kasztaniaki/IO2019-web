@@ -5,13 +5,13 @@
         <div class="level">
           <b-button class="level-item my-button"
                 icon-left="chevron-left"
-                @click.native="dateChange(-1)" ></b-button>
+                @click="dateChange(-1)" ></b-button>
               <div class="level-item" v-if="startTime">
                 {{timeRangeString}}
               </div>
               <b-button class="level-item my-button"
                 icon-left="chevron-right"
-                @click.native="dateChange(1)" ></b-button>
+                @click="dateChange(1)" ></b-button>
         </div>
       </div>
       <div class="column">
@@ -37,10 +37,38 @@
         </b-field>
       </div>
     </div>
-    <BarChartWrap :loading="charts[0].loading" :labels='charts[0].labels' :data='charts[0].data' chartTitle='Popular Pools'/>
-    <BarChartWrap :labels='pools' :data='stats' chartTitle='Popular Users'/>
-    <BarChartWrap :labels='pools' :data='stats' chartTitle='Bottlenecks'/>
-    <BarChartWrap :labels='pools' :data='stats' chartTitle='Least Used'/>
+    <BarChartWrap
+      ref="chart1"
+      :tooltip='charts[0].tooltip'
+      :chartTitle='charts[0].title'
+      :number.sync="chartNumbers[0]"
+      :labels='charts[0].labels'
+      :dataPoints='charts[0].data' />
+    <BarChartWrap
+      ref="chart2"
+      :tooltip='charts[1].tooltip'
+      :chartTitle='charts[1].title'
+      :number.sync="chartNumbers[1]"
+      :labels='charts[1].labels'
+      :dataPoints='charts[1].data'
+      />
+    <BarChartWrap
+      ref="chart3"
+      :tooltip='charts[2].tooltip'
+      :chartTitle='charts[2].title'
+      :number.sync="chartNumbers[2]"
+      :threshold.sync="threshold"
+      :labels='charts[2].labels'
+      :dataPoints='charts[2].data'
+      />
+    <BarChartWrap
+      ref="chart4"
+      :tooltip='charts[3].tooltip'
+      :chartTitle='charts[3].title'
+      :number.sync="chartNumbers[3]"
+      :labels='charts[3].labels'
+      :dataPoints='charts[3].data'
+      />
   </div>
 </template>
 
@@ -62,21 +90,21 @@ export default {
       timeRange: 'week',
       startTime: null,
       endTime: null,
+      isLoading: false,
+      chartNumbers: [5, 5, 5, 5],
+      threshold: 0.8,
       charts: [
         {
           title: 'Popular Pools',
+          tooltip: 'Hours * machine count for reservation',
           labels: [],
           data: [],
-          loading: false,
-          getter: getPopularPoolsReq,
-          arguments: [
-            this.startTime,
-            this.endTime,
-            3 // todo
-          ]
+          loaded: false,
+          getter: getPopularPoolsReq
         },
         {
           title: 'Popular Users',
+          tooltip: 'Hours * machine count for reservation',
           labels: [],
           data: [],
           loading: false,
@@ -84,6 +112,7 @@ export default {
         },
         {
           title: 'Bottlenecked Pools',
+          tooltip: 'Number of hours in bottlenecked state (more than 80% machines in use at a given moment)',
           labels: [],
           data: [],
           loading: false,
@@ -91,26 +120,73 @@ export default {
         },
         {
           title: 'Unused Pools',
+          tooltip: 'Lowest peak percent of machines in use for a given pool',
           labels: [],
           data: [],
           loading: false,
           getter: getUnusedPoolsReq
         }
-      ],
-      isLoading: false
+      ]
+    }
+  },
+  computed: {
+    timeRangeString () {
+      switch (this.timeRange) {
+        case 'week':
+          return this.startTime.toLocaleString('pl-PL', { year: 'numeric', month: 'numeric', day: 'numeric' }) + ' - ' +
+          this.endTime.toLocaleString('pl-PL', { year: 'numeric', month: 'numeric', day: 'numeric' })
+        case 'month':
+          return this.startTime.toLocaleString('pl-PL', { year: 'numeric', month: 'long' })
+        case 'year':
+          return this.startTime.toLocaleString('pl-PL', { year: 'numeric' })
+        default:
+          return ''
+      }
+    },
+    arguments () {
+      return [
+        [
+          this.startTime,
+          this.endTime,
+          this.chartNumbers[0]
+        ],
+        [
+          this.startTime,
+          this.endTime,
+          this.chartNumbers[1]
+        ],
+        [
+          this.startTime,
+          this.endTime,
+          this.chartNumbers[2],
+          this.threshold
+        ],
+        [
+          this.startTime,
+          this.endTime,
+          this.chartNumbers[3]
+        ]
+      ]
     }
   },
   methods: {
     loadData (chartIndex) {
       var chart = this.charts[chartIndex]
-      chart.getter(...chart.arguments)
+      chart.getter(...this.arguments[chartIndex])
         .then(response => {
           chart.data = response.data.data
-          chart.labels = response.data.labels
-          for (let i = 0; i < chart.labels.length; i++) {
-            chart.labels[i] = chart.labels[i].name
+          var labels = []
+          for (const label of response.data.labels) {
+            labels.push(label.display)
           }
+          chart.labels = labels
         })
+    },
+    loadAll () {
+      this.loadData(0)
+      this.loadData(1)
+      this.loadData(2)
+      // this.loadData(3)
     },
     chartData (dataLabels, dataPoints, label) {
       var colors = []
@@ -120,7 +196,21 @@ export default {
       return { labels: dataLabels, datasets: [{ backgroundColor: colors, label: label, data: dataPoints }] }
     },
     dateChange (offset) {
+      switch (this.timeRange) {
+        case 'week':
+          this.startTime = new Date(this.startTime.setDate(this.startTime.getDate() + offset * 7))
+          break
 
+        case 'month':
+          this.startTime = new Date(this.startTime.setMonth(this.startTime.getMonth() + offset))
+          break
+
+        case 'year':
+          this.startTime = new Date(this.startTime.setFullYear(this.startTime.getFullYear() + offset))
+          break
+        default:
+          break
+      }
     },
     setTime (range) {
       switch (range) {
@@ -138,8 +228,8 @@ export default {
           var now = new Date()
           var month = new Date(now.getFullYear(),
             now.getMonth(),
-            0, 0, 0, 0, 0)
-          var monthStart = new Date(month)
+            1, 0, 0, 0, 0)
+          var monthStart = new Date(month + 1)
           var monthEnd = new Date(month.setMonth(month.getMonth() + 1))
 
           this.startTime = monthStart
@@ -149,7 +239,7 @@ export default {
         case 'year':
           var now2 = new Date()
           var year = new Date(now2.getFullYear(),
-            0, 0, 0, 0, 0, 0)
+            0, 1, 0, 0, 0, 0)
           var yearStart = new Date(year)
           var yearEnd = new Date(year.setFullYear(year.getFullYear() + 1))
 
@@ -168,27 +258,29 @@ export default {
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
     }
   },
-  computed: {
-    timeRangeString () {
-      switch (this.timeRange) {
-        case 'week':
-          return this.startTime.toLocaleString('pl-PL', { year: 'numeric', month: 'numeric', day: 'numeric' }) + ' - ' +
-          this.endTime.toLocaleString('pl-PL', { year: 'numeric', month: 'numeric', day: 'numeric' })
-        case 'month':
-          return this.startTime.toLocaleString('pl-PL', { year: 'numeric', month: 'long' })
-        default:
-          return ''
-      }
-    }
-  },
   watch: {
     timeRange: function (value) {
       this.setTime(value)
+    },
+    chartNumbers: {
+      handler: function (oldValue, newValue) {
+        if (oldValue !== null && newValue !== null) this.loadAll()
+      },
+      deep: true
+    },
+
+    startTime: function (oldValue, newValue) {
+      if (oldValue !== null && newValue !== null) this.loadAll()
+    },
+
+    threshold: function (oldValue, newValue) {
+      if (oldValue !== null && newValue !== null) this.loadAll()
     }
   },
   mounted () {
     this.setTime('week')
-    this.loadData(0)
+    this.loadAll()
+    // this.loadData(3)
   },
   components: {
     BarChartWrap

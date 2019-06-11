@@ -4,7 +4,7 @@
       <div class="hero-body">
         <div class="columns">
           <div class="column is-3">
-            <b-tooltip label="Hours * machine count for reservation">
+            <b-tooltip :label="tooltip" position='is-right'>
               <h1 class="title">
                 {{chartTitle}}
               </h1>
@@ -14,14 +14,29 @@
             <div class="level">
               <b-button class="level-item my-button"
                 icon-left="minus"
-                @click.native="weekChange(-1)" >
+                @click.native="updateNumber(-1)" >
               </b-button>
-              <div class="level-item">
-                3 pools
+              <div class="level-item expanded">
+                Rows: {{number}}
               </div>
               <b-button class="level-item my-button"
                 icon-left="plus"
-                @click.native="weekChange(1)" >
+                @click.native="updateNumber(1)" >
+              </b-button>
+            </div>
+          </div>
+          <div v-if="threshold" class="column is-4">
+            <div class="level">
+              <b-button class="level-item my-button"
+                icon-left="minus"
+                @click.native="updateThreshold(-0.05)" >
+              </b-button>
+              <div class="level-item">
+                Threshold: {{threshold}}
+              </div>
+              <b-button class="level-item my-button"
+                icon-left="plus"
+                @click.native="updateThreshold(0.05)" >
               </b-button>
             </div>
           </div>
@@ -29,7 +44,7 @@
       </div>
     </section>
     <div>
-      <BarChart ref='chart' :styles='chartStyles' :chartdata='chartData(labels,data)' />
+      <BarChart ref='chart' :chart-data='chartData(labels,dataPoints)' />
     </div>
   </div>
 </template>
@@ -40,21 +55,16 @@ import BarChart from '@/components/statistics/BarChart.vue'
 export default {
   props: {
     labels: Array,
-    data: Array,
+    dataPoints: Array,
     chartTitle: String,
-    loading: Boolean
+    loading: Boolean,
+    number: Number,
+    threshold: Number,
+    tooltip: String
   },
   data () {
     return {
       loadingComponent: null
-    }
-  },
-  computed: {
-    chartStyles () {
-      return {
-        position: 'relative',
-        height: (this.data.length * 50 + 20) + 'px'
-      }
     }
   },
   methods: {
@@ -71,17 +81,14 @@ export default {
         hash = value.charCodeAt(i) * 34 + hash
       }
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
-    }
-  },
-  watch: {
-    loading: function (isLoading) {
-      if (isLoading) {
-        this.loadingComponent = this.$loading.open({
-          container: this.$refs.chart.$el
-        })
-      } else {
-        this.loadingComponent.close()
-      }
+    },
+    updateNumber (offset) {
+      this.number += offset
+      this.$emit('update:number', this.number)
+    },
+    updateThreshold (offset) {
+      this.threshold = Number((this.threshold + offset).toFixed(2))
+      this.$emit('update:threshold', this.threshold)
     }
   },
   components: {

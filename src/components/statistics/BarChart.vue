@@ -1,15 +1,9 @@
 
 <script>
-import { HorizontalBar } from 'vue-chartjs'
-
+import { HorizontalBar, mixins } from 'vue-chartjs'
 export default {
   extends: HorizontalBar,
-  props: {
-    chartdata: {
-      type: Object,
-      default: null
-    }
-  },
+  mixins: [mixins.reactiveProp],
   data () {
     return {
       chartOptions: {
@@ -17,16 +11,26 @@ export default {
         maintainAspectRatio: false,
         legend: {
           display: false
+        },
+        scales: {
+          yAxes: [{
+            barPercentage: 0.8,
+            maxBarThickness: 40,
+            minBarLength: 2
+          }]
         }
       }
     }
   },
   mounted () {
-    this.renderChart(this.chartdata, this.chartOptions)
+    this.renderChart(this.chartData, this.chartOptions)
   },
   watch: {
-    chartdata: function (value) {
-      this.renderChart(this.chartdata, this.chartOptions)
+    chartData: {
+      handler: function () {
+        this.$data._chart.update()
+      },
+      deep: true
     }
   }
 }
