@@ -52,6 +52,34 @@
           </b-field>
         </div>
       </div>
+      <div class="columns">
+        <b-checkbox class="column"
+          v-model="recurrent">
+          Recurrent reservation
+        </b-checkbox>
+      </div>
+      <div class="columns is-vcentered is-centered"
+            v-if="recurrent">
+        <div class="column">
+          <b-field
+            label="CYCLE END DATE">
+            <b-datepicker
+              inline
+              v-model="cycleEndDate"
+              :min-date="selectedDate">
+            </b-datepicker>
+          </b-field>
+        </div>
+        <div class="column is-centered auto">
+          <b-field label="Weeks between reservations">
+            <b-numberinput
+              v-model="step"
+              controls-position="compact">
+            </b-numberinput>
+          </b-field>
+        </div>
+
+      </div>
     </section>
     <footer class="modal-card-foot">
       <b-button
@@ -106,7 +134,10 @@ export default {
       timeSlots: TIME_SLOTS,
       selectedSlot: null,
       start: null,
-      end: null
+      end: null,
+      recurrent: false,
+      step: 0,
+      cycleEndDate: today
     }
   },
   computed: {
@@ -136,7 +167,9 @@ export default {
         StartDate: startDate,
         EndDate: endDate,
         ReservationID: this.ReservationID,
-        Email: this.$store.getters.getUserData.email
+        Email: this.$store.getters.getUserData.email,
+        Step: (this.recurrent) ? this.step : null,
+        CycleEndDate: (this.recurrent) ? this.cycleEndDate : null
       }
 
       this.$emit('saveReservation', reservationProps)
