@@ -199,14 +199,17 @@ export default {
       switch (this.timeRange) {
         case 'week':
           this.startTime = new Date(this.startTime.setDate(this.startTime.getDate() + offset * 7))
+          this.endTime = new Date(this.endTime.setDate(this.endTime.getDate() + offset * 7))
           break
 
         case 'month':
           this.startTime = new Date(this.startTime.setMonth(this.startTime.getMonth() + offset))
+          this.endTime = new Date(this.endTime.setMonth(this.endTime.getMonth() + offset))
           break
 
         case 'year':
           this.startTime = new Date(this.startTime.setFullYear(this.startTime.getFullYear() + offset))
+          this.endTime = new Date(this.endTime.setFullYear(this.endTime.getFullYear() + offset))
           break
         default:
           break
