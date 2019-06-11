@@ -28,7 +28,9 @@
         </div>
       </div>
     </section>
-    <BarChart :styles='chartStyles' :chartdata='chartData(labels,data)' />
+    <div>
+      <BarChart ref='chart' :styles='chartStyles' :chartdata='chartData(labels,data)' />
+    </div>
   </div>
 </template>
 
@@ -39,13 +41,19 @@ export default {
   props: {
     labels: Array,
     data: Array,
-    chartTitle: String
+    chartTitle: String,
+    loading: Boolean
+  },
+  data () {
+    return {
+      loadingComponent: null
+    }
   },
   computed: {
     chartStyles () {
       return {
         position: 'relative',
-        height: '200px'
+        height: (this.data.length * 50 + 20) + 'px'
       }
     }
   },
@@ -65,6 +73,17 @@ export default {
       return 'hsl(' + hash % 360 + ', 50%, 30%)'
     }
   },
+  watch: {
+    loading: function (isLoading) {
+      if (isLoading) {
+        this.loadingComponent = this.$loading.open({
+          container: this.$refs.chart.$el
+        })
+      } else {
+        this.loadingComponent.close()
+      }
+    }
+  },
   components: {
     BarChart
   }
@@ -74,9 +93,6 @@ export default {
 <style lang="scss">
 @import "@/variables.scss";
 
-.chart {
-  height: 300px;
-}
 .my-button {
   border-color: transparent !important;
 }

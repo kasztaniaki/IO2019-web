@@ -23,6 +23,11 @@ export default {
   },
   mounted () {
     this.renderChart(this.chartdata, this.chartOptions)
+  },
+  watch: {
+    chartdata: function (value) {
+      this.renderChart(this.chartdata, this.chartOptions)
+    }
   }
 }
 </script>
