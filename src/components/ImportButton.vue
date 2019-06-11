@@ -33,7 +33,6 @@ export default {
       // eslint-disable-next-line
           .catch(error => {
           if (error) {
-            this.handleError(error)
             this.$modal.open({
               parent: this,
               component: ImportErrors,
@@ -43,11 +42,11 @@ export default {
               events: {
                 'force': () => {
                   this.sendRequest(true)
+                  this.file = null
                 }
               }
             })
             this.$parent.isLoading = false
-            // this.file = null
           }
         })
     }
