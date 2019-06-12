@@ -67,7 +67,6 @@
 import { cancelReservationReq, editReservationReq } from '@/api'
 import CancelReservationForm from '@/components/CancelReservationForm.vue'
 import ReservationForm from '@/components/ReservationForm.vue'
-import { type } from 'os';
 
 export default {
   props: {
