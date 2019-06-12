@@ -39,6 +39,8 @@
     </div>
     <BarChartWrap
       ref="chart1"
+      @hey='loadData(0)'
+      :loading='charts[0].loading'
       :tooltip='charts[0].tooltip'
       :chartTitle='charts[0].title'
       :number.sync="chartNumbers[0]"
@@ -46,6 +48,8 @@
       :dataPoints='charts[0].data' />
     <BarChartWrap
       ref="chart2"
+      @hey='loadData(1)'
+      :loading='charts[1].loading'
       :tooltip='charts[1].tooltip'
       :chartTitle='charts[1].title'
       :number.sync="chartNumbers[1]"
@@ -54,6 +58,8 @@
       />
     <BarChartWrap
       ref="chart3"
+      @hey='loadData(2)'
+      :loading='charts[2].loading'
       :tooltip='charts[2].tooltip'
       :chartTitle='charts[2].title'
       :number.sync="chartNumbers[2]"
@@ -63,6 +69,8 @@
       />
     <BarChartWrap
       ref="chart4"
+      @hey='loadData(3)'
+      :loading='charts[3].loading'
       :tooltip='charts[3].tooltip'
       :chartTitle='charts[3].title'
       :number.sync="chartNumbers[3]"
@@ -99,7 +107,7 @@ export default {
           tooltip: 'Hours * machine count for reservation',
           labels: [],
           data: [],
-          loaded: false,
+          loading: false,
           getter: getPopularPoolsReq
         },
         {
@@ -112,7 +120,7 @@ export default {
         },
         {
           title: 'Bottlenecked Pools',
-          tooltip: 'Number of hours in bottlenecked state (more than 80% machines in use at a given moment)',
+          tooltip: 'Number of hours in bottlenecked state (more than [Threshold] machines in use at a given moment)',
           labels: [],
           data: [],
           loading: false,
@@ -172,6 +180,7 @@ export default {
   methods: {
     loadData (chartIndex) {
       var chart = this.charts[chartIndex]
+      chart.loading = true
       chart.getter(...this.arguments[chartIndex])
         .then(response => {
           chart.data = response.data.data
@@ -180,13 +189,14 @@ export default {
             labels.push(label.display)
           }
           chart.labels = labels
+          chart.loading = false
         })
     },
     loadAll () {
       this.loadData(0)
       this.loadData(1)
       this.loadData(2)
-      // this.loadData(3)
+      this.loadData(3)
     },
     chartData (dataLabels, dataPoints, label) {
       var colors = []
@@ -267,7 +277,7 @@ export default {
     },
     chartNumbers: {
       handler: function (oldValue, newValue) {
-        if (oldValue !== null && newValue !== null) this.loadAll()
+        // if (oldValue !== null && newValue !== null) this.loadAll()
       },
       deep: true
     },
@@ -277,7 +287,7 @@ export default {
     },
 
     threshold: function (oldValue, newValue) {
-      if (oldValue !== null && newValue !== null) this.loadAll()
+      if (oldValue !== null && newValue !== null) this.loadData(2)
     }
   },
   mounted () {
