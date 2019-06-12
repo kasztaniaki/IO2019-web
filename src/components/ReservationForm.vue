@@ -5,10 +5,11 @@
     </header>
     <section class="modal-card-body">
         <b-field>
-          <div class="columns is-centered">
+          <div class="columns is-vcentered">
             <div class="column is-two-thirds">
               <b-datepicker
                 inline
+                first-day-of-week="1"
                 v-model="selectedDate"
                 :min-date="today">
               </b-datepicker>
