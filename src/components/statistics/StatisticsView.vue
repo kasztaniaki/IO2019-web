@@ -191,6 +191,10 @@ export default {
           chart.labels = labels
           chart.loading = false
         })
+        .catch(error => {
+          this.handleError(error)
+          chart.loading = false
+        })
     },
     loadAll () {
       this.loadData(0)

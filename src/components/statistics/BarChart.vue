@@ -9,6 +9,14 @@ export default {
   data () {
     return {
       chartOptions: {
+        layout: {
+          padding: {
+            left: 0,
+            right: 50,
+            top: 0,
+            bottom: 0
+          }
+        },
         responsive: true,
         maintainAspectRatio: false,
         legend: {
@@ -26,12 +34,19 @@ export default {
             ticks: {
               fontSize: 18,
               fontStyle: 'bold',
-              padding: 15
+              padding: 15,
+              beginAtZero: true
             }
           }],
           xAxes: [{
             barPercentage: 0.9,
-            minBarLength: 5
+            minBarLength: 5,
+            ticks: {
+              beginAtZero: true,
+              fontSize: 18,
+              fontStyle: 'bold',
+              padding: 15
+            }
           }]
         },
         plugins: {
