@@ -129,7 +129,7 @@ export default {
         },
         {
           title: 'Unused Pools',
-          tooltip: 'Lowest peak percent of machines in use for a given pool',
+          tooltip: 'Lowest peak percent of machines in use for a given pool. The percentage is calculated against the present maximum count for the pool',
           labels: [],
           data: [],
           loading: false,
