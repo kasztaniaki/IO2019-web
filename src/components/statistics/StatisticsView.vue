@@ -70,6 +70,7 @@
     <BarChartWrap
       ref="chart4"
       @hey='loadData(3)'
+      percent
       :loading='charts[3].loading'
       :tooltip='charts[3].tooltip'
       :chartTitle='charts[3].title'

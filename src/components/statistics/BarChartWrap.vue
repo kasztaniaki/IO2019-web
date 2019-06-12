@@ -51,7 +51,7 @@
           </div>
         </div>
         <div>
-          <BarChart @click='(event) => console.log(event)' v-if="open" ref='chart' :chart-data='chartData(labels,dataPoints)' />
+          <BarChart :percent="percent" @click='(event) => console.log(event)' v-if="open" ref='chart' :chart-data='chartData(labels,dataPoints)' />
         </div>
       </div>
     </b-collapse>
@@ -69,7 +69,11 @@ export default {
     loading: Boolean,
     number: Number,
     threshold: Number,
-    tooltip: String
+    tooltip: String,
+    percent: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {

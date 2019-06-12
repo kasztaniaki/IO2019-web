@@ -6,6 +6,12 @@ import * as Datalabels from 'chartjs-plugin-datalabels'
 export default {
   extends: HorizontalBar,
   mixins: [mixins.reactiveProp],
+  props: {
+    percent: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       chartOptions: {
@@ -57,7 +63,8 @@ export default {
             font: {
               weight: 'bold',
               size: 15
-            }
+            },
+            formatter: this.formatter
           }
         },
         events: ['click'],
@@ -65,6 +72,12 @@ export default {
           console.log(click)
         }
       }
+    }
+  },
+  methods: {
+    formatter: function (value, context) {
+      if (this.percent) return Math.round(value * 100) + '%'
+      else return value
     }
   },
   mounted () {
