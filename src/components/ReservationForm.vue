@@ -45,7 +45,7 @@
             <b-numberinput
               value="machinesCount"
               v-model="machinesCount"
-              :min=0
+              :min=1
               :max="this.MaxCount"
               expanded>
             </b-numberinput>
@@ -74,6 +74,7 @@
           <b-field label="Weeks between reservations">
             <b-numberinput
               v-model="step"
+              :min=1
               controls-position="compact">
             </b-numberinput>
           </b-field>
@@ -113,7 +114,7 @@ export default {
     },
     Count: {
       type: Number,
-      default: 0
+      default: 1
     },
     StartDate: {
       type: Date,
@@ -136,7 +137,7 @@ export default {
       start: null,
       end: null,
       recurrent: false,
-      step: 0,
+      step: 1,
       cycleEndDate: today
     }
   },
