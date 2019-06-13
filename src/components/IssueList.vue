@@ -10,13 +10,12 @@
             </template>
             <article v-for="issue in openedIssues" :key="issue.IssueID" class="message is-info">
               <div class="message-header" style="height: 50px">
-                <p>{{ issue.Subject }} ({{issue.PoolName}})</p>
+                <p>{{ issue.Subject }} (<a @click="showPoolForm(issue.PoolID)" class="pool-link">{{issue.PoolName}}</a>)</p>
                 <div class="buttons">
                   <b-button v-if="isAdmin"
                     rounded
                     size="is-small"
                     icon-left="check"
-                    visi
                     @click.native="resolveIssueConfirm(issue.IssueID)">
                   </b-button>
                   <b-button
@@ -40,7 +39,7 @@
             </template>
             <article v-for="issue in resolvedIssues" :key="issue.IssueID" class="message is-success">
               <div class="message-header" style="height: 50px">
-                <p>{{ issue.Subject }}</p>
+                <p>{{ issue.Subject }} ({{issue.PoolName}})</p>
                 <div class="buttons">
                   <b-button v-if="isAdmin"
                     rounded
@@ -63,7 +62,7 @@
             </template>
             <article v-for="issue in rejectedIssues" :key="issue.IssueID" class="message is-danger">
               <div class="message-header" style="height: 50px">
-                <p>{{ issue.Subject }}</p>
+                <p>{{ issue.Subject }} ({{issue.PoolName}})</p>
                 <div class="buttons">
                   <b-button v-if="isAdmin"
                     rounded
@@ -84,12 +83,14 @@
 </template>
 
 <script>
-import { loadIssuesReq, resolveIssueReq, rejectIssueReq, reopenIssueReq } from '@/api'
+import { loadIssuesReq, resolveIssueReq, rejectIssueReq, reopenIssueReq, loadPoolReq, editPoolReq } from '@/api'
+import EditPoolForm from '@/components/EditPoolForm.vue'
 
 export default {
   data () {
     return {
-      issues: []
+      issues: [],
+      poolData: null
     }
   },
   methods: {
@@ -167,6 +168,35 @@ export default {
           })
         })
         .catch(error => this.handleError(error))
+    },
+    editPool (poolID, poolProps) {
+      editPoolReq(poolID, poolProps)
+        .then(response => {
+          this.$toast.open({
+            message: `Pool edited successfully`,
+            position: 'is-top',
+            type: 'is-success'
+          })
+        })
+        .catch(error => this.handleError(error))
+    },
+    showPoolForm (poolID) {
+      loadPoolReq(poolID)
+        .then(response => {
+          const pool = response.data.pool
+          this.$modal.open({
+            parent: this,
+            component: EditPoolForm,
+            hasModalCard: true,
+            props: pool,
+            events: {
+              'poolRequest': (poolProps) => {
+                this.editPool(poolID, poolProps)
+              }
+            }
+          })
+        })
+        .catch(error => this.handleError(error))
     }
   },
   mounted () {
@@ -191,6 +221,17 @@ export default {
     isAdmin () {
       return this.$store.getters.getIsAdmin
     }
+  },
+  components: {
+    // eslint-disable-next-line
+    EditPoolForm
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.pool-link:hover {
+  color: blueviolet !important;
+}
+
+</style>
