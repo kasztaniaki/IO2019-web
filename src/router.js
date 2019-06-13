@@ -35,6 +35,11 @@ export default new Router({
       path: '/admin/users',
       name: 'users',
       component: () => import('./views/Users.vue')
+    },
+    {
+      path: '/admin/statistics',
+      name: 'statistics',
+      component: () => import('./views/Statistics.vue')
     }
   ]
 })
