@@ -12,15 +12,18 @@
           @keydown.enter.native="filterPools"
           placeholder="Search">
         </b-taginput>
-        <b-button class="level-item" @click.native="clearFilter" >Clear</b-button>
-        <b-button v-if="isAdmin" @click="resetDB()">
-        db reset
-        </b-button>
       </div>
     </div>
-    <b-table class="container" :data="machines" :loading="isLoading" :selected.sync="selectedRow" :row-class="rowClass">
+    <b-table class="container pool-table" v-if="this.machines.length > 0"
+      ref="table"
+      :data="filteredMachines"
+      :loading="isLoading"
+      :selected.sync="selectedRow"
+      :row-class="rowClass"
+      detailed
+      :show-detail-icon="false">
       <template slot-scope="props">
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="ID"
           label="ID"
           style="width: 10%">
@@ -28,7 +31,7 @@
               {{props.row.ID}}
             </div>
           </b-table-column>
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="Name"
           label="Name"
           style="width: 25%">
@@ -36,7 +39,7 @@
             {{props.row.Name}}
             </div>
         </b-table-column>
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="OSName"
           label="OS"
           style="width: 5%">
@@ -44,13 +47,13 @@
             {{props.row.OSName}}
             </div>
         </b-table-column>
-        <b-table-column sortable v-if="match(props.row)"
+        <b-table-column sortable
           field="MaximumCount"
           label="Maximum Count"
           style="width: 5%">
             {{props.row.MaximumCount}}
         </b-table-column>
-        <b-table-column v-if="match(props.row)"
+        <b-table-column centered
           field="Enabled"
           label="Enabled"
           style="width:5%">
@@ -66,42 +69,34 @@
               size="is-small">
             </b-icon>
         </b-table-column>
-        <b-table-column v-if="match(props.row)"
-          field="Description"
-          label="Description"
-          style="45%">
-            <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
-        </b-table-column>
+
         <b-table-column
-          style="5%"
+          style="width:25%"
           field="edit"
-          v-if="match(props.row)"
           :visible="editable">
-          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
-            <b-button
-              size="is-small"
+            <div class="buttons is-centered" v-if="props.row==selectedRow">
+              <b-button v-show="props.row==selectedRow"
+                icon-left="calendar-plus"
+                icon-pack="far"
+                type="is-success"
+                @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
+              </b-button>
+              <b-button v-show="props.row==selectedRow && isAdmin"
               icon-left="pen"
               type="is-info"
               @click.native="showPoolForm(props.row.ID, props.row)">
             </b-button>
-          </div>
-          <div class="my-button" v-show="props.row==selectedRow && isAdmin">
-            <b-button
-              size="is-small"
+              <b-button v-show="props.row==selectedRow && isAdmin"
               icon-left="trash"
               type="is-danger"
               @click.native="confirmPoolDelete(props.row.ID)">
             </b-button>
           </div>
-          <div class="my-button" v-show="props.row==selectedRow">
-            <b-button
-              icon-left="calendar-plus"
-              icon-pack="far"
-              size="is-small"
-              type="is-success"
-              @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
-            </b-button></div>
+            <MachineDescription v-else :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
         </b-table-column>
+      </template>
+      <template  slot="detail" slot-scope="props">
+        <MachineDescription :description="props.row.InstalledSoftware" :query="query" :highlightOptions="highlightOptions" :expanded="props.row==selectedRow"/>
       </template>
     </b-table>
   </div>
@@ -122,14 +117,8 @@ export default {
         .then(response => {
           this.isLoading = false
           this.machines = response.data.pools
-          for (const pool of this.machines) {
-            this.$set(pool.InstalledSoftware, 'expanded', false)
-          }
-          this.selectedRow = this.machines[0]
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.handleError(error))
     },
     match (row) {
       if (this.filterTags.length === 0) return true
@@ -142,9 +131,6 @@ export default {
         }
       }
       return false
-    },
-    filterPools () {
-      this.query = this.text
     },
     clearFilter () {
       this.query = ''
@@ -186,14 +172,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     editPool (poolId, poolProps) {
       editPoolReq(poolId, poolProps).then(response => {
@@ -204,14 +183,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     removePool (poolId) {
       removePoolReq(poolId).then(response => {
@@ -222,14 +194,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     rowClass (row, index) {
       if (this.selectedRow === row) return 'selected-row'
@@ -244,15 +209,7 @@ export default {
         })
         this.loadMachinesData()
       })
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: `db reset error`,
-              position: 'is-bottom',
-              type: 'is-success'
-            })
-          }
-        })
+        .catch(error => this.handleError(error))
     },
     addReservationForm (poolID, poolName, poolMaxCount) {
       const poolProps = {
@@ -282,14 +239,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: error,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     }
   },
   data () {
@@ -304,25 +254,26 @@ export default {
   },
   computed: {
     highlightOptions () {
-      return { keyword: this.filterTags, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
+      return { keyword: (this.filterTags.length === 0) ? null : this.filterTags, sensitive: false, overWriteStyle: { backgroundColor: 'indianred', color: 'white' } }
     },
     isAdmin () {
       return this.$store.getters.getIsAdmin
+    },
+    filteredMachines () {
+      return this.machines.filter(this.match)
     }
   },
   mounted () {
     this.loadMachinesData()
   },
-  filters: {
-    highlight: function (value, query) {
-      var re = RegExp(query, 'i')
-      var result = value.toString().replace(re, function (matchedText, a, b) {
-        if (matchedText !== '') {
-          var res = '<span class="highlight has-background-success">' + matchedText + '</span>'
-          return res
-        } else return ''
-      })
-      return result
+  watch: {
+    selectedRow: function (newValue, oldValue) {
+      if (oldValue !== null) {
+        this.$refs.table.openedDetailed.pop()
+      }
+      if (newValue !== null) {
+        this.$refs.table.openedDetailed.push(newValue)
+      }
     }
   },
   components: {
@@ -357,11 +308,35 @@ export default {
   margin: 0px -2px 0px -2px;
 }
 
-.selected-row{
+.selected-row {
   background-color: $selected !important;
   color: $dark !important;
 };
-.my-button {
+
+.detail{
+  background-color: lighten($color: $selected, $amount: 2) !important;
+  color: $dark !important;
+  margin-bottom: 5px !important;
+}
+
+.detail-container {
+  margin-bottom: 8px;
+}
+
+.selected-row>td {
+  border: none;
+}
+
+.b-table .table tr.detail {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.pool-table td {
+  vertical-align: middle !important;
+}
+
+.buttons {
   padding-bottom: 10px;
   padding-top: 6px
 }

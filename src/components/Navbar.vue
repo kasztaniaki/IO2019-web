@@ -60,6 +60,7 @@
 
 <script>
 import EditUser from '@/components/EditUser.vue'
+
 export default {
   data () {
     return {

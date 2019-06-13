@@ -46,11 +46,10 @@ export default {
   padding: 2px;
 }
 .description {
-  max-width: 500px;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 .rolled {
-  max-height: 64px;
+  height: 55px;
   overflow: hidden;
 }
 .highlight{
