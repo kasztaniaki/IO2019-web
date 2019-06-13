@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     resetPassword () {
-        resetPasswordReq({"email": this.email})
+      resetPasswordReq({ 'email': this.email })
         .then(response => {
           this.$toast.open({
             message: `An email has been sent. Check your inbox.`,
@@ -40,7 +40,7 @@ export default {
           this.$emit('close')
         })
       // eslint-disable-next-line
-        .catch(error => this.handleError(error))
+        .catch(error => console.log(error))
     },
     validateBeforeSubmit () {
       this.$validator.validateAll()
