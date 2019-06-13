@@ -25,16 +25,6 @@
               </b-radio-button>
             </div>
           </div>
-          <div class="column is-one-third buttons">
-            <b-radio-button class="slot" type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index"
-              :disabled="slot.start < now && today.getDate() === selectedDate.getDate()">
-              <span>
-              {{ printTimeSlot(slot) }}
-              </span>
-            </b-radio-button>
-            <b-radio-button class="slot" v-model="selectedSlot" :native-value="-1"> Custom slot
-            </b-radio-button>
-          </div>
         </b-field>
       <div class="columns is-centered">
         <b-field class="column" label="FROM" v-if="selectedSlot===-1">
