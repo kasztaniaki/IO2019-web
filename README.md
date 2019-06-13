@@ -30,13 +30,13 @@ VUE_APP_API_URL='url'
 PORT=8080
 ```
 
-Deploy by running
+Deploy by running build:
 
 ```
 npm install
 npm run build
 ```
-and run
+and run:
 ```
 node server.js
 ```
