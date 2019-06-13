@@ -1,7 +1,7 @@
 <template>
     <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
-            <p class="modal-card-title">Errors</p>
+            <p class="modal-card-title">Import errors</p>
         </header>
         <section class="modal-card-body">
             <b-table :data="import_errors"
@@ -16,6 +16,9 @@
         <footer class="modal-card-foot">
                 <b-button @click="forceImport()" class="button is-warning" type="button">Force</b-button>
                 <b-button @click="$parent.close()" class="button" type="button">Close</b-button>
+                <div style="margin-left: 5px">
+                  Forcing the upload skips the failed elements
+                </div>
         </footer>
     </div>
 </template>
