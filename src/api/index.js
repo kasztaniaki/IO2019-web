@@ -106,8 +106,39 @@ export function editReservationReq (reservationProps) {
     headers: { 'Content-Type': 'application/json' }
   })
 }
+
 export function getUserReq (email) {
   return axios.get(`${API_URL}/user`, {
     params: { email: email }
+  })
+}
+
+export function addIssueReq (issueProps) {
+  return axios.post(`${API_URL}/issues/create`, issueProps, {
+    headers: { 'Content-Type': 'application/json' }
+  })
+}
+
+export function loadIssuesReq (email) {
+  return axios.get(`${API_URL}/issues/list`, {
+    params: { email: email }
+  })
+}
+
+export function resolveIssueReq (issueID) {
+  return axios.post(`${API_URL}/issues/resolve`, {}, {
+    params: { id: issueID }
+  })
+}
+
+export function rejectIssueReq (issueID) {
+  return axios.post(`${API_URL}/issues/reject`, {}, {
+    params: { id: issueID }
+  })
+}
+
+export function reopenIssueReq (issueID) {
+  return axios.post(`${API_URL}/issues/reopen`, {}, {
+    params: { id: issueID }
   })
 }
