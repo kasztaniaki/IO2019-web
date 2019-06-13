@@ -14,7 +14,6 @@
         <div class="field">
             <b-radio v-model="radio"
                 native-value="series"
-                disabled
                 type="is-warning">
                 Cancel every reservation in
                 {{new Date(reservationData.StartDate).toLocaleString('pl-PL',timeOptions)}} -
@@ -25,7 +24,6 @@
         <div class="field">
             <b-radio v-model="radio"
                 native-value="all"
-                disabled
                 type="is-danger">
                 Cancel every reservation for {{reservationData.PoolName}}
             </b-radio>

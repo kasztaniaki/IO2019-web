@@ -1,7 +1,12 @@
 
 # io2019
 [![Build Status](https://travis-ci.org/kasztaniaki/IO2019-web.svg?branch=master)](https://travis-ci.org/kasztaniaki/IO2019-web)
-## Project setup
+
+### Requirements
+
+node.js >= 8.10.0
+
+### Project setup
 ```
 npm install
 ```
@@ -16,19 +21,24 @@ npm run serve
 npm run build
 ```
 
-### Run your tests
+### Deployment
+
+You need an `.env` configuration file:
+
 ```
-npm run test
+VUE_APP_API_URL='url'
+PORT=8080
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+Deploy by running
 
-### Deploy
 ```
 npm install
 npm run build
-npm run deploy
 ```
+and run
+```
+node server.js
+```
+or set env variable `VUE_APP_API_URL` to your desired backend URL and serve the `/dist` folder however you like.
+

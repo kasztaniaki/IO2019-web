@@ -40,6 +40,11 @@ export default new Router({
       path: '/issues',
       name: 'issues',
       component: () => import('./views/Issues.vue')
+    },
+    {
+      path: '/admin/statistics',
+      name: 'statistics',
+      component: () => import('./views/Statistics.vue')
     }
   ]
 })

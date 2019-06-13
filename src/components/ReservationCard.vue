@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :style="{'background-color': poolColor(reservationData.PoolID)}">
+  <div :class="cardClass(reservationData.Cancelled)" :style="{'background-color': poolColor(reservationData.PoolID)}">
     <div class="card-content my-card-content has-text-white">
         <div
           @click="userFilterToggle(reservationData.UserEmail, $event)"
@@ -43,7 +43,7 @@
           {{reservationData.Count}}
         </div>
     </div>
-    <div class="card-footer my-card-footer" v-if="isReservationOwner(reservationData.UserEmail)">
+    <div class="card-footer my-card-footer" v-if="isReservationOwner(reservationData.UserEmail) || this.$store.getters.getIsAdmin">
 
       <b-button
         class="card-footer-item my-card-footer-item my-button"
@@ -82,6 +82,9 @@ export default {
     }
   },
   methods: {
+    cardClass (cancelled) {
+      return cancelled === 'true' ? 'cancelled' : ''
+    },
     isReservationOwner (id) {
       return this.$store.getters.getUserData.email === id
     },
@@ -217,6 +220,9 @@ td {
   background-color: white;
   color: black;
   cursor: pointer;
+}
+.cancelled {
+  border: 10px dashed red
 }
 
 </style>
