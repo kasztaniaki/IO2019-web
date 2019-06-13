@@ -89,13 +89,3 @@ export default {
     EventBus.$off('failedAuthentication')
   }
 }
-
-</script>
-
-<style lang="scss" scoped>
-.clickable:hover, .clicked {
-  background-color: white;
-  color: #7067ef;
-  cursor: pointer;
-}
-</style>
