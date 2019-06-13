@@ -89,3 +89,4 @@ export default {
     EventBus.$off('failedAuthentication')
   }
 }
+</script>
