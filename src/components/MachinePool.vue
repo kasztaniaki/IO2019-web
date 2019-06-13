@@ -81,6 +81,11 @@
                 type="is-success"
                 @click.native="addReservationForm(props.row.ID, props.row.Name, props.row.MaximumCount)">
               </b-button>
+              <b-button v-show="!isAdmin"
+                icon-left="envelope"
+                type="is-dark"
+                @click.native="showIssueForm(props.row)">
+              </b-button>
               <b-button v-show="props.row==selectedRow && isAdmin"
               icon-left="pen"
               type="is-info"
@@ -107,7 +112,10 @@ import MachineDescription from '@/components/MachineDescription.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import EditPoolForm from '@/components/EditPoolForm.vue'
 import ReservationForm from '@/components/ReservationForm.vue'
-import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq, addReservationReq } from '@/api'
+import { loadPoolsReq, addPoolReq, editPoolReq, removePoolReq, resetDBReq, addReservationReq, addIssueReq } from '@/api'
+import IssueForm from '@/components/IssueForm.vue'
+// eslint-disable-next-line
+import { error } from 'util'
 
 export default {
   methods: {
@@ -240,6 +248,34 @@ export default {
         })
       })
         .catch(error => this.handleError(error))
+    },
+    showIssueForm (poolProps) {
+      const issueProps = {
+        PoolID: poolProps.ID,
+        PoolName: poolProps.Name
+      }
+
+      this.$modal.open({
+        parent: this,
+        component: IssueForm,
+        hasModalCard: true,
+        props: issueProps,
+        events: {
+          'saveIssue': (issueProps) => {
+            this.addIssue(issueProps)
+          }
+        }
+      })
+    },
+    addIssue (issueProps) {
+      addIssueReq(issueProps).then(response => {
+        this.$toast.open({
+          message: `Issue added succesfully`,
+          position: 'is-top',
+          type: 'is-success'
+        })
+      })
+        .catch(error => this.handleError(error))
     }
   },
   data () {
@@ -280,7 +316,9 @@ export default {
     MachineDescription,
     ImportButton,
     // eslint-disable-next-line
-    EditPoolForm
+    EditPoolForm,
+    // eslint-disable-next-line
+    IssueForm
   },
   props: {
     editable: {
