@@ -23,15 +23,22 @@ npm run build
 
 ### Deployment
 
-```
-npm install
-npm run build
-node server.js
-```
-
-Deploys by default on localhost:5000, this might cause conflicts. To change the default port create an .env file
+You need an `.env` configuration file:
 
 ```
 VUE_APP_API_URL='url'
 PORT=8080
 ```
+
+Deploy by running
+
+```
+npm install
+npm run build
+```
+and run
+```
+node server.js
+```
+or set env variable `VUE_APP_API_URL` to your desired backend URL and serve the `/dist` folder however you like.
+

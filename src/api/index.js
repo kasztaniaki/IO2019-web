@@ -121,3 +121,44 @@ export function getPoolAvailabilityReq (id, startDate, endDate) {
     }
   })
 }
+
+export function getPopularPoolsReq (startDate, endDate, poolsToView) {
+  return axios.get(`${API_URL}/statistics/popular_pools`, {
+    params: {
+      startDate: startDate,
+      endDate: endDate,
+      poolsToView: poolsToView
+    }
+  })
+}
+
+export function getPopularUsersReq (startDate, endDate, usersToView) {
+  return axios.get(`${API_URL}/statistics/popular_users`, {
+    params: {
+      startDate: startDate,
+      endDate: endDate,
+      usersToView: usersToView
+    }
+  })
+}
+
+export function getBottleneckedPoolsReq (startDate, endDate, poolsToView, threshold) {
+  return axios.get(`${API_URL}/statistics/bottlenecked_pools`, {
+    params: {
+      startDate: startDate,
+      endDate: endDate,
+      poolsToView: poolsToView,
+      threshold: threshold
+    }
+  })
+}
+
+export function getUnusedPoolsReq (startDate, endDate, poolsToView) {
+  return axios.get(`${API_URL}/statistics/unused_pools`, {
+    params: {
+      startDate: startDate,
+      endDate: endDate,
+      poolsToView: poolsToView
+    }
+  })
+}
