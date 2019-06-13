@@ -4,39 +4,41 @@
       <p class="modal-card-title"><b>{{ this.PoolName }}</b></p>
     </header>
     <section class="modal-card-body">
-        <b-field>
-          <div class="columns is-centered">
-            <div class="column is-two-thirds">
-              <b-datepicker
-                inline
-                v-model="selectedDate"
-                :min-date="today">
-              </b-datepicker>
-            </div>
-            <div class="column is-one-third buttons">
-              <b-radio-button class="slot" type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index"
-                :disabled="slot.start < now && today.getDate() === selectedDate.getDate()">
-                <span>
-                {{ printTimeSlot(slot) }}
-                </span>
-              </b-radio-button>
-              <b-radio-button class="slot" v-model="selectedSlot" :native-value="-1"> Custom slot
-              </b-radio-button>
-            </div>
+      <b-field>
+        <div class="columns is-centered">
+          <div class="column is-two-thirds">
+            <b-datepicker
+              inline
+              v-model="selectedDate"
+              :min-date="today">
+            </b-datepicker>
           </div>
-        </b-field>
+          <div class="column is-one-third buttons">
+            <b-radio-button class="slot" type="is-primary" v-for="(slot, index) in timeSlots" :key="index" v-model="selectedSlot" :native-value="index"
+              :disabled="slot.start < now && today.getDate() === selectedDate.getDate()">
+              <span>
+              {{ printTimeSlot(slot) }}
+              </span>
+            </b-radio-button>
+            <b-radio-button class="slot" v-model="selectedSlot" :native-value="-1"> Custom slot
+            </b-radio-button>
+          </div>
+        </div>
+      </b-field>
       <div class="columns is-centered">
         <b-field class="column" label="FROM" v-if="selectedSlot===-1">
           <b-clockpicker
             inline
             hour-format="24"
-            v-model="start"></b-clockpicker>
+            v-model="start">
+          </b-clockpicker>
         </b-field>
         <b-field class="column" label="TO" v-if="selectedSlot===-1">
           <b-clockpicker
             inline
             hour-format="24"
-            v-model="end"></b-clockpicker>
+            v-model="end">
+          </b-clockpicker>
         </b-field>
       </div>
       <div class="columns is-centered">
@@ -80,7 +82,7 @@ export default {
       default: ''
     },
     MaxCount: {
-      tpye: Number,
+      type: Number,
       default: 10000
     },
     Count: {
@@ -149,7 +151,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.slot>label {
-  width: 60% !important
-}
+  .slot>label {
+    width: 60% !important
+  }
 </style>
