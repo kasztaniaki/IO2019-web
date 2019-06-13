@@ -14,6 +14,7 @@
             <router-link class="navbar-item" to="/pools">Pools</router-link>
             <router-link class="navbar-item" to="/reservations">Reservations</router-link>
             <router-link v-if="isAdmin" class="navbar-item" to="/admin/users">Users</router-link>
+            <router-link class="navbar-item" to="/issues">Issues</router-link>
         </div>
         <div v-if="!isAuthenticated" class="navbar-end">
                 <a class="navbar-item">
