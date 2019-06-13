@@ -14,10 +14,7 @@ export default new Router({
     {
       path: '/pools',
       name: 'pools',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Pools.vue')
+      component: () => import('./views/Pools.vue')
     },
     {
       path: '/users/signup',
@@ -38,6 +35,11 @@ export default new Router({
       path: '/admin/users',
       name: 'users',
       component: () => import('./views/Users.vue')
+    },
+    {
+      path: '/admin/statistics',
+      name: 'statistics',
+      component: () => import('./views/Statistics.vue')
     }
   ]
 })

@@ -28,10 +28,11 @@ const actions = {
         context.commit('setIsAdmin', response.data.UserData.IsAdmin)
         context.commit('setName', response.data.UserData.Name)
         context.commit('setSurname', response.data.UserData.Surname)
+        EventBus.$emit('successfulAuthentication')
       })
       .catch(error => {
         console.log('Error Authenticating: ', error)
-        EventBus.emit('failedAuthentication', error)
+        EventBus.$emit('failedAuthentication', error)
       })
   },
   register (context, userData) {
@@ -39,7 +40,7 @@ const actions = {
       .then(() => new Promise(resolve => setTimeout(() => resolve(context.dispatch('login', { email: userData.email, password: userData.password })), 500)))
       .catch(error => {
         console.log('Error Registering: ', error)
-        EventBus.emit('failedRegistering: ', error)
+        EventBus.$emit('failedRegistering', error)
       })
   },
   editUser (context, userData) {
@@ -57,12 +58,12 @@ const actions = {
           // newResponse => context.commit('setJwtToken', { jwt: newResponse.data })
           .catch(error => {
             console.log('Error while changing user data: ', error)
-            EventBus.emit('failedChangingUserData: ', error)
+            EventBus.$emit('failedChangingUserData: ', error)
           })
       })
       .catch(error => {
         console.log('Old password does not match: ', error)
-        EventBus.emit('failedChangingPassword: ', error)
+        EventBus.$emit('failedAuthentication', error)
       })
   },
   logout (context) {
@@ -74,9 +75,11 @@ const actions = {
       .then(res => {
         context.commit('clearJwtToken')
         context.commit('clearUserData')
+        EventBus.$emit('successfulDeletion')
       })
-      .catch(err => {
-        if (err) console.log(err)
+      .catch(error => {
+        EventBus.$emit('failedAuthentication', error)
+        console.log(error)
       })
   }
 }

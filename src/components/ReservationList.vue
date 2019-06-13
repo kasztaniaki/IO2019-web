@@ -14,37 +14,46 @@
               @click.native="weekChange(1)" ></b-button>
           </div>
         </div>
-        <div class="column">
-          <b-button :class="(onlyUserInSelected($store.getters.getUserData.email)) ? 'is-primary' : 'is-default'"
+        <div class="column is-3 buttons">
+          <b-button :class="(onlyUserInSelected($store.getters.getUserData.email)) ? 'is-primary' : 'is-default' + 'button'"
             @click="showOnlyUser($store.getters.getUserData.email)">
             Show only mine
           </b-button>
+          <b-button :class="showCancelled ? 'is-primary' : 'is-default' + 'button'"
+            v-if="this.$store.getters.getIsAdmin"
+            @click="toggleCancelled()">
+            Show cancelled
+          </b-button>
         </div>
-        <b-taginput class="column"
-          v-model="selectedPools"
-          :data="filteredPools"
-          autocomplete
-          field="Name"
-          placeholder="Filter by pool"
-          closable
-          expanded
-          open-on-focus
-          @typing="getFilteredPools">
-        </b-taginput>
-        <b-taginput class="column"
-          v-model="selectedUsers"
-          :data="filteredUsers"
-          autocomplete
-          field="Email"
-          placeholder="Filter by user"
-          closable
-          expanded
-          open-on-focus
-          @typing="getFilteredUsers">
-          <template slot-scope="props">
-            {{props.option.Name}} {{props.option.Surname}}
-          </template>
-        </b-taginput>
+        <form autocomplete="off">
+          <b-taginput class="column"
+            v-model="selectedPools"
+            :data="filteredPools"
+            autocomplete
+            field="Name"
+            placeholder="Filter by pool"
+            closable
+            expanded
+            open-on-focus
+            @typing="getFilteredPools">
+          </b-taginput>
+        </form>
+        <form autocomplete="off">
+          <b-taginput class="column"
+            v-model="selectedUsers"
+            :data="filteredUsers"
+            autocomplete
+            field="Email"
+            placeholder="Filter by user"
+            closable
+            expanded
+            open-on-focus
+            @typing="getFilteredUsers">
+            <template slot-scope="props">
+              {{props.option.Name}} {{props.option.Surname}}
+            </template>
+          </b-taginput>
+        </form>
     </div>
     <b-table class="container reservation-table" :data=reservations :loading="isLoading">
       <template slot-scope="props">
@@ -136,18 +145,14 @@ import ReservationCard from '@/components/ReservationCard.vue'
 
 export default {
   methods: {
-    loadReservations (startDate, endDate, showCancelled) {
+    loadReservations () {
       this.isLoading = true
-      loadReservationsReq(startDate, endDate, showCancelled)
+      loadReservationsReq(this.weekstart, this.weekend, this.showCancelled)
         .then(response => {
           this.reservations = this.processResponse(response)
           this.isLoading = false
         })
-        .catch(error => {
-          if (error) {
-            console.log(error)
-          }
-        })
+        .catch(error => this.handleError(error))
     },
     processResponse (response) {
       var reservations = this.sortReservations(response.data.reservation)
@@ -226,11 +231,15 @@ export default {
         this.selectedPools.splice(index, 1)
       }
     },
+    toggleCancelled () {
+      this.showCancelled = !this.showCancelled
+      this.loadReservations()
+    },
     weekChange (diff) {
       diff = diff * 7
       this.weekstart = new Date(this.weekstart.setDate(this.weekstart.getDate() + diff))
       this.weekend = new Date(this.weekend.setDate(this.weekend.getDate() + diff))
-      this.loadReservations(this.weekstart, this.weekend, false)
+      this.loadReservations()
     },
     loadPools () { // todo error handling
       loadPoolsReq()
@@ -238,9 +247,7 @@ export default {
           this.pools = response.data.pools
           this.getFilteredPools('')
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.handleError(error))
     },
     loadUsers () { // todo error handling
       loadUsersReq()
@@ -248,9 +255,7 @@ export default {
           this.users = response.data.users
           this.getFilteredUsers('')
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.handleError(error))
     },
     onlyUserInSelected (email) {
       return this.selectedUsers.filter(user => { return user.Email === email }).length === 1 && this.selectedUsers.length === 1
@@ -269,7 +274,7 @@ export default {
     this.weekstart = new Date(d.setDate(diff))
     this.weekend = new Date(d.setDate(diff + 7))
 
-    this.loadReservations(this.weekstart, this.weekend, false)
+    this.loadReservations()
     this.loadPools()
     this.loadUsers()
   },
@@ -277,6 +282,7 @@ export default {
     return {
       slots: [],
       isLoading: false,
+      showCancelled: false,
       weekstart: null,
       weekend: null,
       dateOptions: { year: 'numeric', month: 'numeric', day: 'numeric' },

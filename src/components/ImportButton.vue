@@ -33,11 +33,6 @@ export default {
       // eslint-disable-next-line
           .catch(error => {
           if (error) {
-            this.$toast.open({
-              message: `Error`,
-              position: 'is-top',
-              type: 'is-danger'
-            })
             this.$modal.open({
               parent: this,
               component: ImportErrors,
@@ -47,11 +42,11 @@ export default {
               events: {
                 'force': () => {
                   this.sendRequest(true)
+                  this.file = null
                 }
               }
             })
             this.$parent.isLoading = false
-            // this.file = null
           }
         })
     }

@@ -6,6 +6,11 @@
         <b-button v-if="isAdmin" class="level-item" icon-left="plus" type="is-success" :disabled="isLoading" @click.native="showPoolForm()">New pool</b-button>
       </div>
       <div class="level-right">
+        <b-checkbox-button class="level-item"
+          v-if="isAdmin"
+          v-model="showDisabled">
+          Only enabled
+        </b-checkbox-button>
         <b-taginput
           class="level-item"
           v-model="filterTags"
@@ -53,7 +58,7 @@
           style="width: 5%">
             {{props.row.MaximumCount}}
         </b-table-column>
-        <b-table-column centered
+        <b-table-column centered :visible="isAdmin && showDisabled"
           field="Enabled"
           label="Enabled"
           style="width:5%">
@@ -117,12 +122,16 @@ export default {
         .then(response => {
           this.isLoading = false
           this.machines = response.data.pools
+          if (!this.isAdmin) {
+            this.machines = this.machines.filter(
+              (value) => value.Enabled
+            )
+          }
         })
-        .catch(error => {
-          console.log(error)
-        })
+        .catch(error => this.handleError(error))
     },
     match (row) {
+      if (!this.showDisabled && !row.Enabled) return false
       if (this.filterTags.length === 0) return true
       for (const key in row) {
         if (row.hasOwnProperty(key)) {
@@ -174,14 +183,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     editPool (poolId, poolProps) {
       editPoolReq(poolId, poolProps).then(response => {
@@ -192,14 +194,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     removePool (poolId) {
       removePoolReq(poolId).then(response => {
@@ -210,14 +205,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: `Error`,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     },
     rowClass (row, index) {
       if (this.selectedRow === row) return 'selected-row'
@@ -232,15 +220,7 @@ export default {
         })
         this.loadMachinesData()
       })
-        .catch(error => {
-          if (error) {
-            this.$toast.open({
-              message: `db reset error`,
-              position: 'is-bottom',
-              type: 'is-success'
-            })
-          }
-        })
+        .catch(error => this.handleError(error))
     },
     addReservationForm (poolID, poolName, poolMaxCount) {
       const poolProps = {
@@ -270,14 +250,7 @@ export default {
           type: 'is-success'
         })
       })
-        // eslint-disable-next-line
-        .catch(error => {
-          this.$toast.open({
-            message: error,
-            position: 'is-top',
-            type: 'is-danger'
-          })
-        })
+        .catch(error => this.handleError(error))
     }
   },
   data () {
@@ -287,7 +260,8 @@ export default {
       filterTags: [],
       query: '',
       highlighting: true,
-      selectedRow: null
+      selectedRow: null,
+      showDisabled: false
     }
   },
   computed: {

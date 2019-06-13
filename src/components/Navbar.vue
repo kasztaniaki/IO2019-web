@@ -11,17 +11,14 @@
       </div>
       <div id="navbar-list" :class="navbarActive" class="navbar-menu">
         <div v-if="isAuthenticated" class="navbar-start">
-            <router-link class="navbar-item" to="/pools">Pools</router-link>
-            <router-link class="navbar-item" to="/reservations">Reservations</router-link>
-            <router-link v-if="isAdmin" class="navbar-item" to="/admin/users">Users</router-link>
+          <router-link class="navbar-item" to="/pools">Pools</router-link>
+          <router-link class="navbar-item" to="/reservations">Reservations</router-link>
+          <router-link v-if="isAdmin" class="navbar-item" to="/admin/users">Users</router-link>
+          <router-link v-if="isAdmin" class="navbar-item" to="/admin/statistics">Statistics</router-link>
         </div>
         <div v-if="!isAuthenticated" class="navbar-end">
-                <a class="navbar-item">
-                    <router-link to="/users/signup">Sign up</router-link>
-                </a>
-                <a class="navbar-item">
-                    <router-link to="/users/signin">Log in</router-link>
-                </a>
+                    <router-link class="navbar-item" to="/users/signup">Sign up</router-link>
+                    <router-link class="navbar-item" to="/users/signin">Log in</router-link>
         </div>
         <div v-if="isAuthenticated" class="navbar-end">
                 <b-dropdown
@@ -60,6 +57,7 @@
 
 <script>
 import EditUser from '@/components/EditUser.vue'
+
 export default {
   data () {
     return {
