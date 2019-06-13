@@ -10,7 +10,7 @@
             </template>
             <article v-for="issue in openedIssues" :key="issue.IssueID" class="message is-info">
               <div class="message-header" style="height: 50px">
-                <p>{{ issue.Subject }}</p>
+                <p>{{ issue.Subject }} ({{issue.PoolName}})</p>
                 <div class="buttons">
                   <b-button v-if="isAdmin"
                     rounded
