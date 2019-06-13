@@ -62,10 +62,23 @@
         </div>
       </div>
       <div class="columns">
-        <b-checkbox class="column"
-          v-model="recurrent">
-          Recurrent reservation
-        </b-checkbox>
+          <b-checkbox class="column is-narrow"
+            v-model="recurrent">
+            Recurrent reservation
+          </b-checkbox>
+          <b-tooltip class="column is-narrow"
+            multilined
+            size="is-large"
+            type="is-warning"
+            label="When unchecked, no reservation will be added when any of the reservations is impossible to add.
+                    When checked, adds every possible reservation in cycle">
+            <b-checkbox
+              v-if="recurrent"
+              type="is-warning"
+              v-model="force">
+              Force
+            </b-checkbox>
+          </b-tooltip>
       </div>
       <div class="columns is-vcentered is-centered"
             v-if="recurrent">
@@ -89,7 +102,6 @@
             </b-numberinput>
           </b-field>
         </div>
-
       </div>
     </section>
     <footer class="modal-card-foot">
@@ -146,7 +158,8 @@ export default {
       end: null,
       recurrent: false,
       step: 1,
-      cycleEndDate: today_
+      cycleEndDate: today_,
+      force: false
     }
   },
   computed: {
@@ -201,7 +214,8 @@ export default {
         ReservationID: this.ReservationID,
         Email: this.$store.getters.getUserData.email,
         Step: (this.recurrent) ? this.step : null,
-        CycleEndDate: (this.recurrent) ? this.cycleEndDate : null
+        CycleEndDate: (this.recurrent) ? this.cycleEndDate : null,
+        Force: this.force
       }
 
       this.$emit('saveReservation', reservationProps)

@@ -105,15 +105,15 @@ export default {
       charts: [
         {
           title: 'Popular Pools',
-          tooltip: 'Hours * machine count for reservation',
+          tooltip: 'Value: number of hours * machine count for reservation.',
           labels: [],
           data: [],
           loading: false,
           getter: getPopularPoolsReq
         },
         {
-          title: 'Popular Users',
-          tooltip: 'Hours * machine count for reservation',
+          title: 'Most Active Users',
+          tooltip: 'Value: number of hours * machine count for reservation.',
           labels: [],
           data: [],
           loading: false,
@@ -121,7 +121,7 @@ export default {
         },
         {
           title: 'Bottlenecked Pools',
-          tooltip: 'Number of hours in bottlenecked state (more than [Threshold] machines in use at a given moment)',
+          tooltip: 'Number of hours in bottlenecked state (more than [Threshold] machines in use at a given moment).',
           labels: [],
           data: [],
           loading: false,
@@ -129,7 +129,7 @@ export default {
         },
         {
           title: 'Unused Pools',
-          tooltip: 'Lowest peak percent of machines in use for a given pool. The percentage is calculated against the present maximum count for the pool',
+          tooltip: 'Lowest peak percent of machines in use for a given pool. The percentage is calculated against the present maximum count for the pool.',
           labels: [],
           data: [],
           loading: false,
