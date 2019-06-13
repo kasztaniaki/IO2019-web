@@ -12,7 +12,11 @@
             v-validate="'required'" />
         </b-field>
 
-        <button class="button is-primary" @click.prevent="validateBeforeSubmit()"> Log in </button>
+        <a align="left" @click="forgotPassword()">
+          <p> <font size="2">Forgot Password?</font> </p>
+        </a>
+
+        <button class="button is-primary is-centered" @click.prevent="validateBeforeSubmit()"> Log in </button>
       </div>
       <div class="information">
         <p>Don't have an account? <router-link to="/users/signup">Sign up</router-link> </p>
@@ -23,6 +27,7 @@
 
 <script>
 import EventBus from './EventBus'
+import ResetPassword from '@/components/ResetPassword.vue'
 
 export default {
   data () {
@@ -51,6 +56,13 @@ export default {
           this.authenticate()
         }
       })
+    },
+    forgotPassword () {
+      this.$modal.open({
+        parent: this,
+        component: ResetPassword,
+        width: 720
+      })
     }
   },
   mounted () {
@@ -66,5 +78,4 @@ export default {
     EventBus.$off('successfulAuthentication')
   }
 }
-
 </script>

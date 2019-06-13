@@ -149,6 +149,10 @@ export function reopenIssueReq (issueID) {
   })
 }
 
+export function resetPasswordReq (email) {
+  return axios.post(`${API_URL}/reset_password`, email)
+}
+
 export function getPoolAvailabilityReq (id, startDate, endDate) {
   return axios.get(`${API_URL}/pool_availability`, {
     params: {

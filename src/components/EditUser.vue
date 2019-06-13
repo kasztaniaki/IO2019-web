@@ -14,7 +14,7 @@
             v-validate="'min:8|max:80'" />
         </b-field>
         <b-field label="Updated first name" :type="{'is-danger': errors.has('name')}" :message="errors.first('name')">
-          <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'required|alpha|max:80'" />
+          <b-input placeholder="Updated first name" v-model="new_name" name="name" v-validate="'required|alpha_spaces|max:80'" />
         </b-field>
         <b-field label="Updated last name" :type="{'is-danger': errors.has('surname')}" :message="errors.first('surname')">
           <b-input placeholder="Updated last name" v-model="new_surname" name="surname" v-validate="'required|alpha|max:80'" />
