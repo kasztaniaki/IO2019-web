@@ -128,7 +128,7 @@ export default {
       } else {
         var time = this.timeSlots[this.selectedSlot]['start']
         console.log(this.selectedDate.getUTCDate())
-        var dt =  new Date(this.selectedDate.getFullYear(),
+        var dt = new Date(this.selectedDate.getFullYear(),
           this.selectedDate.getMonth(),
           this.selectedDate.getDate(),
           time.getHours(),

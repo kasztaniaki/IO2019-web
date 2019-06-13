@@ -7,7 +7,7 @@
         role="button">
             <div class="card-header-title title" id='chart-title'>
               {{chartTitle}}
-            </div>           
+            </div>
             <a class="card-header-icon">
               <b-icon
                 :icon="props.open ? 'menu-down' : 'menu-up'">
