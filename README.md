@@ -35,7 +35,10 @@ Deploy by running
 ```
 npm install
 npm run build
+```
+and run
+```
 node server.js
 ```
-
+or set env variable `VUE_APP_API_URL` to your desired backend URL and serve the `/dist` folder however you like.
 
