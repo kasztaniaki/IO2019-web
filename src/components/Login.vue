@@ -12,9 +12,9 @@
             v-validate="'required'" />
         </b-field>
 
-        <div class="clickable" align="left" @click="forgotPassword()">
+        <a align="left" @click="forgotPassword()">
           <p> <font size="2">Forgot Password?</font> </p>
-        </div>
+        </a>
 
         <button class="button is-primary is-centered" @click.prevent="validateBeforeSubmit()"> Log in </button>
       </div>
