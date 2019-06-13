@@ -30,8 +30,12 @@ export default {
   },
   methods: {
     resetPassword () {
+      var loading = this.$loading.open({
+        container: this.$el
+      })
       resetPasswordReq({ 'email': this.email })
         .then(response => {
+          loading.close()
           this.$toast.open({
             message: `An email has been sent. Check your inbox.`,
             position: 'is-top',
