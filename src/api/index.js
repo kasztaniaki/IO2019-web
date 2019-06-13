@@ -36,6 +36,12 @@ export function loadPoolsReq () {
   return axios.get(`${API_URL}/pools`)
 }
 
+export function loadPoolReq (poolID) {
+  return axios.get(`${API_URL}/pool`, {
+    params: { id: poolID }
+  })
+}
+
 export function addPoolReq (poolProps) {
   return axios.post(`${API_URL}/add_pool`, poolProps, {
     headers: { 'Content-Type': 'application/json' }
