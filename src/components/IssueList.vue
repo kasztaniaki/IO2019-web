@@ -10,7 +10,13 @@
             </template>
             <article v-for="issue in openedIssues" :key="issue.IssueID" class="message is-info">
               <div class="message-header" style="height: 50px">
-                <p>{{ issue.Subject }} (<a @click="showPoolForm(issue.PoolID)" class="pool-link">{{issue.PoolName}}</a>)</p>
+                <div v-if="isAdmin">
+                  <b-button type="is-light" size="is-small" rounded @click="showPoolForm(issue.PoolID)">{{issue.PoolName}}</b-button>
+                </div>
+                <div v-else > ({{issue.PoolName}}) </div>
+                <div style="is-centered">
+                  {{ issue.Subject }}
+                </div>
                 <div class="buttons">
                   <b-button v-if="isAdmin"
                     rounded
@@ -232,6 +238,10 @@ export default {
 <style lang="scss" scoped>
 .pool-link:hover {
   color: blueviolet !important;
+  text-decoration-line: none !important;
+}
+.pool-link {
+  text-decoration-line: none !important;
 }
 
 </style>
